@@ -253,3 +253,80 @@ model Asset {
 - モバイルアプリ対応
 - 複数通貨対応
 - 投資信託・暗号資産対応
+
+## 開発支援エージェント実装計画
+
+プロジェクトの品質向上と開発効率化のため、以下の専用エージェントの実装を計画している。
+
+### 実装済みエージェント
+1. **svelte5-syntax-checker** ✅
+   - Svelte 5の構文チェックとベストプラクティスの検証
+   - ルーン（$state、$derived、$effect）の適切な使用確認
+
+2. **typescript-type-checker** ✅
+   - TypeScriptの型安全性検証
+   - tsconfig.jsonの厳格な設定に基づく包括的な型チェック
+
+### 将来実装予定のエージェント
+
+#### Phase 1: 基盤系エージェント（優先度：高）
+1. **prisma-schema-validator** 🗄️
+   - Prismaスキーマファイルの構文チェック
+   - リレーション定義の検証
+   - インデックス最適化の提案
+   - 型の整合性チェック
+
+2. **security-analyzer** 🔒
+   - XSS、SQLインジェクション、CSRF対策の確認
+   - 環境変数の適切な使用チェック
+   - 認証・認可の実装検証
+   - 金融データ取り扱いのセキュリティ監査
+
+3. **zod-schema-validator** ✅
+   - Zodスキーマの検証
+   - 型推論の確認
+   - バリデーションルールの整合性チェック
+   - フォームバリデーションの最適化提案
+
+#### Phase 2: 品質向上系エージェント（優先度：中）
+4. **tailwind-style-checker** 🎨
+   - TailwindCSSクラスの正しい使用法確認
+   - 未使用クラスの検出
+   - カスタムクラスとの競合チェック
+   - レスポンシブデザインの一貫性検証
+
+5. **api-endpoint-tester** 🔌
+   - SvelteKitのAPIエンドポイント（+server.ts）のテスト
+   - レスポンス形式の検証
+   - エラーハンドリングチェック
+   - RESTful設計の準拠確認
+
+6. **test-coverage-analyzer** 🧪
+   - Vitestのテストカバレッジ分析
+   - 未テストコードの特定
+   - テストケースの品質評価
+   - E2Eテストシナリオの提案
+
+#### Phase 3: 最適化系エージェント（優先度：低）
+7. **performance-optimizer** ⚡
+   - バンドルサイズの分析
+   - 不要なインポートの検出
+   - レンダリングパフォーマンスの最適化提案
+   - Core Web Vitalsの改善提案
+
+8. **database-migration-helper** 📊
+   - Prismaマイグレーションの生成支援
+   - スキーマ変更の影響分析
+   - ロールバック戦略の提案
+   - データ移行スクリプトの生成
+
+### エージェント実装のメリット
+- **開発効率の向上**: 自動化されたコードレビューにより、問題を早期発見
+- **品質の一貫性**: プロジェクト全体で統一されたコーディング標準を維持
+- **セキュリティの強化**: 金融データを扱うアプリケーションとして必須のセキュリティチェック
+- **保守性の向上**: 継続的なコード品質の監視と改善提案
+
+### 実装スケジュール
+- **Phase 1完了後**: prisma-schema-validator、security-analyzer、zod-schema-validator
+- **Phase 3完了後**: tailwind-style-checker、api-endpoint-tester、test-coverage-analyzer
+- **Phase 5完了後**: performance-optimizer、database-migration-helper
