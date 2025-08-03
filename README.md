@@ -1,38 +1,98 @@
-# sv
+# 給料・資産管理アプリ
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+個人の給料と資産（株式）を一元管理するWebアプリケーション。
 
-## Creating a project
+## セットアップ
 
-If you're seeing this, you've probably already done this step. Congrats!
+### 1. 依存関係のインストール
 
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+```bash
+npm install
 ```
 
-## Developing
+### 2. 環境変数の設定
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```bash
+cp .env.example .env
+```
 
-```sh
+必要に応じて `.env` ファイルの値を変更してください。
+
+### 3. データベースの起動
+
+```bash
+# PostgreSQLコンテナの起動
+docker-compose up -d
+
+# pgAdminも起動する場合（開発時のデバッグ用）
+docker-compose --profile debug up -d
+```
+
+### 4. データベースのマイグレーション
+
+```bash
+# Prismaクライアントの生成
+npx prisma generate
+
+# マイグレーションの実行
+npx prisma migrate dev
+```
+
+### 5. 開発サーバーの起動
+
+```bash
+npm run dev
+```
+
+http://localhost:5173 でアプリケーションにアクセスできます。
+
+## 開発コマンド
+
+```bash
+# 開発サーバー
 npm run dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
+# ビルド
 npm run build
+
+# プレビュー
+npm run preview
+
+# コード品質チェック
+npm run lint        # ESLint
+npm run format      # Prettier
+npm run check       # TypeScript型チェック
+
+# テスト
+npm test           # Vitestユニットテスト
+npm run test:e2e   # Playwrightテスト
 ```
 
-You can preview the production build with `npm run preview`.
+## データベース管理
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```bash
+# Prisma Studio（DBのGUI）
+npx prisma studio
+
+# マイグレーション作成
+npx prisma migrate dev --name <migration-name>
+
+# DBリセット
+npx prisma migrate reset
+```
+
+## プロジェクト構造
+
+- `/src/routes` - SvelteKitのルーティング
+- `/src/lib/components` - 再利用可能なコンポーネント
+- `/src/lib/data` - データ型とダミーデータ
+- `/src/lib/utils` - ユーティリティ関数
+- `/prisma` - Prismaスキーマとマイグレーション
+
+## 技術スタック
+
+- **Framework**: Svelte 5 + SvelteKit
+- **Database**: PostgreSQL (Docker)
+- **ORM**: Prisma
+- **Styling**: TailwindCSS
+- **Icons**: Lucide Svelte
