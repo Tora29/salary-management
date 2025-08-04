@@ -27,7 +27,13 @@ describe('Table', () => {
 	 * テスト用のモック列定義
 	 * 日本語のラベルを使用して実際の使用例を再現
 	 */
-	const mockColumns: Column[] = [
+	interface MockData {
+		name: string;
+		age: number;
+		city: string;
+	}
+
+	const mockColumns: Column<MockData>[] = [
 		{ key: 'name', label: '名前' },
 		{ key: 'age', label: '年齢' },
 		{ key: 'city', label: '都市' }

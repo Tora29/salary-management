@@ -9,7 +9,7 @@
  * ];
  * ```
  */
-export interface Column<T = any> {
+export interface Column<T = unknown> {
 	/** データオブジェクトのプロパティキー */
 	key: keyof T;
 	/** テーブルヘッダーに表示される列名 */

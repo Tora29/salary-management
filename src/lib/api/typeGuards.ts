@@ -6,12 +6,14 @@ import type { ApiErrorData } from './error';
  * @returns {boolean} ValidationErrorデータの場合true
  */
 export function isValidationErrorData(data: unknown): data is { errors: Record<string, string[]> } {
+	if (data === null || typeof data !== 'object' || !('errors' in data)) {
+		return false;
+	}
+
+	const dataWithErrors = data as { errors: unknown };
 	return (
-		data !== null &&
-		typeof data === 'object' &&
-		'errors' in data &&
-		typeof (data as any).errors === 'object' &&
-		(data as any).errors !== null
+		typeof dataWithErrors.errors === 'object' &&
+		dataWithErrors.errors !== null
 	);
 }
 

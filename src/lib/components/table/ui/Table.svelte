@@ -48,7 +48,7 @@
 					<tr>
 						{#each columns as column (column.key)}
 							<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-								{(row as any)[column.key] ?? '-'}
+								{String(row[column.key] ?? '-')}
 							</td>
 						{/each}
 					</tr>
