@@ -18,6 +18,6 @@
 		"noImplicitOverride": true,
 		"noUncheckedIndexedAccess": true,
 		"moduleResolution": "bundler",
-		"types": ["svelte"]
+		"types": ["svelte", "node"]
 	}
 }
