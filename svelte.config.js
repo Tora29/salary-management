@@ -12,6 +12,7 @@ const config = {
 		alias: {
 			$entities: 'src/entities',
 			$features: 'src/features',
+			$widgets: 'src/widgets',
 			$lib: 'src/lib'
 		}
 	}

@@ -42,3 +42,46 @@ model Asset {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+model SalarySlip {
+  id              String   @id @default(cuid())
+  companyName     String
+  employeeName    String
+  employeeId      String
+  paymentDate     String
+  targetPeriodStart String
+  targetPeriodEnd String
+  
+  // 勤怠情報
+  overtimeHours   Float
+  holidayWorkDays Int
+  
+  // 収入
+  baseSalary      Decimal  @db.Decimal(10, 2)
+  overtimePay     Decimal  @db.Decimal(10, 2)
+  transportationAllowance Decimal @db.Decimal(10, 2)
+  otherAllowances Decimal  @db.Decimal(10, 2)
+  totalEarnings   Decimal  @db.Decimal(10, 2)
+  
+  // 控除
+  healthInsurance Decimal  @db.Decimal(10, 2)
+  welfareInsurance Decimal @db.Decimal(10, 2)
+  employmentInsurance Decimal @db.Decimal(10, 2)
+  incomeTax       Decimal  @db.Decimal(10, 2)
+  residentTax     Decimal  @db.Decimal(10, 2)
+  otherDeductions Decimal  @db.Decimal(10, 2)
+  totalDeductions Decimal  @db.Decimal(10, 2)
+  
+  // 差引支給額
+  netPay          Decimal  @db.Decimal(10, 2)
+  
+  // ファイル情報
+  fileName        String
+  uploadedAt      DateTime @default(now())
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([paymentDate])
+  @@index([employeeId])
+}

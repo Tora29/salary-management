@@ -53,6 +53,7 @@
 	"dependencies": {
 		"@lucide/svelte": "^0.536.0",
 		"@prisma/client": "^6.13.0",
+		"pdfjs-dist": "^5.4.54",
 		"zod": "^4.0.14"
 	},
 	"prisma": {

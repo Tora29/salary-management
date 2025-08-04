@@ -3,6 +3,10 @@ import { describe, test, expect } from 'vitest';
 import Page from './+page.svelte';
 import type { Stock } from '$lib/data/types';
 import type { DashboardResponse } from '$lib/api/types';
+type PageData = {
+	dashboardData: DashboardResponse;
+	error?: string;
+};
 
 const mockDashboardData: DashboardResponse = {
 	currentMonthSalary: 275000,
@@ -26,7 +30,7 @@ describe('+page.svelte', () => {
 	test('ダッシュボードのヘッダーが表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData } as PageData
+				data: { dashboardData: mockDashboardData }
 			}
 		});
 
@@ -36,7 +40,7 @@ describe('+page.svelte', () => {
 	test('4つのダッシュボードカードが表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData } as PageData
+				data: { dashboardData: mockDashboardData }
 			}
 		});
 
@@ -50,7 +54,7 @@ describe('+page.svelte', () => {
 	test('株式ポートフォリオのテーブルが表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData } as PageData
+				data: { dashboardData: mockDashboardData }
 			}
 		});
 
@@ -67,7 +71,7 @@ describe('+page.svelte', () => {
 	test('APIから取得した株式情報が表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData } as PageData
+				data: { dashboardData: mockDashboardData }
 			}
 		});
 
@@ -79,7 +83,7 @@ describe('+page.svelte', () => {
 	test('更新ボタンが表示される', () => {
 		const { getByRole } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData } as PageData
+				data: { dashboardData: mockDashboardData }
 			}
 		});
 
@@ -92,7 +96,7 @@ describe('+page.svelte', () => {
 				data: {
 					dashboardData: mockDashboardData,
 					error: 'データの取得に失敗しました'
-				}
+				} as PageData
 			}
 		});
 
@@ -103,7 +107,7 @@ describe('+page.svelte', () => {
 	test('フッターが表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData } as PageData
+				data: { dashboardData: mockDashboardData }
 			}
 		});
 

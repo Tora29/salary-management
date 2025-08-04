@@ -23,7 +23,7 @@ Feature-Sliced Design (FSD) アーキテクチャに従っています。
 
 ```bash
 # コード品質（タスク完了前に必ず上から１つずつ実行）
-1. レビューエージェントによる並列レビュー（docs/Review/agents 配下参照）
+1. レビューエージェントによる並列レビュー（.claude/agents 配下参照）
 2. npm run lint        # ESLint を実行
 3. npm run format      # Prettier でフォーマット
 4. npm run check       # TypeScript 型チェック
