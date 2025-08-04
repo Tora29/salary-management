@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="T">
 	import type { Column } from '../model/types';
 
 	/**
@@ -19,8 +19,8 @@
 		data = [],
 		emptyMessage = 'データがありません'
 	}: {
-		columns?: Column[];
-		data?: Record<string, unknown>[];
+		columns?: Column<T>[];
+		data?: T[];
 		emptyMessage?: string;
 	} = $props();
 </script>
@@ -48,7 +48,7 @@
 					<tr>
 						{#each columns as column (column.key)}
 							<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-								{row[column.key as string] ?? '-'}
+								{(row as any)[column.key] ?? '-'}
 							</td>
 						{/each}
 					</tr>

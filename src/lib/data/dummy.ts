@@ -1,3 +1,23 @@
+/**
+ * 開発・テスト用のダミーデータ
+ *
+ * @description
+ * アプリケーションの動作確認やテストで使用するダミーデータです。
+ * 本番環境では使用しないでください。
+ *
+ * @property {number} currentMonthSalary - 今月の給料（円）
+ * @property {number} yearlyIncome - 年収（円）
+ * @property {number} depositBalance - 預金残高（円）
+ * @property {number} stockValuation - 株式評価額（円）
+ * @property {Stock[]} stocks - 保有株式の配列
+ * @property {number} totalAssets - 総資産（預金＋株式）
+ *
+ * @example
+ * import { dummyData } from '$lib/data/dummy';
+ *
+ * // テストで使用
+ * const mockDashboard = { ...dummyData };
+ */
 export const dummyData = {
 	currentMonthSalary: 320000,
 	yearlyIncome: 3840000,
