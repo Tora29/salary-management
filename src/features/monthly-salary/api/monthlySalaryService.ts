@@ -16,19 +16,34 @@ export async function getMonthlySalaryData(
 
 	// 指定年でフィルタリング
 	const yearFilteredSlips = formattedSlips.filter((slip) => {
-		const match = slip.salarySlip.paymentDate.match(/(\d{4})年/);
-		return match && match[1] === targetYear;
+		// YYYY-MM-DD形式とYYYY年MM月DD日形式の両方に対応
+		const dateMatch = slip.salarySlip.paymentDate.match(/^(\d{4})-\d{2}-\d{2}$/);
+		const jpMatch = slip.salarySlip.paymentDate.match(/(\d{4})年/);
+		
+		if (dateMatch) {
+			return dateMatch[1] === targetYear;
+		} else if (jpMatch) {
+			return jpMatch[1] === targetYear;
+		}
+		return false;
 	});
 
 	// 月別にグループ化
 	const monthlyData: { [key: string]: MonthlySalaryData } = {};
 
 	yearFilteredSlips.forEach((slip) => {
-		// 支給日から年月を抽出 (YYYY年MM月DD日 -> YYYY-MM)
-		const match = slip.salarySlip.paymentDate.match(/(\d{4})年(\d{1,2})月/);
-		if (!match) return;
-
-		const monthKey = `${match[1]}-${match[2]!.padStart(2, '0')}`;
+		// 支給日から年月を抽出 (YYYY-MM-DD または YYYY年MM月DD日 -> YYYY-MM)
+		const dateMatch = slip.salarySlip.paymentDate.match(/^(\d{4})-(\d{2})-\d{2}$/);
+		const jpMatch = slip.salarySlip.paymentDate.match(/(\d{4})年(\d{1,2})月/);
+		
+		let monthKey: string;
+		if (dateMatch) {
+			monthKey = `${dateMatch[1]}-${dateMatch[2]}`;
+		} else if (jpMatch) {
+			monthKey = `${jpMatch[1]}-${jpMatch[2]!.padStart(2, '0')}`;
+		} else {
+			return;
+		}
 
 		if (!monthlyData[monthKey]) {
 			monthlyData[monthKey] = {
@@ -41,11 +56,14 @@ export async function getMonthlySalaryData(
 			};
 		}
 
-		monthlyData[monthKey].slips.push(slip);
-		monthlyData[monthKey].totalNetPay += slip.salarySlip.netPay;
-		monthlyData[monthKey].totalEarnings += slip.salarySlip.earnings.total;
-		monthlyData[monthKey].totalDeductions += slip.salarySlip.deductions.total;
-		monthlyData[monthKey].count++;
+		const monthData = monthlyData[monthKey];
+		if (monthData) {
+			monthData.slips.push(slip);
+			monthData.totalNetPay += slip.salarySlip.netPay;
+			monthData.totalEarnings += slip.salarySlip.earnings.total;
+			monthData.totalDeductions += slip.salarySlip.deductions.total;
+			monthData.count++;
+		}
 	});
 
 	// 月別データを配列に変換してソート
@@ -71,10 +89,18 @@ export async function getMonthlySalaryData(
 		new Set(
 			formattedSlips
 				.map((slip) => {
-					const match = slip.salarySlip.paymentDate.match(/(\d{4})年/);
-					return match ? match[1] : '';
+					// YYYY-MM-DD形式とYYYY年MM月DD日形式の両方に対応
+					const dateMatch = slip.salarySlip.paymentDate.match(/^(\d{4})-\d{2}-\d{2}$/);
+					const jpMatch = slip.salarySlip.paymentDate.match(/(\d{4})年/);
+					
+					if (dateMatch) {
+						return dateMatch[1];
+					} else if (jpMatch) {
+						return jpMatch[1];
+					}
+					return undefined;
 				})
-				.filter(Boolean)
+				.filter((year): year is string => year !== undefined)
 		)
 	)
 		.sort()

@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { Calendar, DollarSign, Clock, Receipt } from '@lucide/svelte';
-	import type { SalarySlip } from '$entities/salary-slip/model';
+	import type { SalarySlipDisplayProps } from '$entities/salary-slip/model';
 
-	interface Props {
-		salarySlip: SalarySlip;
-	}
-
-	let { salarySlip }: Props = $props();
+	let { salarySlip }: SalarySlipDisplayProps = $props();
 
 	function formatCurrency(amount: number): string {
 		return `¥${amount.toLocaleString('ja-JP')}`;

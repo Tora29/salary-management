@@ -6,7 +6,7 @@
 
 import { render } from '@testing-library/svelte';
 import { describe, test, expect } from 'vitest';
-import DashboardCard from '../ui/Card.svelte';
+import DashboardCard from '$lib/components/card/ui/Card.svelte';
 import { DollarSign } from '@lucide/svelte';
 
 /**

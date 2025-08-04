@@ -1,5 +1,5 @@
 import type { SalarySlip } from '../model';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, SalarySlip as PrismaSalarySlip } from '@prisma/client';
 
 /**
  * ドメインモデル(SalarySlip)をPrisma用のデータベース保存形式に変換
@@ -111,13 +111,13 @@ export function salarySlipToPrismaData(
  * フラットな構造から階層構造への再構築、欠損フィールドのデフォルト値設定を行います。
  * UIでの表示とビジネスロジックでの処理に最適化された形式を提供します。
  *
- * @param {any} slip - Prismaから取得したSalarySlipレコード
+ * @param {PrismaSalarySlip} slip - Prismaから取得したSalarySlipレコード
  * @param {string} slip.companyName - 会社名
  * @param {string} slip.employeeName - 従業員名
  * @param {string} slip.employeeId - 従業員ID
- * @param {Date} slip.paymentDate - 支給日
- * @param {Date} slip.targetPeriodStart - 対象期間開始日
- * @param {Date} slip.targetPeriodEnd - 対象期間終了日
+ * @param {string} slip.paymentDate - 支給日
+ * @param {string} slip.targetPeriodStart - 対象期間開始日
+ * @param {string} slip.targetPeriodEnd - 対象期間終了日
  * @param {Decimal} slip.baseSalary - 基本給（Decimal型）
  * @param {Decimal} slip.overtimePay - 残業代（Decimal型）
  * @param {Decimal} slip.transportationAllowance - 交通費（Decimal型）
@@ -185,7 +185,7 @@ export function salarySlipToPrismaData(
  * - タイムゾーン情報の適切な処理
  *
  * @security
- * - any型の使用はPrismaの動的型生成による制約のため（将来的に改善予定）
+ * - PrismaSalarySlip型を使用して型安全性を確保
  * - 入力データの基本的な存在チェックを実装（nullチェック等）
  * - 数値変換時のNaN/Infinityの適切な処理
  *
@@ -193,7 +193,7 @@ export function salarySlipToPrismaData(
  * @see {@link SalarySlip} ドメインモデルの型定義
  * @see {@link Prisma.SalarySlip} PrismaのDB型定義
  */
-export function prismaDataToSalarySlip(slip: any) {
+export function prismaDataToSalarySlip(slip: PrismaSalarySlip) {
 	return {
 		salarySlip: {
 			companyName: slip.companyName,

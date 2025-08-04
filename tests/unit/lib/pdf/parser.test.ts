@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { parseSalarySlipPDF, extractSalaryData } from './parser';
+import { parseSalarySlipPDF, extractSalaryData } from '$lib/pdf/parser';
 
 vi.mock('pdfjs-dist', () => ({
 	getDocument: vi.fn(),

@@ -1,1 +1,1 @@
-export type { Stock, DashboardMetrics, DashboardCardProps } from './types';
+export type { Stock, DashboardMetrics, DashboardCardProps, StockTableProps } from './types';

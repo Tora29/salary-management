@@ -1,1 +1,1 @@
-export type { SalarySlip, ParsedSalaryData } from './types';
+export type { SalarySlip, ParsedSalaryData, SalarySlipDisplayProps } from './types';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Table from '$lib/components/table/ui/Table.svelte';
 	import type { Column } from '$lib/components/table/model/types';
-	import type { Stock } from '../model';
+	import type { Stock, StockTableProps } from '../model';
 
 	/**
 	 * 株式情報専用のテーブルコンポーネント
@@ -25,12 +25,7 @@
 	 * ```
 	 */
 
-	interface Props {
-		/** 表示する株式データの配列 */
-		stocks: Stock[];
-	}
-
-	let { stocks }: Props = $props();
+	let { stocks }: StockTableProps = $props();
 
 	const stockColumns: Column<Stock>[] = [
 		{ key: 'symbol', label: '銘柄コード' },

@@ -43,3 +43,8 @@ export interface ParsedSalaryData {
 	fileName: string;
 	uploadedAt: string;
 }
+
+export interface SalarySlipDisplayProps {
+	/** 表示する給料明細データ */
+	salarySlip: SalarySlip;
+}

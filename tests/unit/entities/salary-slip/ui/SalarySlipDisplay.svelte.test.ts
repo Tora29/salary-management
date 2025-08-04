@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
-import SalarySlipDisplay from './SalarySlipDisplay.svelte';
-import type { SalarySlip } from '../model';
+import SalarySlipDisplay from '$entities/salary-slip/ui/SalarySlipDisplay.svelte';
+import type { SalarySlip } from '$entities/salary-slip/model/types';
 
 describe('SalarySlipDisplay Component', () => {
 	const mockSalarySlip: SalarySlip = {

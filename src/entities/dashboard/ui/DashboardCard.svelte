@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Card from '$lib/components/card/ui/Card.svelte';
-	import type { Component } from 'svelte';
+	import type { DashboardCardProps } from '../model';
 
 	/**
 	 * ダッシュボード専用のカードコンポーネント
@@ -20,18 +20,7 @@
 	 * ```
 	 */
 
-	interface Props {
-		/** カードのタイトル（例: "今月の給料", "総資産額"） */
-		title: string;
-		/** 表示する値（例: "¥300,000"） */
-		value: string;
-		/** オプションのサブタイトル（例: "前月比 +5%"） */
-		subtitle?: string;
-		/** アイコンコンポーネント（Lucide Svelteアイコン） */
-		icon: Component;
-	}
-
-	let { title, value, subtitle, icon }: Props = $props();
+	let { title, value, subtitle, icon }: DashboardCardProps = $props();
 </script>
 
 {#if subtitle}
