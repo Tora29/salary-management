@@ -1,7 +1,7 @@
 /**
  * 株式銘柄情報
  */
-export interface Stock {
+export interface Stock extends Record<string, unknown> {
 	/** 銘柄コード */
 	symbol: string;
 	/** 銘柄名 */

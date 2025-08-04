@@ -93,7 +93,10 @@
 		<!-- Stock Portfolio Preview -->
 		<div class="rounded-lg bg-white p-6 shadow-md">
 			<h2 class="mb-4 text-xl font-semibold text-gray-900">保有株式</h2>
-			<Table columns={stockColumns} data={data.dashboardData.stocks} />
+			<Table
+				columns={stockColumns as unknown as Column<Record<string, unknown>>[]}
+				data={data.dashboardData.stocks as unknown as Record<string, unknown>[]}
+			/>
 		</div>
 	</main>
 

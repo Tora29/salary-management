@@ -4,12 +4,6 @@ import Page from './+page.svelte';
 import type { Stock } from '$lib/data/types';
 import type { DashboardResponse } from '$lib/api/types';
 
-// テスト用の型定義
-interface TestPageData {
-	dashboardData: DashboardResponse;
-	error?: string;
-}
-
 const mockDashboardData: DashboardResponse = {
 	currentMonthSalary: 275000,
 	yearlyIncome: 1650000,
@@ -32,7 +26,7 @@ describe('+page.svelte', () => {
 	test('ダッシュボードのヘッダーが表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData }
+				data: { dashboardData: mockDashboardData } as PageData
 			}
 		});
 
@@ -42,7 +36,7 @@ describe('+page.svelte', () => {
 	test('4つのダッシュボードカードが表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData }
+				data: { dashboardData: mockDashboardData } as PageData
 			}
 		});
 
@@ -56,7 +50,7 @@ describe('+page.svelte', () => {
 	test('株式ポートフォリオのテーブルが表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData }
+				data: { dashboardData: mockDashboardData } as PageData
 			}
 		});
 
@@ -73,7 +67,7 @@ describe('+page.svelte', () => {
 	test('APIから取得した株式情報が表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData }
+				data: { dashboardData: mockDashboardData } as PageData
 			}
 		});
 
@@ -85,7 +79,7 @@ describe('+page.svelte', () => {
 	test('更新ボタンが表示される', () => {
 		const { getByRole } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData }
+				data: { dashboardData: mockDashboardData } as PageData
 			}
 		});
 
@@ -109,7 +103,7 @@ describe('+page.svelte', () => {
 	test('フッターが表示される', () => {
 		const { getByText } = render(Page, {
 			props: {
-				data: { dashboardData: mockDashboardData }
+				data: { dashboardData: mockDashboardData } as PageData
 			}
 		});
 

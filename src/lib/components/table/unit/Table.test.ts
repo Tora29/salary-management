@@ -27,7 +27,7 @@ describe('Table', () => {
 	 * テスト用のモック列定義
 	 * 日本語のラベルを使用して実際の使用例を再現
 	 */
-	interface MockData {
+	interface MockData extends Record<string, unknown> {
 		name: string;
 		age: number;
 		city: string;
@@ -43,7 +43,7 @@ describe('Table', () => {
 	 * テーブルヘッダーが正しくレンダリングされることを検証
 	 */
 	it('renders table headers correctly', () => {
-		const { container } = render(Table, {
+		const { container } = render(Table<MockData>, {
 			columns: mockColumns,
 			data: []
 		});
@@ -58,7 +58,7 @@ describe('Table', () => {
 	 * データが空の場合のメッセージ表示を検証
 	 */
 	it('renders empty state when no data provided', () => {
-		const { container } = render(Table, {
+		const { container } = render(Table<MockData>, {
 			columns: mockColumns,
 			data: []
 		});
@@ -75,8 +75,8 @@ describe('Table', () => {
 			{ name: '花子', age: 30, city: '大阪' }
 		];
 
-		const { container } = render(Table, {
-			columns: mockColumns,
+		const { container } = render(Table<TestData>, {
+			columns: mockColumns as Column<TestData>[],
 			data: mockData
 		});
 		const rows = container.querySelectorAll('tbody tr');
@@ -97,8 +97,8 @@ describe('Table', () => {
 		// Partial型を使用して、一部のプロパティのみを持つオブジェクトを作成
 		const mockData = [{ city: '京都' } as TestData];
 
-		const { container } = render(Table, {
-			columns: mockColumns,
+		const { container } = render(Table<TestData>, {
+			columns: mockColumns as Column<TestData>[],
 			data: mockData
 		});
 		const cells = container.querySelectorAll('tbody td');
@@ -112,7 +112,7 @@ describe('Table', () => {
 	 * カスタムエンプティメッセージが表示されることを検証
 	 */
 	it('displays custom empty message when no data', () => {
-		const { container } = render(Table, {
+		const { container } = render(Table<MockData>, {
 			columns: mockColumns,
 			data: [],
 			emptyMessage: 'カスタムメッセージ'

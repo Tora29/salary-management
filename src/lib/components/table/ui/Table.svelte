@@ -1,5 +1,7 @@
-<script lang="ts" generics="T">
+<script lang="ts">
 	import type { Column } from '../model/types';
+
+	type T = Record<string, unknown>;
 
 	/**
 	 * 汎用テーブルコンポーネント
@@ -14,15 +16,13 @@
 	 *   data={users}
 	 * />
 	 */
-	let {
-		columns = [],
-		data = [],
-		emptyMessage = 'データがありません'
-	}: {
+	interface Props {
 		columns?: Column<T>[];
 		data?: T[];
 		emptyMessage?: string;
-	} = $props();
+	}
+
+	let { columns = [], data = [], emptyMessage = 'データがありません' }: Props = $props();
 </script>
 
 <div class="overflow-x-auto">
