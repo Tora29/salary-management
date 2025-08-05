@@ -1,1 +1,1 @@
-export { getDashboardData } from './dashboardService';
+export { getDashboardData } from './dashboardService.svelte';

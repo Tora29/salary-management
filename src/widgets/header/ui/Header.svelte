@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Home, FileText, Menu, X, Calendar } from '@lucide/svelte';
+	import { Home, FileText, Menu, X, Calendar, TrendingUp } from '@lucide/svelte';
 
 	/**
 	 * アプリケーション共通ヘッダーコンポーネント
@@ -35,7 +35,8 @@
 	const navItems = [
 		{ href: '/', label: 'ダッシュボード', icon: Home },
 		{ href: '/salary-slips', label: '給料明細', icon: FileText },
-		{ href: '/monthly-salary', label: '月別給料', icon: Calendar }
+		{ href: '/monthly-salary', label: '月別給料', icon: Calendar },
+		{ href: '/portfolio', label: '株式ポートフォリオ', icon: TrendingUp }
 	];
 </script>
 

@@ -1,1 +1,1 @@
-export { salarySlipToPrismaData, prismaDataToSalarySlip } from './converters';
+export { salarySlipToPrismaData, prismaDataToSalarySlip } from './converters.svelte';

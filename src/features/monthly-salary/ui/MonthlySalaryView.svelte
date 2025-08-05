@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { DollarSign, TrendingUp, MinusCircle, BarChart3 } from '@lucide/svelte';
@@ -8,47 +7,21 @@
 	import { SalarySlipDisplay } from '$entities/salary-slip';
 
 	import { formatCurrency } from '$lib/utils/format';
-	import { BUSINESS_ERROR_MESSAGES } from '$lib/consts/businessErrorMessages';
 
 	import type { MonthlySalaryResponse } from '$features/monthly-salary/api';
 	import type { ParsedSalaryData } from '$entities/salary-slip/model';
 
-	let data = $state<MonthlySalaryResponse>({
-		monthlyData: [],
-		yearStats: {
-			totalNetPay: 0,
-			totalEarnings: 0,
-			totalDeductions: 0,
-			monthCount: 0,
-			averageNetPay: 0
-		},
-		selectedYear: new Date().getFullYear().toString(),
-		selectedMonth: '',
-		availableYears: []
-	});
-	let error = $state<string | null>(null);
+	interface Props {
+		monthlySalaryData: MonthlySalaryResponse;
+		selectedYear?: string | null;
+		selectedMonth?: string | null;
+		error?: string | null | undefined;
+	}
+
+	let { monthlySalaryData, error = null }: Props = $props();
+
 	let selectedSalarySlip = $state<ParsedSalaryData | null>(null);
 
-	async function loadData(year?: string, month?: string) {
-		error = null;
-
-		try {
-			const params = new URLSearchParams();
-			if (year) params.set('year', year);
-			if (month) params.set('month', month);
-
-			const response = await fetch(`/api/monthly-salary?${params.toString()}`);
-			if (!response.ok) {
-				throw new Error(`Monthly salary API error: ${response.status}`);
-			}
-
-			data = await response.json();
-		} catch (err) {
-			console.error('Failed to load monthly salary data:', err);
-			error =
-				BUSINESS_ERROR_MESSAGES.MONTHLY_SALARY?.LOAD_FAILED || 'データの読み込みに失敗しました';
-		}
-	}
 
 	function handleYearChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
@@ -56,18 +29,11 @@
 		const params = new URLSearchParams($page.url.searchParams);
 		params.set('year', year);
 		goto(`?${params.toString()}`);
-		loadData(year, data.selectedMonth);
 	}
 
 	function selectSalarySlip(salarySlip: ParsedSalaryData) {
 		selectedSalarySlip = salarySlip;
 	}
-
-	onMount(() => {
-		const year = $page.url.searchParams.get('year') || undefined;
-		const month = $page.url.searchParams.get('month') || undefined;
-		loadData(year, month);
-	});
 </script>
 
 <svelte:head>
@@ -83,11 +49,11 @@
 				<label for="year-select" class="text-sm font-medium text-gray-700">表示年度:</label>
 				<select
 					id="year-select"
-					value={data.selectedYear}
+					value={monthlySalaryData.selectedYear}
 					onchange={handleYearChange}
 					class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
 				>
-					{#each data.availableYears as year}
+					{#each monthlySalaryData.availableYears as year}
 						<option value={year}>{year}年</option>
 					{/each}
 				</select>
@@ -107,25 +73,25 @@
 		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 			<Card
 				title="年間総支給額"
-				value={formatCurrency(data.yearStats.totalNetPay)}
-				subtitle="{data.yearStats.monthCount}ヶ月分"
+				value={formatCurrency(monthlySalaryData.yearStats.totalNetPay)}
+				subtitle="{monthlySalaryData.yearStats.monthCount}ヶ月分"
 				icon={DollarSign}
 			/>
 			<Card
 				title="年間総収入"
-				value={formatCurrency(data.yearStats.totalEarnings)}
+				value={formatCurrency(monthlySalaryData.yearStats.totalEarnings)}
 				subtitle="税引き前"
 				icon={TrendingUp}
 			/>
 			<Card
 				title="年間総控除額"
-				value={formatCurrency(data.yearStats.totalDeductions)}
+				value={formatCurrency(monthlySalaryData.yearStats.totalDeductions)}
 				subtitle="税金・保険料等"
 				icon={MinusCircle}
 			/>
 			<Card
 				title="月平均支給額"
-				value={formatCurrency(data.yearStats.averageNetPay)}
+				value={formatCurrency(monthlySalaryData.yearStats.averageNetPay)}
 				subtitle="手取り平均"
 				icon={BarChart3}
 			/>
@@ -133,16 +99,18 @@
 
 		<!-- 月別データ -->
 		<div class="rounded-lg bg-white p-6 shadow-md">
-			<h2 class="mb-6 text-xl font-semibold text-gray-900">{data.selectedYear}年 月別詳細</h2>
+			<h2 class="mb-6 text-xl font-semibold text-gray-900">
+				{monthlySalaryData.selectedYear}年 月別詳細
+			</h2>
 
-			{#if data.monthlyData.length === 0}
+			{#if monthlySalaryData.monthlyData.length === 0}
 				<div class="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center">
 					<p class="text-lg text-gray-600">選択した年度にデータがありません</p>
 					<p class="mt-2 text-sm text-gray-500">他の年度を選択してください</p>
 				</div>
 			{:else}
 				<div class="space-y-4">
-					{#each data.monthlyData as monthData}
+					{#each monthlySalaryData.monthlyData as monthData}
 						<div class="rounded-lg border border-gray-200 bg-white shadow-sm">
 							<div class="p-4">
 								<div class="mb-4 flex items-center justify-between">
@@ -158,52 +126,50 @@
 								</div>
 
 								{#if monthData.slips.length > 0}
-									<div class="grid gap-4 lg:grid-cols-2">
-										<!-- 明細リスト -->
-										<div>
-											<h4 class="mb-2 text-sm font-medium text-gray-700">給料明細一覧</h4>
-											<div class="space-y-2">
-												{#each monthData.slips as slip}
-													<button
-														type="button"
-														onclick={() => selectSalarySlip(slip)}
-														class="w-full rounded-lg border border-gray-200 bg-gray-50 p-3 text-left transition-colors hover:bg-gray-100 {selectedSalarySlip
-															?.salarySlip.paymentDate === slip.salarySlip.paymentDate
-															? 'border-blue-300 bg-blue-50'
-															: ''}"
-													>
-														<div class="flex items-center justify-between">
-															<div>
-																<p class="font-medium text-gray-900">
-																	{slip.salarySlip.paymentDate}
-																</p>
-																<p class="text-sm text-gray-600">{slip.fileName}</p>
-															</div>
-															<p class="font-semibold text-blue-600">
-																{formatCurrency(slip.salarySlip.netPay)}
-															</p>
-														</div>
-													</button>
-												{/each}
-											</div>
-										</div>
-
-										<!-- 選択された明細の詳細 -->
-										<div>
-											{#if selectedSalarySlip}
-												<h4 class="mb-2 text-sm font-medium text-gray-700">明細詳細</h4>
-												<div class="rounded-lg border border-gray-200 p-4">
-													<SalarySlipDisplay salarySlip={selectedSalarySlip.salarySlip} />
-												</div>
-											{:else}
-												<div
-													class="flex h-48 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
+									<!-- 明細リスト -->
+									<div class="mb-6">
+										<h4 class="mb-2 text-sm font-medium text-gray-700">給料明細一覧</h4>
+										<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+											{#each monthData.slips as slip}
+												<button
+													type="button"
+													onclick={() => selectSalarySlip(slip)}
+													class="rounded-lg border border-gray-200 bg-gray-50 p-3 text-left transition-colors hover:bg-gray-100 {selectedSalarySlip
+														?.salarySlip.paymentDate === slip.salarySlip.paymentDate
+														? 'border-blue-300 bg-blue-50'
+														: ''}"
 												>
-													<p class="text-gray-600">明細を選択すると詳細が表示されます</p>
-												</div>
-											{/if}
+													<div class="flex items-center justify-between">
+														<div>
+															<p class="font-medium text-gray-900">
+																{slip.salarySlip.paymentDate}
+															</p>
+															<p class="text-sm text-gray-600">{slip.fileName}</p>
+														</div>
+														<p class="font-semibold text-blue-600">
+															{formatCurrency(slip.salarySlip.netPay)}
+														</p>
+													</div>
+												</button>
+											{/each}
 										</div>
 									</div>
+
+									<!-- 選択された明細の詳細 -->
+									{#if selectedSalarySlip}
+										<div>
+											<h4 class="mb-4 text-sm font-medium text-gray-700">明細詳細</h4>
+											<div class="rounded-lg bg-gray-50 p-6">
+												<SalarySlipDisplay salarySlip={selectedSalarySlip.salarySlip} />
+											</div>
+										</div>
+									{:else}
+										<div
+											class="flex h-48 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
+										>
+											<p class="text-gray-600">明細を選択すると詳細が表示されます</p>
+										</div>
+									{/if}
 								{/if}
 							</div>
 						</div>

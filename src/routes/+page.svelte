@@ -2,11 +2,12 @@
 	import DashboardView from '$features/dashboard/ui/DashboardView.svelte';
 	import type { PageData } from './$types';
 
-	interface Props {
-		data: PageData;
-	}
-
-	let { data }: Props = $props();
+	let { data }: { data: PageData } = $props();
 </script>
 
-<DashboardView {data} />
+<DashboardView
+	dashboardData={data.dashboardData}
+	salarySlips={data.salarySlips}
+	salaryChartData={data.salaryChartData}
+	error={data.error}
+/>

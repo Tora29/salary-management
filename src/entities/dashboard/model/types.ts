@@ -1,4 +1,4 @@
-export interface Stock {
+export interface Stock extends Record<string, unknown> {
 	symbol: string;
 	name: string;
 	quantity: number;
@@ -13,6 +13,10 @@ export interface DashboardMetrics {
 	depositBalance: number;
 	stockValuation: number;
 	totalAssets: number;
+}
+
+export interface DashboardResponse extends DashboardMetrics {
+	stocks: Stock[];
 }
 
 import type { Component } from 'svelte';

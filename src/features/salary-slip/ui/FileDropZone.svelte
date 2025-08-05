@@ -1,13 +1,8 @@
 <script lang="ts">
 	import { Upload, FileText, CircleAlert } from '@lucide/svelte';
+	import type { FileDropZoneProps } from '$features/salary-slip/model';
 
-	interface Props {
-		onFileSelect: (file: File) => void;
-		isProcessing?: boolean;
-		error?: string | null;
-	}
-
-	let { onFileSelect, isProcessing = false, error = null }: Props = $props();
+	let { onFileSelect, isProcessing = false, error = null }: FileDropZoneProps = $props();
 
 	let isDragging = $state(false);
 	let localError = $state<string | null>(error);

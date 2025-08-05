@@ -4,4 +4,4 @@ export {
 	saveSalarySlipWithDuplicateCheck,
 	getAllSalarySlips,
 	type SaveSalarySlipResult
-} from './salarySlipService';
+} from './salarySlipService.svelte';

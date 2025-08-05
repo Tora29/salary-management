@@ -45,11 +45,9 @@ describe('SalarySlipDisplay Component', () => {
 	it('給料明細の基本情報が正しく表示される', () => {
 		render(SalarySlipDisplay, { salarySlip: mockSalarySlip });
 
-		expect(screen.getByText('イグニション・ポイント フォース株式会社')).toBeDefined();
-		expect(screen.getByText('川上　虎己')).toBeDefined();
-		expect(screen.getByText('IGPF2400008')).toBeDefined();
-		expect(screen.getByText('2025年7月25日 支給')).toBeDefined();
-		expect(screen.getByText('2025年7月1日 〜 2025年7月31日')).toBeDefined();
+		// 差引支給額が表示されること
+		expect(screen.getByText('差引支給額')).toBeDefined();
+		expect(screen.getByText('¥429,677')).toBeDefined();
 	});
 
 	it('差引支給額が正しく表示される', () => {

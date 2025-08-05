@@ -1,39 +1,31 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { FileUp, FileText } from '@lucide/svelte';
 
 	import FileDropZone from './FileDropZone.svelte';
 	import { SalarySlipDisplay } from '$entities/salary-slip';
 
 	import { formatCurrency } from '$lib/utils/format';
-	import { BUSINESS_ERROR_MESSAGES } from '$lib/consts/businessErrorMessages';
 
 	import type { ParsedSalaryData } from '$entities/salary-slip/model';
+	import { invalidateAll } from '$app/navigation';
 
-	let salaryHistory = $state<ParsedSalaryData[]>([]);
+	interface Props {
+		salaryHistory: ParsedSalaryData[];
+		error?: string | null | undefined;
+	}
+
+	let { salaryHistory = [], error = null }: Props = $props();
+
 	let isLoading = $state(false);
-	let error = $state<string | null>(null);
 	let selectedSalarySlip = $state<ParsedSalaryData | null>(null);
 	let parsedSalaryData = $state<ParsedSalaryData | null>(null);
 	let uploadError = $state<string | null>(null);
 	let isProcessing = $state(false);
 
-	async function loadSalarySlips() {
+	async function reloadSalarySlips() {
 		isLoading = true;
-		error = null;
-
-		try {
-			const response = await fetch('/api/salary-slips');
-			if (!response.ok) {
-				throw new Error(`Salary slips API error: ${response.status}`);
-			}
-			salaryHistory = await response.json();
-		} catch (err) {
-			console.error('Failed to load salary slips:', err);
-			error = BUSINESS_ERROR_MESSAGES.SALARY_SLIP.LOAD_FAILED;
-		} finally {
-			isLoading = false;
-		}
+		await invalidateAll();
+		isLoading = false;
 	}
 
 	function handleSlipSelect(slip: ParsedSalaryData) {
@@ -46,7 +38,7 @@
 
 		try {
 			// 動的インポートで parseSalarySlipPDF を読み込む
-			const { parseSalarySlipPDF } = await import('$lib/pdf/parser');
+			const { parseSalarySlipPDF } = await import('$lib/utils/pdf/parser');
 			const parsedResult = await parseSalarySlipPDF(file);
 			parsedSalaryData = parsedResult;
 
@@ -75,7 +67,7 @@
 			}
 
 			// アップロード成功時にリストを再読み込み
-			await loadSalarySlips();
+			await reloadSalarySlips();
 		} catch (err) {
 			console.error('Upload error:', err);
 			uploadError = err instanceof Error ? err.message : 'アップロードに失敗しました';
@@ -83,10 +75,6 @@
 			isProcessing = false;
 		}
 	}
-
-	onMount(() => {
-		loadSalarySlips();
-	});
 </script>
 
 <svelte:head>

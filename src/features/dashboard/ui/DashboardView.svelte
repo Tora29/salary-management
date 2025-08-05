@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Svelte core imports
-	import { onMount } from 'svelte';
+	// Svelte coreのインポートは不要になりました
 
 	// External library imports (Lucide icons)
 	import {
@@ -15,82 +15,67 @@
 
 	// Project entity imports (domain-specific components)
 	import { DashboardCard, StockTable } from '$entities/dashboard';
+	import { SalaryChart } from '$entities/salary-chart';
 
 	// Project feature imports (feature components)
 	import { SalarySlipDisplay } from '$entities/salary-slip';
+	import StockPriceUpdater from '$features/stock-price/ui/StockPriceUpdater.svelte';
 
 	// Library utils and constants
 	import { formatCurrency } from '$lib/utils/format';
-	import { BUSINESS_ERROR_MESSAGES } from '$lib/consts/businessErrorMessages';
 
 	// Type imports (grouped together)
-	import type { DashboardResponse } from '$lib/api/types';
+	import type { DashboardResponse } from '$entities/dashboard/model';
 	import type { ParsedSalaryData } from '$entities/salary-slip/model';
+	import type { Stock } from '$entities/dashboard/model';
+	import type { SalaryChartData } from '$entities/salary-chart/model';
 
 	interface Props {
-		data?: {
-			dashboardData?: DashboardResponse;
-			error?: string;
-		};
+		dashboardData: DashboardResponse;
+		salarySlips: ParsedSalaryData[];
+		salaryChartData: SalaryChartData | null;
+		error?: string | null | undefined;
 	}
 
-	let { data }: Props = $props();
+	let {
+		dashboardData = $bindable(),
+		salarySlips = [],
+		salaryChartData = null,
+		error = null as string | null
+	}: Props = $props();
 
-	let dashboardData = $state<DashboardResponse>(
-		data?.dashboardData || {
-			currentMonthSalary: 0,
-			yearlyIncome: 0,
-			depositBalance: 0,
-			stockValuation: 0,
-			stocks: [],
-			totalAssets: 0
-		}
-	);
-	let salarySlips = $state<ParsedSalaryData[]>([]);
 	let isLoading = $state(false);
-	let error = $state<string | null>(data?.error || null);
 	let selectedSalarySlip = $state<ParsedSalaryData | null>(null);
 
-	async function loadData() {
-		isLoading = true;
-		error = null;
-
-		try {
-			// ダッシュボードデータをAPIから取得
-			const dashboardResponse = await fetch('/api/dashboard');
-			if (!dashboardResponse.ok) {
-				throw new Error(`Dashboard API error: ${dashboardResponse.status}`);
-			}
-			dashboardData = await dashboardResponse.json();
-
-			// 給料明細データをAPIから取得
-			const salarySlipsResponse = await fetch('/api/salary-slips');
-			if (!salarySlipsResponse.ok) {
-				throw new Error(`Salary slips API error: ${salarySlipsResponse.status}`);
-			}
-			salarySlips = await salarySlipsResponse.json();
-		} catch (err) {
-			console.error('Error loading dashboard:', err);
-			error = BUSINESS_ERROR_MESSAGES.STOCK.FETCH_FAILED;
-		} finally {
-			isLoading = false;
+	// 最新の給料明細を自動選択
+	$effect(() => {
+		if (salarySlips.length > 0 && !selectedSalarySlip) {
+			selectedSalarySlip = salarySlips[0] || null;
 		}
-	}
+	});
 
 	async function handleRefresh() {
-		await loadData();
+		isLoading = true;
+		// ページ全体をリロードしてデータを再取得
+		await invalidateAll();
+		isLoading = false;
 	}
 
 	function selectSalarySlip(salarySlip: ParsedSalaryData) {
 		selectedSalarySlip = salarySlip;
 	}
 
-	onMount(() => {
-		// propsでデータが提供されていない場合のみAPIからデータを取得
-		if (!data?.dashboardData) {
-			loadData();
-		}
-	});
+	function handleStockPricesUpdate(updatedStocks: Stock[]) {
+		// 株価更新後の処理
+		dashboardData.stocks = updatedStocks;
+		// 株式評価額の再計算
+		dashboardData.stockValuation = updatedStocks.reduce((sum, stock) => sum + stock.value, 0);
+		// 総資産額の再計算
+		dashboardData.totalAssets = dashboardData.depositBalance + dashboardData.stockValuation;
+	}
+
+	// invalidateAllをインポート
+	import { invalidateAll } from '$app/navigation';
 </script>
 
 <svelte:head>
@@ -150,6 +135,17 @@
 			/>
 		</div>
 
+		<!-- Salary Chart -->
+		{#if salaryChartData}
+			<div class="mb-8 rounded-lg bg-white p-6 shadow-md">
+				<h2 class="mb-4 flex items-center gap-2 text-xl font-semibold text-gray-900">
+					<ChartBar size={20} />
+					{salaryChartData.year}年 給料推移
+				</h2>
+				<SalaryChart data={salaryChartData} height="400px" />
+			</div>
+		{/if}
+
 		<!-- Recent Salary Slips -->
 		{#if salarySlips && salarySlips.length > 0}
 			<div class="mb-8 rounded-lg bg-white p-6 shadow-md">
@@ -166,58 +162,52 @@
 						<ChevronRight size={16} />
 					</a>
 				</div>
-				<div class="grid gap-4 lg:grid-cols-2">
-					<!-- 給料明細リスト -->
-					<div>
-						<div class="space-y-2">
-							{#each salarySlips as salarySlip}
-								<button
-									type="button"
-									onclick={() => selectSalarySlip(salarySlip)}
-									class="w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition-colors hover:bg-gray-50 {selectedSalarySlip
-										?.salarySlip.paymentDate === salarySlip.salarySlip.paymentDate
-										? 'border-blue-300 bg-blue-50'
-										: ''}"
-								>
-									<div class="flex items-center justify-between">
-										<div>
-											<p class="font-medium text-gray-900">
-												{salarySlip.salarySlip.paymentDate} 支給分
-											</p>
-											<p class="text-sm text-gray-600">
-												{salarySlip.fileName}
-											</p>
-										</div>
-										<p class="text-lg font-semibold text-blue-600">
-											¥{salarySlip.salarySlip.netPay.toLocaleString()}
-										</p>
-									</div>
-								</button>
-							{/each}
-						</div>
-					</div>
-					<!-- 選択された給料明細の詳細 -->
-					<div>
-						{#if selectedSalarySlip}
-							<div class="rounded-lg border border-gray-200 p-4">
-								<h3 class="mb-3 text-lg font-semibold text-gray-900">給料明細詳細</h3>
-								<SalarySlipDisplay salarySlip={selectedSalarySlip.salarySlip} />
+				<!-- 給料明細リスト -->
+				<div class="mb-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+					{#each salarySlips.slice(0, 3) as salarySlip (salarySlip.salarySlip.paymentDate)}
+						<button
+							type="button"
+							onclick={() => selectSalarySlip(salarySlip)}
+							class="rounded-lg border border-gray-200 bg-white p-3 text-left transition-colors hover:bg-gray-50 {selectedSalarySlip
+								?.salarySlip.paymentDate === salarySlip.salarySlip.paymentDate
+								? 'border-blue-300 bg-blue-50'
+								: ''}"
+						>
+							<div class="flex items-center justify-between">
+								<div>
+									<p class="font-medium text-gray-900">
+										{salarySlip.salarySlip.paymentDate} 支給分
+									</p>
+									<p class="text-sm text-gray-600">
+										{salarySlip.fileName}
+									</p>
+								</div>
+								<p class="text-lg font-semibold text-blue-600">
+									¥{salarySlip.salarySlip.netPay.toLocaleString()}
+								</p>
 							</div>
-						{:else}
-							<div
-								class="flex h-48 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
-							>
-								<p class="text-gray-600">給料明細を選択すると詳細が表示されます</p>
-							</div>
-						{/if}
-					</div>
+						</button>
+					{/each}
 				</div>
+				<!-- 選択された給料明細の詳細 -->
+				{#if selectedSalarySlip}
+					<div class="rounded-lg bg-gray-50 p-6">
+						<SalarySlipDisplay salarySlip={selectedSalarySlip.salarySlip} />
+					</div>
+				{/if}
 			</div>
 		{/if}
 
 		<!-- Stock Portfolio Preview -->
 		<div class="rounded-lg bg-white p-6 shadow-md">
-			<h2 class="mb-4 text-xl font-semibold text-gray-900">保有株式</h2>
+			<div class="mb-4 flex items-center justify-between">
+				<h2 class="text-xl font-semibold text-gray-900">保有株式</h2>
+				<StockPriceUpdater
+					stocks={dashboardData.stocks}
+					onPricesUpdate={handleStockPricesUpdate}
+					updateInterval={60000}
+				/>
+			</div>
 			<StockTable stocks={dashboardData.stocks} />
 		</div>
 	</main>
