@@ -7,14 +7,11 @@
 	import { formatCurrency } from '$lib/utils/format';
 
 	// Project entity imports (domain-specific components)
-	import { DashboardCard, StockTable } from '$entities/dashboard';
+	import { DashboardCard, SalaryChart, SalarySlipDisplay, StockTable } from '$entities/dashboard';
 	// Type imports (grouped together)
 	import type { DashboardResponse } from '$entities/dashboard/model';
 	import type { Stock } from '$entities/dashboard/model';
-	import { SalaryChart } from '$entities/salary-chart';
 	import type { SalaryChartData } from '$entities/salary-chart/model';
-	// Project feature imports (feature components)
-	import { SalarySlipDisplay } from '$entities/salary-slip';
 	import type { ParsedSalaryData } from '$entities/salary-slip/model';
 	import StockPriceUpdater from '$features/portfolio/ui/StockPriceUpdater.svelte';
 	import {

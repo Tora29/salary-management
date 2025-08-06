@@ -2,7 +2,7 @@
 	import type { Column } from '$lib/components/table/model/types';
 	import Table from '$lib/components/table/ui/Table.svelte';
 
-	import type { Stock, StockTableProps } from '../model';
+	import type { Stock, StockTableProps } from '../model/StockTable.model';
 
 	/**
 	 * 株式情報専用のテーブルコンポーネント

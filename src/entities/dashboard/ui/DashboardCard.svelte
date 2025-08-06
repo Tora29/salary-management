@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Card from '$lib/components/card/ui/Card.svelte';
 
-	import type { DashboardCardProps } from '../model';
+	import type { DashboardCardProps } from '../model/DashboardCard.model';
 
 	/**
 	 * ダッシュボード専用のカードコンポーネント

@@ -3,6 +3,7 @@ import svelteConfig from './svelte.config.js';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import jsdoc from 'eslint-plugin-jsdoc';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
 import { fileURLToPath } from 'node:url';
@@ -17,6 +18,11 @@ export default ts.config(
 	...svelte.configs.recommended,
 	prettier,
 	...svelte.configs.prettier,
+	{
+		plugins: {
+			jsdoc
+		}
+	},
 	{
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node }
@@ -64,7 +70,22 @@ export default ts.config(
 			'@typescript-eslint/no-non-null-assertion': 'warn',
 
 			// ========== JSDoc関連 ==========
-			// JSDocは TypeScript の型情報で十分なため、必須にはしない
+			'jsdoc/require-description': [
+				'warn',
+				{
+					contexts: ['FunctionDeclaration', 'MethodDefinition', 'ClassDeclaration']
+				}
+			],
+			'jsdoc/require-param': 'warn',
+			'jsdoc/require-param-description': 'warn',
+			'jsdoc/require-param-type': 'off', // TypeScriptで型があるため不要
+			'jsdoc/require-returns': 'warn',
+			'jsdoc/require-returns-description': 'warn',
+			'jsdoc/require-returns-type': 'off', // TypeScriptで型があるため不要
+			'jsdoc/check-alignment': 'warn',
+			'jsdoc/check-param-names': 'error',
+			'jsdoc/check-tag-names': 'error',
+			'jsdoc/no-undefined-types': 'off', // TypeScript型を使うため
 
 			// ========== 一般的な品質ルール ==========
 			'prefer-const': 'error',

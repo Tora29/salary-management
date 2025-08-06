@@ -5,7 +5,7 @@
 
 	import FileDropZone from './FileDropZone.svelte';
 
-	import { SalarySlipDisplay } from '$entities/salary-slip';
+	import { SalarySlipDisplay } from '$entities/dashboard';
 	import type { ParsedSalaryData } from '$entities/salary-slip/model';
 	import { FileText, FileUp } from '@lucide/svelte';
 

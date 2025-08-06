@@ -1,15 +1,10 @@
 <script lang="ts">
-	import type { ChartConfiguration } from 'chart.js';
+	import type { ChartProps } from '../model/types';
+
 	import Chart from 'chart.js/auto';
 	import { onDestroy, onMount } from 'svelte';
 
-	interface Props {
-		config: ChartConfiguration;
-		height?: string;
-		class?: string;
-	}
-
-	let { config, height = '300px', class: className = '' }: Props = $props();
+	let { config, height = '300px', class: className = '' }: ChartProps = $props();
 
 	let canvas: HTMLCanvasElement;
 	let chart: Chart | null = null;

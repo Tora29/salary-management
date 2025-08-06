@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { SalarySlipDisplayProps } from '$entities/salary-slip/model';
+	import type { SalarySlipDisplayProps } from '../model/SalarySlipDisplay.model';
+
 	import { Clock, DollarSign, FileText } from '@lucide/svelte';
 
 	let { salarySlip }: SalarySlipDisplayProps = $props();

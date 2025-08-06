@@ -1,5 +1,5 @@
+import SalarySlipDisplay from '$entities/dashboard/ui/SalarySlipDisplay.svelte';
 import type { SalarySlip } from '$entities/salary-slip/model/types';
-import SalarySlipDisplay from '$entities/salary-slip/ui/SalarySlipDisplay.svelte';
 import { render, screen } from '@testing-library/svelte';
 import { describe, expect, it } from 'vitest';
 
