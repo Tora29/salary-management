@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import Chart from 'chart.js/auto';
 	import type { ChartConfiguration } from 'chart.js';
+	import Chart from 'chart.js/auto';
+	import { onDestroy, onMount } from 'svelte';
 
 	interface Props {
 		config: ChartConfiguration;

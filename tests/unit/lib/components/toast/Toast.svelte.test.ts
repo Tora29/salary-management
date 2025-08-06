@@ -1,12 +1,13 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { toastStore } from '$lib/components/toast/model/store';
 import {
-	showSuccessToast,
 	showErrorToast,
-	showWarningToast,
-	showInfoToast
+	showInfoToast,
+	showSuccessToast,
+	showWarningToast
 } from '$lib/components/toast/model';
+import { toastStore } from '$lib/components/toast/model/store';
 import type { ToastMessage } from '$lib/components/toast/model/types';
+
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Toast Store', () => {
 	beforeEach(() => {

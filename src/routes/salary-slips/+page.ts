@@ -1,4 +1,5 @@
 import type { PageLoad } from './$types';
+
 import type { ParsedSalaryData } from '$entities/salary-slip/model';
 
 export const load: PageLoad = async ({ fetch }) => {

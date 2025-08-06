@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { FileUp, FileText } from '@lucide/svelte';
-
-	import FileDropZone from './FileDropZone.svelte';
-	import { SalarySlipDisplay } from '$entities/salary-slip';
+	import { invalidateAll } from '$app/navigation';
 
 	import { formatCurrency } from '$lib/utils/format';
 
+	import FileDropZone from './FileDropZone.svelte';
+
+	import { SalarySlipDisplay } from '$entities/salary-slip';
 	import type { ParsedSalaryData } from '$entities/salary-slip/model';
-	import { invalidateAll } from '$app/navigation';
+	import { FileText, FileUp } from '@lucide/svelte';
 
 	interface Props {
 		salaryHistory: ParsedSalaryData[];

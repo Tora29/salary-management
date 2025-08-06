@@ -36,7 +36,6 @@ lib       → 完全汎用UI（基本的なレゴブロック）
 // entities/dashboard/ui/DashboardCard.svelte
 // ダッシュボード専用のカードコンポーネント
 import Card from '$lib/components/card/ui/Card.svelte';
-
 // entities/dashboard/ui/StockTable.svelte
 // 株式情報専用のテーブルコンポーネント
 import Table from '$lib/components/table/ui/Table.svelte';
@@ -87,6 +86,7 @@ export const load = async ({ fetch }) => {
 <!-- routes/+page.svelte -->
 <script lang="ts">
 	import DashboardView from '$features/dashboard/ui/DashboardView.svelte';
+
 	let { data } = $props();
 </script>
 
@@ -183,6 +183,7 @@ graph TD
 
 ```typescript
 import type { PageLoad } from './$types';
+
 import type { DashboardResponse } from '$entities/dashboard/model';
 
 export const load: PageLoad = async ({ fetch }) => {
@@ -195,8 +196,8 @@ export const load: PageLoad = async ({ fetch }) => {
 **2. routes/api/dashboard/+server.ts（HTTPエンドポイント）**
 
 ```typescript
-import { json } from '@sveltejs/kit';
 import { getDashboardData } from '$features/dashboard/api';
+import { json } from '@sveltejs/kit';
 
 export const GET = async () => {
 	const data = await getDashboardData(); // ← ビジネスロジック呼び出し
@@ -208,6 +209,7 @@ export const GET = async () => {
 
 ```typescript
 import { prisma } from '$lib/utils/server/prisma';
+
 import type { DashboardResponse } from '$entities/dashboard/model';
 
 export async function getDashboardData(): Promise<DashboardResponse> {
@@ -233,8 +235,9 @@ export async function getDashboardData(): Promise<DashboardResponse> {
 
 ```svelte
 <script lang="ts">
-	import DashboardView from '$features/dashboard/ui/DashboardView.svelte';
 	import type { PageData } from './$types';
+
+	import DashboardView from '$features/dashboard/ui/DashboardView.svelte';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -289,10 +292,6 @@ src/
 │   ├── dashboard/
 │   │   ├── api/        # ビジネスロジック
 │   │   └── ui/         # DashboardView
-│   ├── monthly-salary/
-│   │   ├── api/        # ビジネスロジック
-│   │   ├── model/      # 機能固有モデル
-│   │   └── ui/         # MonthlySalaryView
 │   └── salary-slip/
 │       ├── api/        # ビジネスロジック
 │       └── ui/         # 機能固有UI

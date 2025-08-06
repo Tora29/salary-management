@@ -1,7 +1,8 @@
 import type { PageLoad } from './$types';
+
 import type { DashboardResponse } from '$entities/dashboard/model';
-import type { ParsedSalaryData } from '$entities/salary-slip/model';
 import type { SalaryChartData } from '$entities/salary-chart/model';
+import type { ParsedSalaryData } from '$entities/salary-slip/model';
 
 export const load: PageLoad = async ({ fetch }) => {
 	try {

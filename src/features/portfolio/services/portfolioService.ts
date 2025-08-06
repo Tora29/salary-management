@@ -1,5 +1,6 @@
-import type { Stock } from '$entities/dashboard/model';
 import type { StockFormData } from '../model';
+
+import type { Stock } from '$entities/dashboard/model';
 
 /**
  * 株式ポートフォリオ管理のAPIサービス

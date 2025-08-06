@@ -1,11 +1,13 @@
 <script lang="ts">
-	import type { PortfolioViewProps, StockFormData } from '../model';
-	import type { Stock } from '$entities/dashboard/model';
 	import { CardWrapper } from '$lib/components/card';
 	import { showToast } from '$lib/components/toast/model/store';
+
+	import type { PortfolioViewProps, StockFormData } from '../model';
+	import { portfolioService } from '../services';
 	import StockForm from './StockForm.svelte';
 	import StockList from './StockList.svelte';
-	import { portfolioService } from '../api';
+
+	import type { Stock } from '$entities/dashboard/model';
 
 	let { initialStocks = [], error: initialError = null }: PortfolioViewProps = $props();
 
@@ -117,7 +119,6 @@
 			try {
 				await portfolioService.updateStock(stock.symbol, {
 					symbol: stock.symbol,
-					name: stock.name,
 					quantity: stock.quantity,
 					purchasePrice: stock.purchasePrice
 				});

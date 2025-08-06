@@ -16,22 +16,22 @@ export interface SalarySlip {
 	};
 	earnings: {
 		baseSalary: number;
-		fixedOvertimeAllowance: number;
-		overtimePay: number;
-		overtimePayOver60: number;
-		lateNightPay: number;
-		expenseReimbursement: number;
-		commuterAllowance: number;
-		stockPurchaseIncentive: number;
+		overtimePay: number; // 通常の残業手当
+		overtimePayOver60: number; // 60時間超残業手当
+		lateNightPay: number; // 深夜割増額
+		fixedOvertimeAllowance: number; // 固定時間外手当
+		expenseReimbursement: number; // 立替経費
+		transportationAllowance: number; // 通勤手当
+		stockPurchaseIncentive: number; // 持株会奨励金
 		total: number;
 	};
 	deductions: {
 		healthInsurance: number;
-		employeePension: number;
+		welfareInsurance: number;
 		employmentInsurance: number;
-		residentTax: number;
 		incomeTax: number;
-		stockPurchaseContribution: number;
+		residentTax: number;
+		otherDeductions: number;
 		total: number;
 	};
 	remarks?: string;

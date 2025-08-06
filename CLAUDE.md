@@ -30,3 +30,11 @@ Feature-Sliced Design (FSD) アーキテクチャに従っています。
 4. npm run check       # TypeScript 型チェック
 5. playwright mcp による動作確認
 ```
+
+## 関連ファイル
+
+要件定義時は@~/.claude/agents/01-Requirements-Definition/README.md
+基本設計時は@~/.claude/agents/02-Basic-Design/README.md
+詳細設計時は@~/.claude/agents/03-Detailed-Design/README.md
+実装、テスト時は@~/.claude/agents/04-Implementation/README.md
+を参照すること

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Upload, FileText, CircleAlert } from '@lucide/svelte';
 	import type { FileDropZoneProps } from '$features/salary-slip/model';
+	import { CircleAlert, FileText, Upload } from '@lucide/svelte';
 
 	let { onFileSelect, isProcessing = false, error = null }: FileDropZoneProps = $props();
 

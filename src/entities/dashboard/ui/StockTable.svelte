@@ -1,6 +1,7 @@
 <script lang="ts">
-	import Table from '$lib/components/table/ui/Table.svelte';
 	import type { Column } from '$lib/components/table/model/types';
+	import Table from '$lib/components/table/ui/Table.svelte';
+
 	import type { Stock, StockTableProps } from '../model';
 
 	/**

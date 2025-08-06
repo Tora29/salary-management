@@ -1,7 +1,9 @@
-import { json } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
-import { getAllSalarySlips } from '$features/salary-slip/api';
 import { BUSINESS_ERROR_MESSAGES } from '$lib/consts/businessErrorMessages';
+
+import type { RequestHandler } from './$types';
+
+import { getAllSalarySlips } from '$features/salary-slip/api';
+import { json } from '@sveltejs/kit';
 
 interface MonthlySalaryData {
 	month: string;

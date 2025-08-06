@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { Chart } from '$lib/components/chart';
-	import type { ChartConfiguration } from 'chart.js';
+
 	import type { SalaryChartProps } from '../model';
+
+	import type { ChartConfiguration } from 'chart.js';
 
 	let { data, height = '300px' }: SalaryChartProps = $props();
 

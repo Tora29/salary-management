@@ -1,6 +1,7 @@
 <script lang="ts">
-	import DashboardView from '$features/dashboard/ui/DashboardView.svelte';
 	import type { PageData } from './$types';
+
+	import DashboardView from '$features/dashboard/ui/DashboardView.svelte';
 
 	let { data }: { data: PageData } = $props();
 </script>

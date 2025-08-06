@@ -1,8 +1,10 @@
 <script lang="ts">
-	import type { StockListProps } from '../model';
 	import { CardWrapper } from '$lib/components/card';
 	import { formatCurrency } from '$lib/utils/format';
-	import StockPriceUpdater from '$features/stock-price/ui/StockPriceUpdater.svelte';
+
+	import type { StockListProps } from '../model';
+	import StockPriceUpdater from './StockPriceUpdater.svelte';
+
 	import { Edit2, Trash2 } from '@lucide/svelte';
 
 	let { stocks, onEdit, onDelete, onPricesUpdate }: StockListProps = $props();

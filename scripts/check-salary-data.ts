@@ -1,5 +1,5 @@
-import { prisma } from '../src/lib/utils/server/prisma';
 import { prismaDataToSalarySlip } from '../src/entities/salary-slip/api/converters';
+import { prisma } from '../src/lib/utils/server/prisma';
 
 async function checkSalarySlipData() {
 	try {

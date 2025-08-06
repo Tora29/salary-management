@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import FileDropZone from '$features/salary-slip/ui/FileDropZone.svelte';
 import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
-import FileDropZone from '$features/salary-slip/ui/FileDropZone.svelte';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('FileDropZone Component', () => {
 	const mockOnFileSelect = vi.fn();

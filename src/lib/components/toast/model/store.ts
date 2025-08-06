@@ -1,5 +1,6 @@
-import { writable } from 'svelte/store';
 import type { ToastMessage, ToastStore } from './types';
+
+import { writable } from 'svelte/store';
 
 /**
  * 給料管理システム用の統一トースト通知ストアを作成

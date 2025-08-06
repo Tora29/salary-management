@@ -1,34 +1,31 @@
 <script lang="ts">
-	// Svelte core imports
-	// Svelte coreのインポートは不要になりました
-
 	// External library imports (Lucide icons)
-	import {
-		DollarSign,
-		TrendingUp,
-		Wallet,
-		ChartBar,
-		RefreshCw,
-		FileText,
-		ChevronRight
-	} from '@lucide/svelte';
-
-	// Project entity imports (domain-specific components)
-	import { DashboardCard, StockTable } from '$entities/dashboard';
-	import { SalaryChart } from '$entities/salary-chart';
-
-	// Project feature imports (feature components)
-	import { SalarySlipDisplay } from '$entities/salary-slip';
-	import StockPriceUpdater from '$features/stock-price/ui/StockPriceUpdater.svelte';
+	// invalidateAllをインポート
+	import { invalidateAll } from '$app/navigation';
 
 	// Library utils and constants
 	import { formatCurrency } from '$lib/utils/format';
 
+	// Project entity imports (domain-specific components)
+	import { DashboardCard, StockTable } from '$entities/dashboard';
 	// Type imports (grouped together)
 	import type { DashboardResponse } from '$entities/dashboard/model';
-	import type { ParsedSalaryData } from '$entities/salary-slip/model';
 	import type { Stock } from '$entities/dashboard/model';
+	import { SalaryChart } from '$entities/salary-chart';
 	import type { SalaryChartData } from '$entities/salary-chart/model';
+	// Project feature imports (feature components)
+	import { SalarySlipDisplay } from '$entities/salary-slip';
+	import type { ParsedSalaryData } from '$entities/salary-slip/model';
+	import StockPriceUpdater from '$features/portfolio/ui/StockPriceUpdater.svelte';
+	import {
+		ChartBar,
+		ChevronRight,
+		DollarSign,
+		FileText,
+		RefreshCw,
+		TrendingUp,
+		Wallet
+	} from '@lucide/svelte';
 
 	interface Props {
 		dashboardData: DashboardResponse;
@@ -73,9 +70,6 @@
 		// 総資産額の再計算
 		dashboardData.totalAssets = dashboardData.depositBalance + dashboardData.stockValuation;
 	}
-
-	// invalidateAllをインポート
-	import { invalidateAll } from '$app/navigation';
 </script>
 
 <svelte:head>
@@ -111,8 +105,9 @@
 		<!-- Dashboard Cards -->
 		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 			<DashboardCard
-				title="今月の給料"
+				title="手取り累計"
 				value={formatCurrency(dashboardData.currentMonthSalary)}
+				subtitle="今年の合計"
 				icon={DollarSign}
 			/>
 			<DashboardCard

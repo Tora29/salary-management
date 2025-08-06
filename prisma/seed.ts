@@ -7,58 +7,8 @@ async function main() {
 	// 既存データを削除（開発環境のみ）
 	await prisma.asset.deleteMany();
 	await prisma.stock.deleteMany();
-	await prisma.salary.deleteMany();
 
-	// 給料データの作成（過去6ヶ月分）
-	const salaryData = [
-		{
-			paymentDate: new Date('2025-07-25'),
-			grossAmount: 350000,
-			deduction: 75000,
-			netAmount: 275000
-		},
-		{
-			paymentDate: new Date('2025-06-25'),
-			grossAmount: 350000,
-			deduction: 75000,
-			netAmount: 275000
-		},
-		{
-			paymentDate: new Date('2025-05-25'),
-			grossAmount: 350000,
-			deduction: 75000,
-			netAmount: 275000
-		},
-		{
-			paymentDate: new Date('2025-04-25'),
-			grossAmount: 380000,
-			deduction: 82000,
-			netAmount: 298000
-		}, // ボーナス月
-		{
-			paymentDate: new Date('2025-03-25'),
-			grossAmount: 350000,
-			deduction: 75000,
-			netAmount: 275000
-		},
-		{
-			paymentDate: new Date('2025-02-25'),
-			grossAmount: 350000,
-			deduction: 75000,
-			netAmount: 275000
-		}
-	];
-
-	for (const salary of salaryData) {
-		await prisma.salary.create({
-			data: {
-				paymentDate: salary.paymentDate,
-				grossAmount: new Decimal(salary.grossAmount),
-				deduction: new Decimal(salary.deduction),
-				netAmount: new Decimal(salary.netAmount)
-			}
-		});
-	}
+	// 株式データに集中（salaryテーブルはSalarySlipに統合されている）
 
 	// 株式データの作成
 	const stockData = [
@@ -142,12 +92,10 @@ async function main() {
 	console.log('✅ シードデータの作成が完了しました！');
 
 	// 作成されたデータの確認
-	const salaryCount = await prisma.salary.count();
 	const stockCount = await prisma.stock.count();
 	const assetCount = await prisma.asset.count();
 
 	console.log(`📊 作成されたデータ:`);
-	console.log(`  - 給料データ: ${salaryCount}件`);
 	console.log(`  - 株式データ: ${stockCount}件`);
 	console.log(`  - 資産データ: ${assetCount}件`);
 }

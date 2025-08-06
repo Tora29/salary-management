@@ -1,8 +1,15 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
 	import { showToast } from '$lib/components/toast/model/store';
+
+	import type { Stock } from '$entities/dashboard/model';
 	import type { StockPriceResponse } from '$entities/stock-price/model';
-	import type { StockPriceUpdaterProps } from '$features/stock-price/model';
+	import { onDestroy, onMount } from 'svelte';
+
+	interface StockPriceUpdaterProps {
+		stocks: Stock[];
+		onPricesUpdate: (stocks: Stock[]) => void;
+		updateInterval?: number;
+	}
 
 	let { stocks, onPricesUpdate, updateInterval = 60000 }: StockPriceUpdaterProps = $props();
 
@@ -19,7 +26,7 @@
 		const symbols = stocks.map((stock) => stock.symbol);
 
 		try {
-			const response = await fetch('/api/stock-prices', {
+			const response = await fetch('/api/portfolio/prices', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -34,7 +41,7 @@
 			const data: StockPriceResponse = await response.json();
 
 			// エラーがある場合は通知
-			if (data.errors.length > 0) {
+			if (data.errors?.length > 0) {
 				const errorSymbols = data.errors.map((e) => e.symbol).join(', ');
 				showToast({
 					type: 'error',
@@ -44,7 +51,7 @@
 			}
 
 			// 取得できた株価で更新
-			if (data.quotes.length > 0) {
+			if (data.quotes?.length > 0) {
 				const updatedStocks = stocks.map((stock) => {
 					const quote = data.quotes.find((q) => q.symbol === stock.symbol);
 					if (quote) {

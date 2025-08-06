@@ -1,8 +1,10 @@
-import { json } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
-import type { SalarySlip } from '$entities/salary-slip/model';
-import { saveSalarySlipWithDuplicateCheck, getAllSalarySlips } from '$features/salary-slip/api';
 import { BUSINESS_ERROR_MESSAGES } from '$lib/consts/businessErrorMessages';
+
+import type { RequestHandler } from './$types';
+
+import type { SalarySlip } from '$entities/salary-slip/model';
+import { getAllSalarySlips, saveSalarySlipWithDuplicateCheck } from '$features/salary-slip/api';
+import { json } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {

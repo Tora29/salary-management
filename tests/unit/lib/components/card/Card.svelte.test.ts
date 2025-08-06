@@ -3,11 +3,11 @@
  * @module card/unit/Card.test
  * @description TDDアプローチに基づいたカードコンポーネントの動作検証
  */
-
-import { render } from '@testing-library/svelte';
-import { describe, test, expect } from 'vitest';
 import DashboardCard from '$lib/components/card/ui/Card.svelte';
+
 import { DollarSign } from '@lucide/svelte';
+import { render } from '@testing-library/svelte';
+import { describe, expect, test } from 'vitest';
 
 /**
  * DashboardCardコンポーネントのテストスイート

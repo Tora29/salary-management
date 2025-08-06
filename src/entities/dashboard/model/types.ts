@@ -1,3 +1,5 @@
+import type { Component } from 'svelte';
+
 export interface Stock extends Record<string, unknown> {
 	symbol: string;
 	name: string;
@@ -8,7 +10,7 @@ export interface Stock extends Record<string, unknown> {
 }
 
 export interface DashboardMetrics {
-	currentMonthSalary: number;
+	currentMonthSalary: number; // 手取り累計（今年の合計）
 	yearlyIncome: number;
 	depositBalance: number;
 	stockValuation: number;
@@ -19,10 +21,8 @@ export interface DashboardResponse extends DashboardMetrics {
 	stocks: Stock[];
 }
 
-import type { Component } from 'svelte';
-
 export interface DashboardCardProps {
-	/** カードのタイトル（例: "今月の給料", "総資産額"） */
+	/** カードのタイトル（例: "手取り累計", "総資産額"） */
 	title: string;
 	/** 表示する値（例: "¥300,000"） */
 	value: string;

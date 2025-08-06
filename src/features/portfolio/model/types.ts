@@ -11,17 +11,23 @@ export interface PortfolioViewProps {
 }
 
 /**
- * 株式フォームの入力データ
+ * 株式フォームの入力データ（簡略版：証券コードメイン）
  */
 export interface StockFormData {
 	/** 証券コード */
 	symbol: string;
-	/** 銘柄名 */
-	name: string;
 	/** 保有数量 */
 	quantity: number;
 	/** 購入単価 */
 	purchasePrice: number;
+}
+
+/**
+ * 株式フォームの完全版データ（内部処理用）
+ */
+export interface StockFormDataWithName extends StockFormData {
+	/** 銘柄名（自動取得） */
+	name: string;
 }
 
 /**

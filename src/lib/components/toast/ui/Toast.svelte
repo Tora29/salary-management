@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { fade, fly } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
-
 	import { toastStore } from '../model/store';
-
 	import type { ToastMessage } from '../model/types';
+
+	import { flip } from 'svelte/animate';
+	import { fade, fly } from 'svelte/transition';
 
 	let toasts = $state<ToastMessage[]>([]);
 

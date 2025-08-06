@@ -1,4 +1,5 @@
 import { prisma } from '$lib/utils/server/prisma';
+
 import type { DashboardResponse } from '$entities/dashboard/model';
 
 /**
@@ -7,26 +8,22 @@ import type { DashboardResponse } from '$entities/dashboard/model';
 export async function getDashboardData(): Promise<DashboardResponse> {
 	const currentDate = new Date();
 	const currentYear = currentDate.getFullYear();
-	const currentMonth = currentDate.getMonth();
 	const startOfYear = new Date(currentYear, 0, 1);
-	const startOfMonth = new Date(currentYear, currentMonth, 1);
-	const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
-	const [currentMonthSalary, yearlyIncome, stocks, assets] = await Promise.all([
-		prisma.salarySlip.findFirst({
+	const [totalNetPay, yearlyIncome, stocks, assets] = await Promise.all([
+		prisma.salarySlip.aggregate({
+			_sum: {
+				netPay: true
+			},
 			where: {
 				paymentDate: {
-					gte: startOfMonth.toISOString().split('T')[0] as string,
-					lte: endOfMonth.toISOString().split('T')[0] as string
+					gte: startOfYear.toISOString().split('T')[0] as string
 				}
-			},
-			orderBy: {
-				paymentDate: 'desc'
 			}
 		}),
 		prisma.salarySlip.aggregate({
 			_sum: {
-				netPay: true
+				totalEarnings: true
 			},
 			where: {
 				paymentDate: {
@@ -62,8 +59,8 @@ export async function getDashboardData(): Promise<DashboardResponse> {
 	const stockValuation = stocksWithValue.reduce((sum, stock) => sum + stock.value, 0);
 
 	return {
-		currentMonthSalary: Number(currentMonthSalary?.netPay || 0),
-		yearlyIncome: Number(yearlyIncome._sum?.netPay || 0),
+		currentMonthSalary: Number(totalNetPay._sum?.netPay || 0),
+		yearlyIncome: Number(yearlyIncome._sum?.totalEarnings || 0),
 		depositBalance,
 		stockValuation,
 		stocks: stocksWithValue,

@@ -1,4 +1,5 @@
 import type { SalarySlip } from '../model';
+
 import type { Prisma, SalarySlip as PrismaSalarySlip } from '@prisma/client';
 
 /**
@@ -87,18 +88,19 @@ export function salarySlipToPrismaData(
 		paidLeaveDays: salarySlip.attendance.paidLeaveDays,
 		baseSalary: salarySlip.earnings.baseSalary,
 		overtimePay: salarySlip.earnings.overtimePay,
-		transportationAllowance: salarySlip.earnings.commuterAllowance,
-		otherAllowances:
-			salarySlip.earnings.fixedOvertimeAllowance +
-			salarySlip.earnings.expenseReimbursement +
-			salarySlip.earnings.stockPurchaseIncentive,
+		overtimePayOver60: salarySlip.earnings.overtimePayOver60,
+		lateNightPay: salarySlip.earnings.lateNightPay,
+		fixedOvertimeAllowance: salarySlip.earnings.fixedOvertimeAllowance,
+		expenseReimbursement: salarySlip.earnings.expenseReimbursement,
+		transportationAllowance: salarySlip.earnings.transportationAllowance,
+		stockPurchaseIncentive: salarySlip.earnings.stockPurchaseIncentive,
 		totalEarnings: salarySlip.earnings.total,
 		healthInsurance: salarySlip.deductions.healthInsurance,
-		welfareInsurance: salarySlip.deductions.employeePension,
+		welfareInsurance: salarySlip.deductions.welfareInsurance,
 		employmentInsurance: salarySlip.deductions.employmentInsurance,
 		incomeTax: salarySlip.deductions.incomeTax,
 		residentTax: salarySlip.deductions.residentTax,
-		otherDeductions: salarySlip.deductions.stockPurchaseContribution,
+		otherDeductions: salarySlip.deductions.otherDeductions,
 		totalDeductions: salarySlip.deductions.total,
 		netPay: salarySlip.netPay,
 		fileName
@@ -215,22 +217,22 @@ export function prismaDataToSalarySlip(slip: PrismaSalarySlip) {
 			},
 			earnings: {
 				baseSalary: Number(slip.baseSalary), // PrismaのDecimal型をJavaScriptのNumber型に変換
-				fixedOvertimeAllowance: 0, // 固定残業代: データベーススキーマに個別フィールドが存在しないためデフォルト値0
 				overtimePay: Number(slip.overtimePay), // 残業代: PrismaのDecimal型をNumber型に変換
-				overtimePayOver60: 0, // 60時間超残業代: 現在のスキーマに存在しないためデフォルト値0
-				lateNightPay: 0, // 深夜割増賃金: 現在のスキーマに存在しないためデフォルト値0
-				expenseReimbursement: 0, // 経費精算: otherAllowancesに集約されているためデフォルト値0
-				commuterAllowance: Number(slip.transportationAllowance), // 通勤手当: DBのtransportationAllowanceフィールドをマッピング
-				stockPurchaseIncentive: 0, // 持株会奨励金: otherAllowancesに集約されているためデフォルト値0
+				overtimePayOver60: Number(slip.overtimePayOver60), // 60時間超残業手当: PrismaのDecimal型をNumber型に変換
+				lateNightPay: Number(slip.lateNightPay), // 深夜割増額: PrismaのDecimal型をNumber型に変換
+				fixedOvertimeAllowance: Number(slip.fixedOvertimeAllowance), // 固定時間外手当: PrismaのDecimal型をNumber型に変換
+				expenseReimbursement: Number(slip.expenseReimbursement), // 立替経費: PrismaのDecimal型をNumber型に変換
+				transportationAllowance: Number(slip.transportationAllowance), // 交通費: DBのtransportationAllowanceフィールドをマッピング
+				stockPurchaseIncentive: Number(slip.stockPurchaseIncentive), // 持株会奨励金: PrismaのDecimal型をNumber型に変換
 				total: Number(slip.totalEarnings) // 総支給額: PrismaのDecimal型をNumber型に変換
 			},
 			deductions: {
 				healthInsurance: Number(slip.healthInsurance), // 健康保険料: PrismaのDecimal型をNumber型に変換
-				employeePension: Number(slip.welfareInsurance), // 厚生年金保険料: DBのwelfareInsuranceフィールドをマッピング
+				welfareInsurance: Number(slip.welfareInsurance), // 厚生年金保険料: DBのwelfareInsuranceフィールドをマッピング
 				employmentInsurance: Number(slip.employmentInsurance), // 雇用保険料: PrismaのDecimal型をNumber型に変換
-				residentTax: Number(slip.residentTax), // 住民税: PrismaのDecimal型をNumber型に変換
 				incomeTax: Number(slip.incomeTax), // 所得税: PrismaのDecimal型をNumber型に変換
-				stockPurchaseContribution: Number(slip.otherDeductions), // 持株会拠出金: DBのotherDeductionsフィールドをマッピング
+				residentTax: Number(slip.residentTax), // 住民税: PrismaのDecimal型をNumber型に変換
+				otherDeductions: Number(slip.otherDeductions), // その他控除: DBのotherDeductionsフィールドをマッピング
 				total: Number(slip.totalDeductions) // 総控除額: PrismaのDecimal型をNumber型に変換
 			},
 			netPay: Number(slip.netPay) // 差引支給額: PrismaのDecimal型をNumber型に変換

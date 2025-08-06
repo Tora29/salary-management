@@ -1,10 +1,13 @@
 <script lang="ts">
-	import { Clock, DollarSign, FileText } from '@lucide/svelte';
 	import type { SalarySlipDisplayProps } from '$entities/salary-slip/model';
+	import { Clock, DollarSign, FileText } from '@lucide/svelte';
 
 	let { salarySlip }: SalarySlipDisplayProps = $props();
 
 	function formatCurrency(amount: number): string {
+		if (typeof amount !== 'number' || isNaN(amount)) {
+			return '¥0';
+		}
 		return `¥${amount.toLocaleString('ja-JP')}`;
 	}
 
@@ -68,12 +71,70 @@
 				<h3 class="text-lg font-semibold">支給</h3>
 			</div>
 			<div class="flex flex-col gap-4">
-				<div class="flex items-center justify-between text-sm">
-					<span class="text-gray-500">基本給(月給)</span>
-					<span class="font-mono font-medium text-slate-800"
-						>{formatCurrency(salarySlip.earnings.baseSalary)}</span
-					>
-				</div>
+				{#if salarySlip.earnings.baseSalary && salarySlip.earnings.baseSalary > 0}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-gray-500">基本給(月給)</span>
+						<span class="font-mono font-medium text-slate-800"
+							>{formatCurrency(salarySlip.earnings.baseSalary)}</span
+						>
+					</div>
+				{/if}
+				{#if salarySlip.earnings.fixedOvertimeAllowance && salarySlip.earnings.fixedOvertimeAllowance > 0}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-gray-500">固定時間外手当</span>
+						<span class="font-mono font-medium text-slate-800"
+							>{formatCurrency(salarySlip.earnings.fixedOvertimeAllowance)}</span
+						>
+					</div>
+				{/if}
+				{#if salarySlip.earnings.overtimePay && salarySlip.earnings.overtimePay > 0}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-gray-500">残業手当</span>
+						<span class="font-mono font-medium text-slate-800"
+							>{formatCurrency(salarySlip.earnings.overtimePay)}</span
+						>
+					</div>
+				{/if}
+				{#if salarySlip.earnings.overtimePayOver60 && salarySlip.earnings.overtimePayOver60 > 0}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-gray-500">残業手当(60時間超)</span>
+						<span class="font-mono font-medium text-slate-800"
+							>{formatCurrency(salarySlip.earnings.overtimePayOver60)}</span
+						>
+					</div>
+				{/if}
+				{#if salarySlip.earnings.lateNightPay && salarySlip.earnings.lateNightPay > 0}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-gray-500">深夜割増額</span>
+						<span class="font-mono font-medium text-slate-800"
+							>{formatCurrency(salarySlip.earnings.lateNightPay)}</span
+						>
+					</div>
+				{/if}
+				{#if salarySlip.earnings.expenseReimbursement && salarySlip.earnings.expenseReimbursement > 0}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-gray-500">立替経費</span>
+						<span class="font-mono font-medium text-slate-800"
+							>{formatCurrency(salarySlip.earnings.expenseReimbursement)}</span
+						>
+					</div>
+				{/if}
+				{#if salarySlip.earnings.transportationAllowance && salarySlip.earnings.transportationAllowance > 0}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-gray-500">非課税通勤費</span>
+						<span class="font-mono font-medium text-slate-800"
+							>{formatCurrency(salarySlip.earnings.transportationAllowance)}</span
+						>
+					</div>
+				{/if}
+				{#if salarySlip.earnings.stockPurchaseIncentive && salarySlip.earnings.stockPurchaseIncentive > 0}
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-gray-500">持株会奨励金</span>
+						<span class="font-mono font-medium text-slate-800"
+							>{formatCurrency(salarySlip.earnings.stockPurchaseIncentive)}</span
+						>
+					</div>
+				{/if}
 				<div
 					class="mt-2 flex items-center justify-between border-t border-gray-200 pt-4 text-sm font-semibold"
 				>
@@ -98,11 +159,11 @@
 						>
 					</div>
 				{/if}
-				{#if salarySlip.deductions.employeePension > 0}
+				{#if salarySlip.deductions.welfareInsurance > 0}
 					<div class="flex items-center justify-between text-sm">
 						<span class="text-gray-500">厚生年金保険</span>
 						<span class="font-mono font-medium text-slate-800"
-							>{formatCurrency(salarySlip.deductions.employeePension)}</span
+							>{formatCurrency(salarySlip.deductions.welfareInsurance)}</span
 						>
 					</div>
 				{/if}
@@ -130,11 +191,11 @@
 						>
 					</div>
 				{/if}
-				{#if salarySlip.deductions.stockPurchaseContribution > 0}
+				{#if salarySlip.deductions.otherDeductions > 0}
 					<div class="flex items-center justify-between text-sm">
-						<span class="text-gray-500">持株会拠出金</span>
+						<span class="text-gray-500">その他控除</span>
 						<span class="font-mono font-medium text-slate-800"
-							>{formatCurrency(salarySlip.deductions.stockPurchaseContribution)}</span
+							>{formatCurrency(salarySlip.deductions.otherDeductions)}</span
 						>
 					</div>
 				{/if}

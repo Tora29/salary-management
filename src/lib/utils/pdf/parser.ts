@@ -1,4 +1,4 @@
-import type { SalarySlip, ParsedSalaryData } from '$entities/salary-slip/model';
+import type { ParsedSalaryData, SalarySlip } from '$entities/salary-slip/model';
 
 /**
  * 給料明細PDFのテキストから構造化データを抽出
@@ -117,21 +117,28 @@ export function extractSalaryData(text: string): SalarySlip {
 		return match ? parseInt(match[1]!.replace(/,/g, ''), 10) : 0;
 	};
 
-	const earnings = {
-		baseSalary: extractAmount(/基本給[^\d]*([0-9,]+)/),
-		fixedOvertimeAllowance: extractAmount(/固定時間外手当[^\d]*([0-9,]+)/),
-		overtimePay: 0,
-		overtimePayOver60: extractAmount(/残業手当[^\d]*\(60[^\d]*時間超[^\)]*\)[^\d]*([0-9,]+)/),
-		lateNightPay: extractAmount(/深夜割増額[^\d]*([0-9,]+)/),
-		expenseReimbursement: extractAmount(/立替経費[^\d]*([0-9,]+)/),
-		commuterAllowance: extractAmount(/非課税通勤費[^\d]*([0-9,]+)/),
-		stockPurchaseIncentive: extractAmount(/持株会奨励金[^\d]*([0-9,]+)/),
-		total: 0
-	};
+	// 詳細な支給項目を抽出
+	const fixedOvertimeAllowance = extractAmount(/固定時間外手当[^\d]*([0-9,]+)/);
+	const overtimePayOver60 = extractAmount(/残業手当[^\d]*\(60[^\d]*時間超[^\)]*\)[^\d]*([0-9,]+)/);
+	const lateNightPay = extractAmount(/深夜割増額[^\d]*([0-9,]+)/);
+	const expenseReimbursement = extractAmount(/立替経費[^\d]*([0-9,]+)/);
+	const stockPurchaseIncentive = extractAmount(/持株会奨励金[^\d]*([0-9,]+)/);
 
 	// 通常の残業手当を抽出（60時間超を除く）
 	const overtimeMatch = text.match(/残業手当[^\(]*?([0-9,]+)(?![^\n]*60[^\n]*時間超)/);
-	earnings.overtimePay = overtimeMatch ? parseInt(overtimeMatch[1]!.replace(/,/g, ''), 10) : 0;
+	const regularOvertimePay = overtimeMatch ? parseInt(overtimeMatch[1]!.replace(/,/g, ''), 10) : 0;
+
+	const earnings = {
+		baseSalary: extractAmount(/基本給[^\d]*([0-9,]+)/),
+		overtimePay: regularOvertimePay, // 通常の残業手当
+		overtimePayOver60: overtimePayOver60, // 60時間超残業手当
+		lateNightPay: lateNightPay, // 深夜割増額
+		fixedOvertimeAllowance: fixedOvertimeAllowance, // 固定時間外手当
+		expenseReimbursement: expenseReimbursement, // 立替経費
+		transportationAllowance: extractAmount(/非課税通勤費[^\d]*([0-9,]+)/), // 通勤手当
+		stockPurchaseIncentive: stockPurchaseIncentive, // 持株会奨励金
+		total: 0
+	};
 
 	// 支給合計を探す
 	const earningsTotalMatch = text.match(/支給[^\d]*合計[^\d]*([0-9,]+)/);
@@ -140,13 +147,15 @@ export function extractSalaryData(text: string): SalarySlip {
 		: Object.values(earnings).reduce((sum, val) => sum + val, 0);
 
 	// 控除額の抽出
+	const stockPurchaseContribution = extractAmount(/持株会拠出金[^\d]*([0-9,]+)/);
+
 	const deductions = {
 		healthInsurance: extractAmount(/健康保険料[^\d]*([0-9,]+)/),
-		employeePension: extractAmount(/厚生年金[^\d]*([0-9,]+)/),
+		welfareInsurance: extractAmount(/厚生年金[^\d]*([0-9,]+)/), // employeePension → welfareInsurance
 		employmentInsurance: extractAmount(/雇用保険料[^\d]*([0-9,]+)/),
-		residentTax: extractAmount(/住民税[^\d]*([0-9,]+)/),
 		incomeTax: extractAmount(/所得税[^\d]*([0-9,]+)/),
-		stockPurchaseContribution: extractAmount(/持株会拠出金[^\d]*([0-9,]+)/),
+		residentTax: extractAmount(/住民税[^\d]*([0-9,]+)/),
+		otherDeductions: stockPurchaseContribution, // その他控除として持株会拠出金を設定
 		total: 0
 	};
 

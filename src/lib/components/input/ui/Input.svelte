@@ -15,7 +15,7 @@
 			error
 				? 'border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500'
 				: 'border-gray-300 focus:ring-blue-500 focus:border-blue-500',
-			disabled && 'bg-gray-50 cursor-not-allowed',
+			disabled && 'bg-gray-100 cursor-not-allowed text-gray-500',
 			className
 		]
 			.filter(Boolean)

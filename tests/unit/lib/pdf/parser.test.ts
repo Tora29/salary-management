@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
-import { parseSalarySlipPDF, extractSalaryData } from '$lib/utils/pdf/parser';
+import { extractSalaryData, parseSalarySlipPDF } from '$lib/utils/pdf/parser';
+
+import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('pdfjs-dist', () => ({
 	getDocument: vi.fn(),
@@ -69,23 +70,23 @@ describe('PDF Parser', () => {
 
 			expect(result.earnings).toEqual({
 				baseSalary: 326767,
-				fixedOvertimeAllowance: 114900,
-				overtimePay: 38294,
-				overtimePayOver60: 58206,
-				lateNightPay: 19402,
-				expenseReimbursement: 3278,
-				commuterAllowance: 9620,
-				stockPurchaseIncentive: 1500,
+				overtimePay: 38294, // 通常の残業手当
+				overtimePayOver60: 58206, // 60時間超残業手当
+				lateNightPay: 19402, // 深夜割増額
+				fixedOvertimeAllowance: 114900, // 固定時間外手当
+				expenseReimbursement: 3278, // 立替経費
+				transportationAllowance: 9620, // 通勤手当
+				stockPurchaseIncentive: 1500, // 持株会奨励金
 				total: 571967
 			});
 
 			expect(result.deductions).toEqual({
 				healthInsurance: 20900,
-				employeePension: 40260,
+				welfareInsurance: 40260, // employeePension → welfareInsurance
 				employmentInsurance: 3120,
-				residentTax: 17600,
 				incomeTax: 28910,
-				stockPurchaseContribution: 31500,
+				residentTax: 17600,
+				otherDeductions: 31500, // stockPurchaseContribution → otherDeductions
 				total: 142290
 			});
 		});

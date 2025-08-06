@@ -50,8 +50,12 @@ model SalarySlip {
   // 収入
   baseSalary      Decimal  @db.Decimal(10, 2)
   overtimePay     Decimal  @db.Decimal(10, 2)
+  overtimePayOver60 Decimal @db.Decimal(10, 2) @default(0)
+  lateNightPay    Decimal  @db.Decimal(10, 2) @default(0)
+  fixedOvertimeAllowance Decimal @db.Decimal(10, 2) @default(0)
+  expenseReimbursement Decimal @db.Decimal(10, 2) @default(0)
   transportationAllowance Decimal @db.Decimal(10, 2)
-  otherAllowances Decimal  @db.Decimal(10, 2)
+  stockPurchaseIncentive Decimal @db.Decimal(10, 2) @default(0)
   totalEarnings   Decimal  @db.Decimal(10, 2)
   
   // 控除

@@ -1,7 +1,8 @@
-import { prisma } from '$lib/utils/server/prisma';
-import type { SalarySlip } from '$entities/salary-slip/model';
-import { salarySlipToPrismaData, prismaDataToSalarySlip } from '$entities/salary-slip/api';
 import { BUSINESS_ERROR_MESSAGES } from '$lib/consts/businessErrorMessages';
+import { prisma } from '$lib/utils/server/prisma';
+
+import { prismaDataToSalarySlip, salarySlipToPrismaData } from '$entities/salary-slip/api';
+import type { SalarySlip } from '$entities/salary-slip/model';
 
 /**
  * 給料明細の重複をチェック

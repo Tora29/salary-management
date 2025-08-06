@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { TrendingUp } from '@lucide/svelte';
-	import { PortfolioView } from '$features/portfolio';
 	import type { PageData } from './$types';
+
+	import { PortfolioView } from '$features/portfolio';
+	import { TrendingUp } from '@lucide/svelte';
 
 	let { data }: { data: PageData } = $props();
 

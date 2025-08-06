@@ -1,6 +1,7 @@
 <script lang="ts">
-	import SalarySlipListView from '$features/salary-slip/ui/SalarySlipListView.svelte';
 	import type { PageData } from './$types';
+
+	import SalarySlipListView from '$features/salary-slip/ui/SalarySlipListView.svelte';
 
 	let { data }: { data: PageData } = $props();
 </script>

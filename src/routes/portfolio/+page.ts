@@ -1,4 +1,5 @@
 import type { PageLoad } from './$types';
+
 import type { Stock } from '$entities/dashboard/model';
 
 export const load: PageLoad = async ({ fetch }) => {
@@ -18,7 +19,9 @@ export const load: PageLoad = async ({ fetch }) => {
 		console.error('Failed to load portfolio data:', error);
 		return {
 			stocks: [] as Stock[],
-			error: (error instanceof Error ? error.message : '株式データの読み込みに失敗しました') as string | null
+			error: (error instanceof Error ? error.message : '株式データの読み込みに失敗しました') as
+				| string
+				| null
 		};
 	}
 };

@@ -1,9 +1,25 @@
 <script lang="ts">
-	import type { FormFieldProps } from '../model/types';
-	import { Label } from '$lib/components/label';
 	import { Input } from '$lib/components/input';
+	import { Label } from '$lib/components/label';
 
-	let { label, required = false, error, id, children, ...inputProps }: FormFieldProps = $props();
+	import type { FormFieldProps } from '../model/types';
+
+	let {
+		label,
+		required = false,
+		error,
+		id,
+		children,
+		value = $bindable(),
+		type,
+		placeholder,
+		disabled,
+		min,
+		max,
+		step,
+		oninput,
+		onblur
+	}: FormFieldProps = $props();
 </script>
 
 <div>
@@ -11,6 +27,18 @@
 	{#if children}
 		{@render children()}
 	{:else}
-		<Input {id} {error} {...inputProps} />
+		<Input
+			{id}
+			{error}
+			{type}
+			{placeholder}
+			disabled={disabled ?? false}
+			{min}
+			{max}
+			{step}
+			{oninput}
+			{onblur}
+			bind:value
+		/>
 	{/if}
 </div>
