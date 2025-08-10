@@ -15,7 +15,7 @@
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
-		"add-jsdoc": "node scripts/add-jsdoc.js"
+		"add-jsdoc": "node --no-warnings scripts/add-jsdoc-enhanced.js"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
