@@ -1,5 +1,5 @@
 ---
-name: data-access-layer-developer
+name: データアクセス層開発者
 description: データベースとの通信、API呼び出し、データの永続化とキャッシング戦略など、データアクセス層の実装が必要な場合に、このエージェントを使用します。Prisma、REST API、またはその他のデータソースとの統合を専門とします。\n\n<example>\nContext: ユーザーがデータベースアクセスロジックを実装する必要がある場合。\nuser: "ユーザーデータをデータベースに保存する処理を実装してください"\nassistant: "ユーザーデータの永続化処理の実装にdata-access-layer-developerエージェントを使用します"\n<commentary>\nデータベースへのアクセスロジックの実装が必要なため、data-access-layer-developerエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: 外部APIとの統合が必要な場合。\nuser: "天気情報を取得する外部APIとの連携を実装して"\nassistant: "外部API統合の実装にdata-access-layer-developerエージェントを起動します"\n<commentary>\n外部APIとのデータ連携実装が必要なため、data-access-layer-developerエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: yellow

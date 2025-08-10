@@ -94,6 +94,13 @@ Task tool --agent requirements-review-approval
 
 ## 各エージェントの成果物
 
+### 成果物ファイル命名規則
+**重要**: 成果物のファイル名には必ず項番を付けてください。
+- 形式: `[カテゴリ番号]-[連番]_[ファイル名].md`
+- 例: `01-01_functional-requirements.md`
+
+### 成果物一覧
+
 1. **business-requirements-analyzer**
    - ビジネス要件分析レポート
    - ステークホルダーマップ
@@ -105,9 +112,9 @@ Task tool --agent requirements-review-approval
    - エンゲージメント計画
 
 3. **feature-requirements-definer**
-   - 機能要件定義書
-   - ユーザーストーリー
-   - 技術仕様書
+   - `01-01_functional-requirements.md` - 機能要件定義書
+   - `01-02_user-stories.md` - ユーザーストーリー
+   - `01-03_technical-specifications.md` - 技術仕様書
 
 4. **non-functional-requirements-definer**
    - 非機能要件定義書
@@ -120,14 +127,15 @@ Task tool --agent requirements-review-approval
    - シナリオ詳細
 
 6. **requirements-prioritizer**
-   - 優先度マトリックス
-   - 実装ロードマップ
-   - リスクレジスタ
+   - `02-01_priority-matrix.md` - 優先度マトリックス
+   - `02-02_implementation-roadmap.md` - 実装ロードマップ
+   - `02-03_risk-register.md` - リスクレジスタ
+   - `02-04_priority-summary.md` - 優先順位付けサマリー
 
 7. **requirements-review-approval**
-   - 統合レビューレポート
-   - 品質チェックリスト
-   - 承認文書
+   - `03-01_PHASE1_FINAL_REVIEW_REPORT.md` - 統合レビューレポート
+   - `03-02_APPROVAL_CHECKLIST.md` - 品質チェックリスト
+   - `03-03_HANDOVER_TO_BASIC_DESIGN.md` - 承認文書
 
 ## 注意事項
 

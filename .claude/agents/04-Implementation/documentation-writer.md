@@ -1,5 +1,5 @@
 ---
-name: documentation-writer
+name: ドキュメント作成者
 description: コード、API、機能、またはシステムのドキュメントを作成、更新、または改善する必要がある場合に、このエージェントを使用します。これには、技術ドキュメント、APIリファレンス、ユーザーガイド、コードコメント、READMEファイル、またはその他の形式のドキュメントの作成が含まれます。このエージェントは、機能を実装した後、またはコードベースの変更を反映するためにドキュメントを更新する必要がある場合に使用する必要があります。\n\n<example>\nContext: ユーザーが新しい認証モジュールを実装したばかりで、ドキュメントが必要な場合。\nuser: "JWTトークンを使用した認証モジュールの実装を完了しました"\nassistant: "素晴らしい！認証モジュールの包括的なドキュメントを作成するために、documentation-writerエージェントを使用します"\n<commentary>\n新しい機能が実装されたので、documentation-writerエージェントを使用して適切なドキュメントを作成します。\n</commentary>\n</example>\n\n<example>\nContext: ユーザーが既存のAPIエンドポイントをドキュメント化する必要がある場合。\nuser: "/api/usersエンドポイントをドキュメント化する必要があります"\nassistant: "/api/usersエンドポイントの詳細なAPIドキュメントを作成するために、documentation-writerエージェントを使用します"\n<commentary>\nユーザーが明示的にAPIドキュメントを必要としているので、documentation-writerエージェントが適切な選択です。\n</commentary>\n</example>
 model: inherit
 color: yellow

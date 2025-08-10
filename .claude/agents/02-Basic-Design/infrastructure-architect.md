@@ -1,5 +1,5 @@
 ---
-name: infrastructure-architect
+name: インフラストラクチャアーキテクト
 description: このエージェントは、アプリケーションのインフラストラクチャアーキテクチャを設計、計画、またはレビューする必要がある場合に使用します。これには、クラウドインフラストラクチャ設計、デプロイメント戦略、スケーリング考慮事項、セキュリティアーキテクチャ、監視設定、DevOpsパイプライン構成が含まれます。<example>\nContext: ユーザーがWebアプリケーションに取り組んでおり、インフラストラクチャの設計が必要な場合。\nuser: "このアプリケーションのインフラ構成を設計してください"\nassistant: "インフラ設計エージェントを使用して、アプリケーションに最適なインフラ構成を設計します"\n<commentary>\nユーザーがインフラストラクチャ設計を必要としているため、Taskツールを使用してinfrastructure-architectエージェントを起動します。\n</commentary>\n</example>\n<example>\nContext: ユーザーが新機能を実装し、インフラストラクチャがそれをサポートできることを確認したい場合。\nuser: "新しい機能を実装しました。インフラがこれに対応できるか確認してください"\nassistant: "インフラ設計エージェントを使用して、新機能に必要なインフラ要件を分析します"\n<commentary>\nユーザーが新機能のためのインフラストラクチャ分析を必要としているため、infrastructure-architectエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: blue

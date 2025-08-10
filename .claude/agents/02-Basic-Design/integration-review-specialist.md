@@ -1,5 +1,5 @@
 ---
-name: integration-review-specialist
+name: 統合レビュースペシャリスト
 description: このエージェントは、各設計エージェント（システムアーキテクチャ、データモデル、API、画面遷移、セキュリティ、インフラ）の成果物を統合的にレビューし、整合性、一貫性、完全性を検証します。設計フェーズの最終段階で使用され、全体的な設計品質を保証します。<example>\nContext: 各設計エージェントが設計を完了し、統合的なレビューが必要な場合。\nuser: "すべての設計が完了したので、統合レビューを実施してください"\nassistant: "統合レビュースペシャリストエージェントを使用して、全設計成果物の整合性と品質を検証します"\n<commentary>\n各設計エージェントの成果物を統合的にレビューする必要があるため、integration-review-specialistエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: blue

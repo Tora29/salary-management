@@ -4,6 +4,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
+	resolve: {
+		alias: {
+			$shared: './src/shared'
+		}
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

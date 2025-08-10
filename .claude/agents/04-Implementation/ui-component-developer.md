@@ -1,5 +1,5 @@
 ---
-name: ui-component-developer
+name: UIコンポーネント開発者
 description: ユーザーインターフェースの実装、Svelteコンポーネントの作成、ページレイアウトの構築、インタラクティブな機能の実装が必要な場合に、このエージェントを使用します。Feature-Sliced Design (FSD) アーキテクチャのfeatures、widgets、pagesレイヤーのUI実装を専門とします。\n\n<example>\nContext: ユーザーが新しい画面やコンポーネントを作成する必要がある場合。\nuser: "商品一覧画面を作成してください"\nassistant: "商品一覧画面の実装にui-component-developerエージェントを使用します"\n<commentary>\n新しい画面の実装が必要なため、ui-component-developerエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: 既存UIの改善や機能追加が必要な場合。\nuser: "ダッシュボードにグラフ表示機能を追加して"\nassistant: "ダッシュボードのグラフ機能実装にui-component-developerエージェントを起動します"\n<commentary>\nUIコンポーネントの機能追加が必要なため、ui-component-developerエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: yellow

@@ -1,5 +1,5 @@
 ---
-name: logging-design-architect
+name: ロギング設計アーキテクト
 description: このエージェントは、ログレベル、フォーマット、ストレージ、モニタリングアプローチを含む、アプリケーションの包括的なロギング戦略を設計する必要がある場合に使用します。このエージェントは、ロギング標準の確立、構造化ロギングの実装、ログ集約システムの設計、適切な可観測性の確保を支援します。例:\n\n<example>\nContext: ユーザーが新機能を実装し、適切なロギングを追加する必要がある場合。\nuser: "新しい認証機能を実装したので、適切なロギングを設計してください"\nassistant: "認証機能のロギング設計のため、logging-design-architectエージェントを使用します"\n<commentary>\nユーザーが認証機能のロギング設計を必要としているため、logging-design-architectエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: ユーザーがアプリケーションの可観測性を向上させたい場合。\nuser: "アプリケーションの監視性を向上させたいです"\nassistant: "監視性向上のためのロギング戦略を設計するため、logging-design-architectエージェントを起動します"\n<commentary>\nユーザーは可観測性の向上を望んでおり、これには適切なロギング設計が必要なため、logging-design-architectエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: ユーザーが新しいマイクロサービスを設定している場合。\nuser: "新しいマイクロサービスのロギング基盤を構築したい"\nassistant: "マイクロサービス用のロギング基盤設計のため、logging-design-architectエージェントを使用します"\n<commentary>\nマイクロサービスのロギングインフラストラクチャには専門的な設計が必要なため、logging-design-architectエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: green

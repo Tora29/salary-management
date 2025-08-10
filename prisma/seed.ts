@@ -4,9 +4,24 @@ import { Decimal } from '@prisma/client/runtime/library';
 const prisma = new PrismaClient();
 
 async function main() {
+	console.log('🚀 シードデータ作成開始...');
+	
 	// 既存データを削除（開発環境のみ）
+	await prisma.salarySlip.deleteMany();
 	await prisma.asset.deleteMany();
 	await prisma.stock.deleteMany();
+	await prisma.session.deleteMany();
+	await prisma.account.deleteMany();
+	await prisma.user.deleteMany();
+	
+	// テスト用ユーザー作成
+	const testUser = await prisma.user.create({
+		data: {
+			email: 'test@example.com',
+			name: 'テストユーザー',
+			image: 'https://via.placeholder.com/150'
+		}
+	});
 
 	// 株式データに集中（salaryテーブルはSalarySlipに統合されている）
 
@@ -55,7 +70,8 @@ async function main() {
 				purchasePrice: new Decimal(stock.purchasePrice),
 				purchaseDate: stock.purchaseDate,
 				currentPrice: new Decimal(stock.currentPrice),
-				lastUpdated: new Date()
+				lastUpdated: new Date(),
+				userId: testUser.id
 			}
 		});
 	}
@@ -84,7 +100,8 @@ async function main() {
 			data: {
 				type: asset.type,
 				name: asset.name,
-				amount: new Decimal(asset.amount)
+				amount: new Decimal(asset.amount),
+				userId: testUser.id
 			}
 		});
 	}
@@ -95,7 +112,10 @@ async function main() {
 	const stockCount = await prisma.stock.count();
 	const assetCount = await prisma.asset.count();
 
+	const userCount = await prisma.user.count();
+	
 	console.log(`📊 作成されたデータ:`);
+	console.log(`  - ユーザー: ${userCount}件`);
 	console.log(`  - 株式データ: ${stockCount}件`);
 	console.log(`  - 資産データ: ${assetCount}件`);
 }

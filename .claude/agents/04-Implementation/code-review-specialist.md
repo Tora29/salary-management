@@ -1,5 +1,5 @@
 ---
-name: code-review-specialist
+name: コードレビュースペシャリスト
 description: 最近書かれたまたは修正されたコードの包括的なコードレビューが必要な場合に、このエージェントを使用します。このエージェントは、コード品質、プロジェクト標準への準拠、潜在的なバグ、パフォーマンスの問題、アーキテクチャの一貫性の詳細な分析を実行します。プルリクエスト、新機能の実装、またはコーディングタスクの完了後のレビューに最適です。例：\n\n<example>\nContext: ユーザーが新機能を実装したばかりで、レビューを希望している場合。\nuser: "ユーザー認証機能を実装しました"\nassistant: "認証実装をレビューするために、code-review-specialistエージェントを使用します"\n<commentary>\nユーザーが機能の実装を完了したので、Taskツールを使用してcode-review-specialistエージェントを起動し、包括的なレビューを実行します。\n</commentary>\n</example>\n\n<example>\nContext: ユーザーが既存のコードに変更を加え、フィードバックを希望している場合。\nuser: "決済処理モジュールをリファクタリングしました"\nassistant: "リファクタリングの変更をcode-review-specialistエージェントにレビューしてもらいます"\n<commentary>\nユーザーが既存のコードを修正したので、code-review-specialistエージェントを使用して、リファクタリングが品質を維持し、問題を導入していないことを確認します。\n</commentary>\n</example>\n\n<example>\nContext: 新しいコンポーネントまたは関数を書いた後。\nuser: "ダッシュボード用の新しいSvelteコンポーネントを作成しました"\nassistant: "新しいダッシュボードコンポーネントをレビューするために、code-review-specialistエージェントを起動します"\n<commentary>\n新しいコンポーネントが作成されたので、code-review-specialistエージェントを使用して、プロジェクト標準とベストプラクティスに従っていることを確認します。\n</commentary>\n</example>
 model: inherit
 color: yellow

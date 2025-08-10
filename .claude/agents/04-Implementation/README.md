@@ -2,26 +2,55 @@
 
 このディレクトリには、実装フェーズで使用する専門的なエージェントが含まれています。
 
+## 成果物ファイル命名規則
+**重要**: 成果物のファイル名には必ず項番を付けてください。
+- 形式: `[カテゴリ番号]-[連番]_[ファイル名].md`
+- 例: `18-01_common-components-implementation.md`
+
 ## エージェント一覧
 
 ### 実装順序に基づくエージェント
 
 1. **common-components-developer** - 共通UIコンポーネントの実装
+   - 成果物: `18-01_common-components-implementation.md`
+   
 2. **data-access-layer-developer** - データベースアクセスとAPI統合
+   - 成果物: `19-01_data-access-layer-implementation.md`
+   
 3. **utility-functions-developer** - 汎用ユーティリティ関数の実装
+   - 成果物: `20-01_utility-functions-implementation.md`
+   
 4. **business-logic-developer** - ビジネスルールとドメインロジック
+   - 成果物: `21-01_business-logic-implementation.md`
+   
 5. **api-endpoint-developer** - SvelteKit APIルートの実装
+   - 成果物: `22-01_api-endpoints-implementation.md`
+   
 6. **ui-component-developer** - ユーザーインターフェースの実装
+   - 成果物: `23-01_ui-components-implementation.md`
+   
 7. **unit-test-writer** - 単体テストとコンポーネントテストの作成
+   - 成果物: `24-01_unit-tests-implementation.md`
 
 ### サポートエージェント
 
 - **build-config-specialist** - ビルド設定の最適化
+  - 成果物: `25-01_build-configuration.md`
+  
 - **code-generator** - 汎用的なコード生成
+  - 成果物: `26-01_generated-code-documentation.md`
+  
 - **code-refactoring-specialist** - コードの品質改善とリファクタリング
+  - 成果物: `27-01_refactoring-report.md`
+  
 - **code-review-specialist** - コードレビューと品質チェック
+  - 成果物: `28-01_code-review-report.md`
+  
 - **dependency-manager** - パッケージ依存関係の管理
+  - 成果物: `29-01_dependency-management.md`
+  
 - **documentation-writer** - 技術ドキュメントの作成
+  - 成果物: `30-01_technical-documentation.md`
 
 ## 使用方法
 

@@ -13,6 +13,7 @@ const config = {
 			$entities: 'src/entities',
 			$features: 'src/features',
 			$widgets: 'src/widgets',
+			$shared: 'src/shared',
 			$lib: 'src/lib'
 		}
 	}

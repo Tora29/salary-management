@@ -1,5 +1,5 @@
 ---
-name: code-refactoring-specialist
+name: コードリファクタリングスペシャリスト
 description: 機能を変更せずにコードの品質、可読性、保守性を改善する必要がある場合に、このエージェントを使用します。これには、複雑なロジックの簡素化、重複の削除、命名の改善、より良い組織のためのコードの再構築、デザインパターンの適用が含まれます。このエージェントは、新機能を実装した後や技術的負債に対処する必要がある場合に使用する必要があります。\n\n<example>\nContext: ユーザーが新機能を実装したばかりで、コードの品質を改善したい場合。\nuser: "給料計算機能を実装しました。リファクタリングを手伝ってもらえますか？"\nassistant: "コード構造をレビューして改善するために、code-refactoring-specialistエージェントを使用します。"\n<commentary>\nユーザーが機能を完成させ、リファクタリングの助けを求めているので、code-refactoring-specialistエージェントを使用してコードを分析し改善します。\n</commentary>\n</example>\n\n<example>\nContext: ユーザーがコードベースに重複を見つけた場合。\nuser: "これらのコンポーネントに重複したコードがたくさんあります"\nassistant: "重複を特定して除去するために、code-refactoring-specialistエージェントを使用します。"\n<commentary>\nユーザーがコード品質の問題（重複）を特定したので、リファクタリングエージェントを使用してそれに対処する必要があります。\n</commentary>\n</example>
 model: inherit
 color: yellow

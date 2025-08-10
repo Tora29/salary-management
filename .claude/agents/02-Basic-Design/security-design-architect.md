@@ -1,5 +1,5 @@
 ---
-name: security-design-architect
+name: セキュリティ設計アーキテクト
 description: このエージェントは、セキュリティアーキテクチャの設計、セキュリティ機能の実装、セキュリティ脆弱性のコードレビュー、またはアプリケーションのセキュリティベストプラクティスの確立が必要な場合に使用します。これには、認証、認可、データ保護、APIセキュリティ、脅威モデリングが含まれます。<example>\nContext: ユーザーが機密性の高いユーザーデータを扱う新機能を実装している場合。\nuser: "ユーザーの支払い情報を保存する機能を実装する必要があります"\nassistant: "適切なセキュリティ考慮事項を含めてその機能の実装をお手伝いします。まずsecurity-design-architectエージェントを使用してセキュリティ要件と設計をレビューします。"\n<commentary>\n機密性の高い支払いデータが関わるため、security-design-architectエージェントを使用して適切なセキュリティ対策が実施されることを確保します。\n</commentary>\n</example>\n<example>\nContext: ユーザーが認証ロジックを実装したばかりの場合。\nuser: "アプリのログイン機能を実装しました"\nassistant: "素晴らしい！次にsecurity-design-architectエージェントを使用して、認証実装のセキュリティベストプラクティスをレビューします。"\n<commentary>\n認証は重要なセキュリティコンポーネントであるため、security-design-architectエージェントを使用してレビューします。\n</commentary>\n</example>
 model: inherit
 color: blue

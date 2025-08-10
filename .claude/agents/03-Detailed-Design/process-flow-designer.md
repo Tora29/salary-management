@@ -1,5 +1,5 @@
 ---
-name: process-flow-designer
+name: プロセスフロー設計者
 description: このエージェントは、処理フロー、ワークフロー、データフロー、またはシステムシーケンスを設計、分析、または文書化する必要がある場合に使用します。これには、フロー図の作成、ステップバイステッププロセスの定義、決定ポイントの特定、データ変換のマッピング、プロセスアーキテクチャの確立が含まれます。<example>Context: ユーザーが新機能を実装し、コーディング前に処理フローを設計する必要がある場合。user: "データ取り込み機能の処理フローを設計して" assistant: "データ取り込み機能の処理フローを設計するため、process-flow-designerエージェントを使用します" <commentary>ユーザーが新機能の処理フローを設計する必要があるため、process-flow-designerエージェントを使用して詳細な処理フローを作成します。</commentary></example> <example>Context: ユーザーが複雑な機能を実装し、そのフローを文書化したい場合。user: "複雑な計算処理の流れを整理したい" assistant: "複雑な計算処理の流れを整理するため、process-flow-designerエージェントを起動します" <commentary>既存の複雑な処理の流れを整理・文書化する必要があるため、process-flow-designerエージェントを使用します。</commentary></example>
 model: inherit
 color: green

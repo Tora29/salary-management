@@ -1,5 +1,5 @@
 ---
-name: utility-functions-developer
+name: ユーティリティ関数開発者
 description: 日付処理、データフォーマット、バリデーション、文字列操作、計算処理などの汎用的なユーティリティ関数を実装する必要がある場合に、このエージェントを使用します。プロジェクト全体で使用される共通の処理ロジックの開発を専門とします。\n\n<example>\nContext: ユーザーが日付フォーマット処理を必要としている場合。\nuser: "データの日付をローカル形式でフォーマットする関数を作成してください"\nassistant: "日付フォーマット関数の実装にutility-functions-developerエージェントを使用します"\n<commentary>\n汎用的な日付処理ユーティリティの実装が必要なため、utility-functions-developerエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: 金額計算のユーティリティが必要な場合。\nuser: "価格計算と割引を適用する共通関数を実装して"\nassistant: "価格計算ユーティリティの実装にutility-functions-developerエージェントを起動します"\n<commentary>\n共通の計算処理ロジックの実装が必要なため、utility-functions-developerエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: yellow

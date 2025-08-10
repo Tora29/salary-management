@@ -1,5 +1,5 @@
 ---
-name: business-logic-developer
+name: ビジネスロジック開発者
 description: ビジネスルール、ドメインロジック、複雑な計算処理など、アプリケーションの中核となるビジネスロジックを実装する必要がある場合に、このエージェントを使用します。価格計算、在庫管理、ユーザー権限管理などのドメイン固有の処理を専門とします。\n\n<example>\nContext: ユーザーが価格計算のビジネスロジックを実装する必要がある場合。\nuser: "商品の価格から割引や税額を計算して最終価格を算出するロジックを実装してください"\nassistant: "価格計算のビジネスロジック実装にbusiness-logic-developerエージェントを使用します"\n<commentary>\n価格計算という複雑なビジネスルールの実装が必要なため、business-logic-developerエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: 在庫管理のロジックが必要な場合。\nuser: "在庫管理で商品の入出庫と在庫数を計算する処理を実装して"\nassistant: "在庫管理ロジックの実装にbusiness-logic-developerエージェントを起動します"\n<commentary>\n在庫管理という専門的なビジネスロジックの実装が必要なため、business-logic-developerエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: yellow

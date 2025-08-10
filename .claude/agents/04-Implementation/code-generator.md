@@ -1,5 +1,5 @@
 ---
-name: code-generator
+name: コード生成器
 description: 要件、仕様、または設計ドキュメントに基づいて新しいコード実装を生成する必要がある場合に、このエージェントを使用します。これには、新しい関数、クラス、コンポーネント、APIエンドポイント、またはその他のコード成果物の作成が含まれます。このエージェントは、要件をプロジェクトの規約とベストプラクティスに従った動作するコードに変換することに優れています。\n\n<example>\nContext: ユーザーが給料データを管理するための新機能を実装する必要がある場合。\nuser: "給料データを管理するための新しいコンポーネントを作成してください"\nassistant: "給料データ管理コンポーネントの実装にcode-generatorエージェントを使用します"\n<commentary>\nユーザーが新しいコンポーネントの作成を求めているため、code-generatorエージェントを使用して実装を生成します。\n</commentary>\n</example>\n\n<example>\nContext: ユーザーが新しいAPIエンドポイントを追加したい場合。\nuser: "株式ポートフォリオの時価を計算するAPIエンドポイントを追加して"\nassistant: "株式ポートフォリオAPIの実装にcode-generatorエージェントを起動します"\n<commentary>\n新しいAPIエンドポイントの実装が必要なため、code-generatorエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: yellow

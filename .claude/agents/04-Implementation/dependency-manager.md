@@ -1,5 +1,5 @@
 ---
-name: dependency-manager
+name: 依存関係管理者
 description: プロジェクトのパッケージ依存関係を分析、更新、または最適化する必要がある場合に、このエージェントを使用します。これには、古いパッケージのチェック、セキュリティ脆弱性の特定、バージョン競合の解決、依存関係ツリーの分析、または依存関係更新戦略の実装が含まれます。このエージェントは、依存関係に影響を与える可能性のある重要なコード変更の後、本番リリースの準備時、または定期的なメンテナンスサイクル中に呼び出す必要があります。\n\n<example>\nContext: ユーザーが追加のnpmパッケージを必要とする新機能を追加したばかりの場合。\nuser: "passportとjsonwebtokenを使用した新しい認証機能を追加しました"\nassistant: "新しい依存関係をレビューし、適切に統合されていることを確認するために、dependency-managerエージェントを使用します"\n<commentary>\n新しいパッケージが追加されたので、dependency-managerエージェントはバージョンの互換性と潜在的な競合をチェックする必要があります。\n</commentary>\n</example>\n\n<example>\nContext: ユーザーが本番リリースの準備をしている場合。\nuser: "来週本番環境にデプロイする予定です"\nassistant: "セキュリティ脆弱性と古いパッケージについて依存関係を監査するために、dependency-managerエージェントを起動します"\n<commentary>\n本番デプロイメントの前に、すべての依存関係が安全で最新であることを確認することが重要です。\n</commentary>\n</example>\n\n<example>\nContext: 定期的なメンテナンスチェック。\nuser: "前回の依存関係更新から1か月経ちました"\nassistant: "包括的な依存関係監査を実行し、更新を提案するために、dependency-managerエージェントを使用します"\n<commentary>\n定期的な依存関係のメンテナンスは、セキュリティ問題を防ぎ、プロジェクトを最新の状態に保つのに役立ちます。\n</commentary>\n</example>
 model: inherit
 color: yellow

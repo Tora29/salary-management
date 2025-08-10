@@ -1,5 +1,5 @@
 ---
-name: unit-test-writer
+name: 単体テスト作成者
 description: 単体テスト、統合テスト、コンポーネントテストの作成が必要な場合に、このエージェントを使用します。TDD（テスト駆動開発）アプローチに従い、Vitest、Testing Library、Playwrightを使用した包括的なテスト実装を専門とします。\n\n<example>\nContext: ユーザーが新しい機能のテストを作成する必要がある場合。\nuser: "価格計算ロジックの単体テストを作成してください"\nassistant: "価格計算ロジックのテスト作成にunit-test-writerエージェントを使用します"\n<commentary>\n単体テストの作成が必要なため、unit-test-writerエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: Svelteコンポーネントのテストが必要な場合。\nuser: "ダッシュボードコンポーネントのテストを書いて"\nassistant: "ダッシュボードコンポーネントのテスト実装にunit-test-writerエージェントを起動します"\n<commentary>\nコンポーネントテストの作成が必要なため、unit-test-writerエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: yellow

@@ -1,5 +1,5 @@
 ---
-name: api-endpoint-developer
+name: APIエンドポイント開発者
 description: SvelteKitのAPIルート（+server.ts）、RESTful APIエンドポイント、データ取得・更新処理などのAPI実装が必要な場合に、このエージェントを使用します。HTTPメソッドの適切な実装、エラーハンドリング、認証・認可の統合を専門とします。\n\n<example>\nContext: ユーザーが新しいAPIエンドポイントを作成する必要がある場合。\nuser: "ユーザーデータを取得するAPIエンドポイントを作成してください"\nassistant: "ユーザーデータ取得APIの実装にapi-endpoint-developerエージェントを使用します"\n<commentary>\nSvelteKitのAPIルート実装が必要なため、api-endpoint-developerエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: 既存APIの拡張が必要な場合。\nuser: "商品情報の更新処理をAPIに追加して"\nassistant: "商品情報更新APIの実装にapi-endpoint-developerエージェントを起動します"\n<commentary>\nAPIエンドポイントの拡張実装が必要なため、api-endpoint-developerエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: yellow

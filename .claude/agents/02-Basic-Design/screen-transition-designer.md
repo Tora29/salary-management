@@ -1,5 +1,5 @@
 ---
-name: screen-transition-designer
+name: 画面遷移設計者
 description: このエージェントは、Webアプリケーションの画面遷移、ナビゲーションフロー、またはユーザージャーニーマッピングを設計する必要がある場合に使用します。これには、ワイヤーフレームの作成、ナビゲーションパターンの定義、遷移アニメーションの指定、アプリケーション内の異なる画面や状態間のフローの文書化が含まれます。<example>\nContext: ユーザーがWebアプリケーションに取り組んでおり、ユーザーが異なる画面間をどのようにナビゲートするかを設計する必要がある場合。\nuser: "データ一覧画面から詳細画面への遷移を設計して"\nassistant: "画面遷移設計エージェントを使用して、データの画面遷移フローを設計します"\n<commentary>\nユーザーが画面遷移設計を必要としているため、screen-transition-designerエージェントを使用して包括的なナビゲーションフローを作成します。\n</commentary>\n</example>\n<example>\nContext: ユーザーが機能の完全なユーザージャーニーを定義する必要がある場合。\nuser: "新規ユーザー登録から初回ログインまでの画面フローを整理したい"\nassistant: "画面遷移設計エージェントを起動して、ユーザー登録フローの画面遷移を設計します"\n<commentary>\nユーザーが登録フローの画面遷移をマッピングしたいため、screen-transition-designerエージェントを使用すべきです。\n</commentary>\n</example>
 model: inherit
 color: blue

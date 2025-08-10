@@ -24,7 +24,7 @@ Feature-Sliced Design (FSD) アーキテクチャに従っています。
 
 ```bash
 # コード品質（タスク完了前に必ず上から１つずつ実行）
-1. レビューエージェントによる並列レビュー（.claude/agents 配下参照）
+1. レビューエージェントによる並列レビュー（.claude/agents/05-Frontend-Reviewer 配下参照）
 2. npm run lint        # ESLint を実行
 3. npm run format      # Prettier でフォーマット
 4. npm run check       # TypeScript 型チェック
@@ -37,4 +37,5 @@ Feature-Sliced Design (FSD) アーキテクチャに従っています。
 基本設計時は@~/.claude/agents/02-Basic-Design/README.md
 詳細設計時は@~/.claude/agents/03-Detailed-Design/README.md
 実装、テスト時は@~/.claude/agents/04-Implementation/README.md
+実装後の文法チェックは@~/.claude/agents/05-Frontend-Reviewer/svelte4-to-svelte5-migrator.md
 を参照すること

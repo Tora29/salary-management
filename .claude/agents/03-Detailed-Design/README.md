@@ -24,11 +24,19 @@ graph TD
 
 ## 実行順序詳細
 
+### 成果物ファイル命名規則
+**重要**: 成果物のファイル名には必ず項番を付けてください。
+- 形式: `[カテゴリ番号]-[連番]_[ファイル名].md`
+- 例: `11-01_interface-detail.md`
+
 ### 1. インターフェース詳細設計（interface-detail-designer）
 
 - **実行タイミング**: 最初に実行
 - **前提条件**: 要件定義、ビジネス要求仕様の完了
-- **成果物**: API仕様、データ交換フォーマット、外部システム連携仕様
+- **成果物**: 
+  - `11-01_api-specification.md` - API仕様
+  - `11-02_data-exchange-format.md` - データ交換フォーマット
+  - `11-03_external-system-integration.md` - 外部システム連携仕様
 
 ### 2. 並列実行フェーズ1
 
@@ -37,18 +45,27 @@ graph TD
 #### 2a. クラス設計（class-design-architect）
 
 - **前提条件**: インターフェース詳細設計の完了
-- **成果物**: クラス構造、ビジネスロジック定義、デザインパターン適用
+- **成果物**: 
+  - `12-01_class-structure.md` - クラス構造
+  - `12-02_business-logic.md` - ビジネスロジック定義
+  - `12-03_design-patterns.md` - デザインパターン適用
 
 #### 2b. データベース詳細設計（database-detail-designer）
 
 - **前提条件**: インターフェース詳細設計の完了
-- **成果物**: データベーススキーマ、インデックス戦略、アクセスパターン
+- **成果物**: 
+  - `13-01_database-schema.md` - データベーススキーマ
+  - `13-02_index-strategy.md` - インデックス戦略
+  - `13-03_access-patterns.md` - アクセスパターン
 
 ### 3. 処理フロー設計（process-flow-designer）
 
 - **実行タイミング**: クラス設計とデータベース設計の両方が完了後
 - **前提条件**: クラス設計とデータベース設計の成果物
-- **成果物**: 処理フロー図、データ変換定義、状態遷移図
+- **成果物**: 
+  - `14-01_process-flow.md` - 処理フロー図
+  - `14-02_data-transformation.md` - データ変換定義
+  - `14-03_state-transition.md` - 状態遷移図
 
 ### 4. 並列実行フェーズ2
 
@@ -57,18 +74,27 @@ graph TD
 #### 4a. エラーハンドリング設計（error-handling-designer）
 
 - **前提条件**: 処理フロー設計の完了
-- **成果物**: エラーハンドリング戦略、エラーコード体系、回復メカニズム
+- **成果物**: 
+  - `15-01_error-handling-strategy.md` - エラーハンドリング戦略
+  - `15-02_error-code-system.md` - エラーコード体系
+  - `15-03_recovery-mechanism.md` - 回復メカニズム
 
 #### 4b. ロギング設計（logging-design-architect）
 
 - **前提条件**: 処理フロー設計の完了
-- **成果物**: ロギング戦略、ログフォーマット、モニタリング仕様
+- **成果物**: 
+  - `16-01_logging-strategy.md` - ロギング戦略
+  - `16-02_log-format.md` - ログフォーマット
+  - `16-03_monitoring-spec.md` - モニタリング仕様
 
 ### 5. 設計ドキュメント生成（design-document-generator）
 
 - **実行タイミング**: すべての詳細設計の完了後
 - **前提条件**: 上記すべてのエージェントの成果物
-- **成果物**: 統合された包括的な設計ドキュメント
+- **成果物**: 
+  - `17-01_integrated-design-document.md` - 統合設計ドキュメント
+  - `17-02_implementation-guide.md` - 実装ガイド
+  - `17-03_design-review-checklist.md` - 設計レビューチェックリスト
 
 ## 使用例
 

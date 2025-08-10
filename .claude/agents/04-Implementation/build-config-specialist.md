@@ -1,5 +1,5 @@
 ---
-name: build-config-specialist
+name: ビルド設定スペシャリスト
 description: プロジェクトのビルド設定を構成、最適化、またはトラブルシューティングする必要がある場合に、このエージェントを使用します。これには、webpack構成、Vite設定、TypeScriptコンパイルオプション、バンドル戦略、環境固有のビルド、ビルドパフォーマンスの最適化が含まれます。 <example>Context: ユーザーがSvelteKitプロジェクトで作業しており、ビルド設定を構成する必要がある場合。\nuser: "ビルドの設定を最適化したい"\nassistant: "ビルド設定の最適化について、build-config-specialistエージェントを使用します。"\n<commentary>ユーザーがビルド構成を最適化したいので、build-config-specialistエージェントを使用してビルド設定を分析し改善します。</commentary></example><example>Context: ユーザーがビルドエラーに遭遇したり、新しいビルド機能を追加したい場合。\nuser: "プロダクションビルドでエラーが出ている"\nassistant: "プロダクションビルドのエラーを解決するため、build-config-specialistエージェントを起動します。"\n<commentary>ビルドエラーはビルド構成の専門知識を必要とするため、build-config-specialistエージェントがこれを処理すべきです。</commentary></example>
 model: inherit
 color: yellow

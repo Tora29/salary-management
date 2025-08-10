@@ -1,5 +1,5 @@
 ---
-name: common-components-developer
+name: 共通コンポーネント開発者
 description: プロジェクト全体で再利用される共通コンポーネント（ボタン、カード、フォーム要素、レイアウトコンポーネントなど）を実装する必要がある場合に、このエージェントを使用します。Feature-Sliced Design (FSD) アーキテクチャのshared層に配置されるコンポーネントの開発を専門とします。\n\n<example>\nContext: ユーザーが新しい共通UIコンポーネントを必要としている場合。\nuser: "アプリケーション全体で使える共通のボタンコンポーネントを作成してください"\nassistant: "共通ボタンコンポーネントの実装にcommon-components-developerエージェントを使用します"\n<commentary>\nプロジェクト全体で再利用される共通コンポーネントの作成が必要なため、common-components-developerエージェントを使用します。\n</commentary>\n</example>\n\n<example>\nContext: 既存の共通コンポーネントを拡張または改善する場合。\nuser: "カードコンポーネントにダークモード対応を追加して"\nassistant: "カードコンポーネントの拡張にcommon-components-developerエージェントを起動します"\n<commentary>\n共通コンポーネントの機能拡張が必要なため、common-components-developerエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: yellow

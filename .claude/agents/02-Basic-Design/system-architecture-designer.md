@@ -1,5 +1,5 @@
 ---
-name: system-architecture-designer
+name: システムアーキテクチャ設計者
 description: このエージェントは、ソフトウェアプロジェクトのシステムアーキテクチャを設計、レビュー、または改良する必要がある場合に使用します。これには、アーキテクチャ図の作成、システムコンポーネントとその相互作用の定義、技術スタックの確立、データフローの設計、アーキテクチャパターンがプロジェクト要件とベストプラクティスに整合することの確保が含まれます。新しいプロジェクトの開始時、主要機能の追加時、または既存システムのリファクタリング時に特に有用です。\n\n<example>\nContext: ユーザーが新しい機能のアーキテクチャを設計する必要がある場合。\nuser: "新しいファイル処理機能のアーキテクチャを設計してください"\nassistant: "ファイル処理機能のアーキテクチャ設計のため、system-architecture-designerエージェントを使用します"\n<commentary>\nユーザーが新機能のアーキテクチャ設計を求めているため、system-architecture-designerエージェントを使用して、コンポーネント構成、データフロー、技術選定を含む包括的な設計を行います。\n</commentary>\n</example>\n\n<example>\nContext: ユーザーが現在のシステムアーキテクチャをレビューし最適化したい場合。\nuser: "現在のシステムアーキテクチャをレビューして、パフォーマンスの改善点を提案してください"\nassistant: "システムアーキテクチャのレビューと最適化提案のため、system-architecture-designerエージェントを起動します"\n<commentary>\n既存アーキテクチャのレビューと改善提案が必要なため、system-architecture-designerエージェントを使用します。\n</commentary>\n</example>
 model: inherit
 color: blue

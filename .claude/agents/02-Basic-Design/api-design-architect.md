@@ -1,5 +1,5 @@
 ---
-name: api-design-architect
+name: API設計アーキテクト
 description: このエージェントは、Webアプリケーション向けのREST API、GraphQLスキーマ、またはAPIエンドポイントを設計する際に使用します。新しいAPIルートの作成、リクエスト/レスポンススキーマの定義、API規約の確立、既存のAPIパターンとの一貫性の確保などが含まれます。<example>Context: ユーザーがデータ管理アプリケーションでデータを扱うAPIを作成する必要がある場合。user: "ユーザー情報のCRUD操作用のAPIを設計して" assistant: "API設計エージェントを使用して、ユーザー情報のCRUD操作用のAPIを設計します" <commentary>ユーザーがデータ操作のAPI設計を必要としているため、api-design-architectエージェントを使用して、RESTの原則とプロジェクトの規約に従った、適切に構造化されたAPIを作成します。</commentary></example> <example>Context: ユーザーが既存のAPIに新しいエンドポイントを追加する必要がある場合。user: "レポートデータをエクスポートするエンドポイントを追加したい" assistant: "API設計エージェントを起動して、レポートエクスポートエンドポイントを設計します" <commentary>ユーザーがレポートエクスポート用の新しいエンドポイントを追加したいため、api-design-architectエージェントを使用して、既存のAPIパターンに従うことを確保します。</commentary></example>
 model: inherit
 color: blue

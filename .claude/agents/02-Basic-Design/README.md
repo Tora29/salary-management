@@ -105,40 +105,47 @@ Task tool --agent integration-review-specialist
 
 ## 各エージェントの成果物
 
+### 成果物ファイル命名規則
+**重要**: 成果物のファイル名には必ず項番を付けてください。
+- 形式: `[カテゴリ番号]-[連番]_[ファイル名].md`
+- 例: `04-01_system-architecture.md`
+
+### 成果物一覧
+
 1. **system-architecture-designer**
-   - システムコンポーネント図
-   - 技術スタック定義
-   - アーキテクチャパターン
+   - `04-01_system-architecture.md` - システムコンポーネント図
+   - `04-02_tech-stack.md` - 技術スタック定義
+   - `04-03_architecture-patterns.md` - アーキテクチャパターン
 
 2. **data-modeling-architect**
-   - ERD（エンティティ関係図）
-   - データベーススキーマ
-   - TypeScriptインターフェース
+   - `05-01_erd.md` - ERD（エンティティ関係図）
+   - `05-02_database-schema.md` - データベーススキーマ
+   - `05-03_typescript-interfaces.md` - TypeScriptインターフェース
 
 3. **api-design-architect**
-   - APIエンドポイント仕様
-   - リクエスト/レスポンススキーマ
-   - OpenAPI仕様
+   - `06-01_api-endpoints.md` - APIエンドポイント仕様
+   - `06-02_request-response-schema.md` - リクエスト/レスポンススキーマ
+   - `06-03_openapi-spec.yaml` - OpenAPI仕様
 
 4. **screen-transition-designer**
-   - 画面遷移図
-   - ナビゲーションフロー
-   - UI状態管理仕様
+   - `07-01_screen-flow.md` - 画面遷移図
+   - `07-02_navigation-flow.md` - ナビゲーションフロー
+   - `07-03_ui-state-management.md` - UI状態管理仕様
 
 5. **security-design-architect**
-   - セキュリティアーキテクチャ図
-   - 認証・認可フロー
-   - 脅威モデル分析
+   - `08-01_security-architecture.md` - セキュリティアーキテクチャ図
+   - `08-02_auth-flow.md` - 認証・認可フロー
+   - `08-03_threat-model.md` - 脅威モデル分析
 
 6. **infrastructure-architect**
-   - インフラアーキテクチャ図
-   - デプロイメント設計
-   - スケーリング戦略
+   - `09-01_infra-architecture.md` - インフラアーキテクチャ図
+   - `09-02_deployment-design.md` - デプロイメント設計
+   - `09-03_scaling-strategy.md` - スケーリング戦略
 
 7. **integration-review-specialist**
-   - 統合レビューレポート
-   - 改善提案リスト
-   - 実装フェーズへの申し送り事項
+   - `10-01_integration-review-report.md` - 統合レビューレポート
+   - `10-02_improvement-proposals.md` - 改善提案リスト
+   - `10-03_handover-to-implementation.md` - 実装フェーズへの申し送り事項
 
 ## 注意事項
 

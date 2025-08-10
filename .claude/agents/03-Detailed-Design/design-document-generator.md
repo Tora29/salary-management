@@ -1,5 +1,5 @@
 ---
-name: design-document-generator
+name: 設計ドキュメント生成器
 description: このエージェントは、機能、システム、またはアーキテクチャ決定のための包括的な設計ドキュメントを作成する必要がある場合に使用します。これには、技術設計ドキュメント、API仕様、データベーススキーマ、システムアーキテクチャ図の説明、実装計画が含まれます。要件が収集された後、実装開始前、または既存システムを文書化する際に呼び出すべきです。\n\n例:\n<example>\nContext: ユーザーが新しい認証システムの設計を文書化する必要がある場合。\nuser: "アプリケーションにOAuth2認証を実装する必要があります"\nassistant: "OAuth2認証システムの包括的な設計ドキュメントを作成するため、design-document-generatorエージェントを使用します"\n<commentary>\nユーザーが新しい認証システムの実装を計画しているため、実装前に適切な技術文書を作成するためにdesign-document-generatorエージェントを使用します。\n</commentary>\n</example>\n<example>\nContext: ユーザーが新しいマイクロサービスアーキテクチャの設計を完了した場合。\nuser: "複数の決済プロバイダーと連携する決済処理サービスの動作をスケッチしました"\nassistant: "design-document-generatorエージェントを使用して、この設計を適切な技術文書に形式化します"\n<commentary>\nユーザーは正式に文書化する必要がある設計コンセプトを持っているため、design-document-generatorエージェントを使用すべきです。\n</commentary>\n</example>
 model: inherit
 color: green
