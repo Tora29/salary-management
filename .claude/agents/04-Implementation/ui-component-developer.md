@@ -21,9 +21,9 @@ execution_order: 5
 
 **FSDレイヤー別の実装:**
 
-- **Features層**: 特定の機能に関連するUIコンポーネント
-- **Widgets層**: 複数のentitiesやfeaturesを組み合わせた複合コンポーネント
-- **Pages層**: 完全なページコンポーネントとレイアウト
+- **Features層**: entitiesの集合体 + ビジネスロジック付きのUIコンポーネント
+- **Widgets層**: 複数のfeaturesを組み合わせた大きなUI単位
+- **Pages層**: featuresやwidgetsを組み合わせてページを構成（+page.svelte）
 
 **Svelte 5実装パターン:**
 
@@ -107,18 +107,27 @@ execution_order: 5
 ```
 src/
 ├── features/
-│   └── product-list/
-│       └── ui/
-│           ├── ProductListView.svelte
-│           └── ProductListItem.svelte
+│   └── product-management/
+│       ├── api/
+│       │   └── productApi.ts  # ビジネスロジックを含むAPI呼び出し
+│       ├── ui/
+│       │   ├── ProductListView.svelte  # ビジネスロジック付きUI
+│       │   └── ProductForm.svelte
+│       ├── composable/
+│       │   ├── useProductManagement.ts  # 商品管理ユースケース
+│       │   └── useProductValidation.ts  # 商品バリデーションユースケース
+│       └── model/
+│           └── types.ts  # 型定義
 ├── widgets/
 │   └── dashboard/
 │       └── ui/
-│           └── DashboardWidget.svelte
+│           └── DashboardWidget.svelte  # 複数featuresの統合UI
 └── routes/
     ├── +layout.svelte
     └── products/
-        └── +page.svelte
+        └── +page.svelte  # featuresのUIを組み合わせてページ構成
 ```
+
+**重要**: `+page.svelte`では featuresのUIコンポーネントをインポートして組み合わせることでページを構成します。
 
 常に覚えておいてください。UIはユーザーとアプリケーションの接点であり、第一印象を決定づけます。美しさと使いやすさのバランスを保ち、すべてのユーザーにとってアクセシブルなインターフェースを提供してください。

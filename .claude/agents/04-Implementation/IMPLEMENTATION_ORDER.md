@@ -10,18 +10,19 @@ graph TD
     B --> C[データアクセス層]
     B --> D[ユーティリティ実装]
 
-    C --> E[ビジネスロジック層]
+    C --> E[エンティティ層]
     D --> E
 
-    E --> F[API実装]
-    F --> G[UI実装]
+    E --> F[フィーチャー層]
+    F --> G[API実装]
+    G --> H[UI実装]
 
-    G --> H{並列実行}
-    H --> I[単体テスト作成]
-    H --> J[ドキュメント生成]
+    H --> I{並列実行}
+    I --> J[単体テスト作成]
+    I --> K[ドキュメント生成]
 
-    I --> K[リファクタリング]
-    J --> K
+    J --> L[リファクタリング]
+    K --> L
 ```
 
 ## 実装フェーズと使用エージェント
@@ -33,7 +34,9 @@ graph TD
 1. **共通コンポーネント実装**
    - エージェント: `common-components-developer`
    - 実装内容: Button、Card、Form要素などの基本UIコンポーネント
-   - 配置: `src/shared/ui/`
+   - 配置:
+      - UI: `src/shared/components/ui/`
+      - Model: `src/shared/components/model/`
 
 ### フェーズ2: インフラストラクチャ層（並列実行可能）
 
@@ -43,65 +46,86 @@ graph TD
 
 - エージェント: `data-access-layer-developer`
 - 実装内容: Prismaスキーマ、リポジトリ、データベース接続
-- 配置: `src/lib/server/`, `prisma/`
+- 配置: `src/shared/server/`, `prisma/`
 
 2-B. **ユーティリティ実装**
 
 - エージェント: `utility-functions-developer`
 - 実装内容: 日付処理、フォーマッター、バリデーション関数
-- 配置: `src/shared/lib/`
+- 配置: `src/shared/utils/`
 
-### フェーズ3: ビジネスロジック層
+### フェーズ3: エンティティ層
 
-**目的**: アプリケーションの中核となるビジネスルールを実装
+**目的**: ビジネスドメインに特化したUIコンポーネントを実装（ビジネスロジックは含まない）
 
-3. **ビジネスロジック実装**
+3. **エンティティ実装**
+   - エージェント: `common-components-developer`
+   - 実装内容: shared/components/uiの集合体で構成されるビジネス専用UI
+   - 配置: `src/entities/*/`
+     - UI: `src/entities/*/ui/` - ビジネス専用のUIコンポーネント
+     - API: `src/entities/*/api/` - セレクトボックス初期値取得など純粋なデータ取得
+     - Model: `src/entities/*/model/` - 型定義とデータ構造
+   - 前提条件: 共通コンポーネント（shared）の完成
+
+### フェーズ4: フィーチャー層
+
+**目的**: ビジネスロジック付きの機能を実装
+
+4. **フィーチャー実装**
    - エージェント: `business-logic-developer`
-   - 実装内容: 価格計算、在庫管理、ユーザー権限などのドメインロジック
-   - 配置: `src/entities/*/model/`, `src/entities/*/lib/`
-   - 前提条件: データアクセス層とユーティリティの完成
+   - 実装内容: entitiesの集合体 + ビジネスロジックを組み合わせた機能
+   - 配置: `src/features/*/`
+     - UI: `src/features/*/ui/` - ビジネスロジック付きのUIコンポーネント
+     - API: `src/features/*/api/` - ビジネスロジックを含むAPI呼び出し
+     - Composable: `src/features/*/composable/` - ユースケース単位で作成されるビジネスロジック
+     - Model: `src/features/*/model/` - フィーチャー固有の型定義
+   - 前提条件: エンティティ層の完成
 
-### フェーズ4: API層
+### フェーズ5: API層（SvelteKit）
 
-**目的**: フロントエンドとバックエンドの通信インターフェースを構築
+**目的**: SvelteKitのAPIルートを実装
 
-4. **API実装**
+5. **API実装**
    - エージェント: `api-endpoint-developer`
    - 実装内容: SvelteKitのAPIルート（+server.ts）
    - 配置: `src/routes/api/`
-   - 前提条件: ビジネスロジック層の完成
+   - 前提条件: フィーチャー層の完成
 
-### フェーズ5: UI層
+### フェーズ6: UI層（ページ・ウィジェット）
 
-**目的**: ユーザーインターフェースを実装
+**目的**: ページレベルのUIとウィジェットを実装
 
-5. **UI実装**
+6. **UI実装**
    - エージェント: `ui-component-developer`
-   - 実装内容: ページ、機能別コンポーネント、ウィジェット
-   - 配置: `src/features/`, `src/widgets/`, `src/routes/`
-   - 前提条件: API層の完成
+   - 実装内容: 
+     - ページ（`+page.svelte`）: featuresのUIコンポーネントを組み合わせてページを構成
+     - ウィジェット: 複数のfeaturesを統合した大きなUI単位
+   - 配置: 
+     - Pages: `src/routes/*/+page.svelte` - featuresの組み合わせでページ構成
+     - Widgets: `src/widgets/` - 複数featuresの統合UI
+   - 前提条件: API層とフィーチャー層の完成
 
-### フェーズ6: 品質保証（並列実行可能）
+### フェーズ7: 品質保証（並列実行可能）
 
 **目的**: コードの品質と保守性を確保
 
-6-A. **単体テスト作成**
+7-A. **単体テスト作成**
 
 - エージェント: `unit-test-writer`
 - 実装内容: Vitest、Testing Libraryを使用したテスト
 - 配置: `tests/unit/`
 
-6-B. **ドキュメント生成**
+7-B. **ドキュメント生成**
 
 - エージェント: `documentation-writer`
 - 実装内容: API仕様、コンポーネントドキュメント、使用ガイド
 - 配置: `docs/`, コード内JSDoc
 
-### フェーズ7: 最適化
+### フェーズ8: 最適化
 
 **目的**: コードの品質向上と最適化
 
-7. **リファクタリング**
+8. **リファクタリング**
    - エージェント: `code-refactoring-specialist`
    - 実装内容: コードの整理、パフォーマンス改善、重複削除
 
@@ -127,6 +151,24 @@ graph TD
 - **`code-review-specialist`**: コードレビューとフィードバック
 - **`code-generator`**: 汎用的なコード生成（特定のフェーズに特化していない場合）
 
+## FSDアーキテクチャの実装例
+
+### ページ構成の例
+```typescript
+// src/routes/salary/+page.svelte
+import { SalaryCalculationFeature } from '$features/salary-calculation';
+import { StockPortfolioFeature } from '$features/stock-portfolio';
+
+// featuresを組み合わせてページを構成
+```
+
+### 層の依存関係
+- **Shared**: 汎用的な基本コンポーネント（独立）
+- **Entities**: Sharedを使用してビジネス専用UI構築
+- **Features**: Entitiesを使用してビジネスロジック付き機能構築  
+- **Widgets**: Featuresを組み合わせて大きなUI単位構築
+- **Pages**: FeaturesやWidgetsを組み合わせてページ構成
+
 ## 実装のベストプラクティス
 
 1. **TDDアプローチ**: 可能な限りテストを先に書く
@@ -134,6 +176,7 @@ graph TD
 3. **早期統合**: 各フェーズ完了後、速やかに統合テストを実施
 4. **継続的なレビュー**: 各フェーズでcode-review-specialistを活用
 5. **依存関係の管理**: dependency-managerで定期的にチェック
+6. **FSD原則の遵守**: 下位層は上位層に依存しない、上位層のみ下位層を使用
 
 ## チェックリスト
 

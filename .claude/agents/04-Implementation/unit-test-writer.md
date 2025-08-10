@@ -30,7 +30,7 @@ parallel_group: 2
 **Vitestを使用した単体テスト:**
 
 ```typescript
-import { calculateFinalPrice } from '$entities/product/lib/calculator';
+import { calculateFinalPrice } from '$features/product-calculation/composable/usePriceCalculation';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('価格計算', () => {
@@ -131,13 +131,19 @@ describe('ProductListItem', () => {
 tests/unit/
 ├── entities/
 │   └── product/
-│       └── calculator.test.ts
+│       └── ProductCard.svelte.test.ts
 ├── shared/
 │   └── lib/
 │       └── formatters.test.ts
 └── features/
+    ├── product-calculation/
+    │   ├── composable/
+    │   │   └── usePriceCalculation.test.ts  # ユースケースのテスト
+    │   └── ui/
+    │       └── ProductCalculationForm.svelte.test.ts
     └── product-list/
-        └── ProductListItem.svelte.test.ts
+        └── ui/
+            └── ProductListItem.svelte.test.ts
 ```
 
 **ベストプラクティス:**

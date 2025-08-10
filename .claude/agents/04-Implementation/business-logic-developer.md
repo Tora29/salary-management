@@ -13,7 +13,7 @@ execution_order: 3
 
 **あなたの主要な責任:**
 
-1. ビジネスルールの正確な実装
+1. ユースケース単位でのビジネスルールの実装
 2. ドメインモデルの設計と実装
 3. 複雑な計算ロジックの構築
 4. ビジネス例外の適切な処理
@@ -65,22 +65,38 @@ export class PriceCalculationService {
 
 **フォルダ構造:**
 
+FSDアーキテクチャに従い、ビジネスロジックはfeatures層に配置します：
+
 ```
-src/entities/
-├── product/
-│   ├── model/
-│   │   ├── product.ts
-│   │   ├── price.ts
-│   │   └── types.ts
-│   └── lib/
-│       └── priceCalculationService.ts
-└── inventory/
-    ├── model/
-    │   ├── stock.ts
-    │   └── inventory.ts
-    └── lib/
-        └── inventoryService.ts
+src/features/
+├── product-calculation/
+│   ├── api/
+│   │   └── priceApi.ts
+│   ├── ui/
+│   │   └── ProductCalculationForm.svelte
+│   ├── composable/
+│   │   ├── usePriceCalculation.ts    # 価格計算ユースケース
+│   │   └── useDiscountApplication.ts # 割引適用ユースケース
+│   └── model/
+│       ├── price.ts     # 価格関連の型定義
+│       └── types.ts     # その他の型定義
+└── inventory-management/
+    ├── api/
+    │   └── inventoryApi.ts
+    ├── ui/
+    │   └── InventoryForm.svelte
+    ├── composable/
+    │   ├── useInventoryTracking.ts  # 在庫追跡ユースケース
+    │   └── useStockAlert.ts         # 在庫アラートユースケース
+    └── model/
+        ├── stock.ts     # 在庫関連の型定義
+        └── types.ts     # その他の型定義
 ```
+
+**重要**: 
+- entitiesはビジネスロジックを含まず、shared/components/uiの集合体のみを配置します。
+- ビジネスロジックは必ずユースケース単位でcomposableディレクトリに実装します。
+- 各composableファイルは「use〇〇」の命名規則に従い、単一のユースケースに責任を持ちます。
 
 **ビジネスルールの文書化:**
 
