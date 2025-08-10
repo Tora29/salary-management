@@ -133,7 +133,7 @@ tests/unit/
 │   └── product/
 │       └── ProductCard.svelte.test.ts
 ├── shared/
-│   └── lib/
+│   └── utils/
 │       └── formatters.test.ts
 └── features/
     ├── product-calculation/

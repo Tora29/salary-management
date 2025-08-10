@@ -48,7 +48,7 @@
 ### 2.1 アプリケーションレベル監視
 
 ```typescript
-// src/shared/lib/monitoring/error-monitor.service.ts
+// src/shared/utils/monitoring/error-monitor.service.ts
 
 /**
  * エラー監視サービス
@@ -423,7 +423,7 @@ interface Alert {
 ### 2.2 リアルタイム監視ダッシュボード
 
 ```typescript
-// src/shared/lib/monitoring/dashboard-config.ts
+// src/shared/utils/monitoring/dashboard-config.ts
 
 /**
  * Grafanaダッシュボード設定
@@ -591,7 +591,7 @@ export const dashboardConfig = {
 ### 3.1 アラートルーティング設定
 
 ```typescript
-// src/shared/lib/alerting/alert-manager.ts
+// src/shared/utils/alerting/alert-manager.ts
 
 /**
  * アラート管理システム
@@ -885,7 +885,7 @@ interface NotificationChannelConfig {
 ### 3.2 エスカレーション・オンコール管理
 
 ```typescript
-// src/shared/lib/alerting/escalation-manager.ts
+// src/shared/utils/alerting/escalation-manager.ts
 
 /**
  * エスカレーション・オンコール管理
@@ -1470,7 +1470,7 @@ kubectl get deployment salary-management-api -o jsonpath='{.spec.template.spec.c
 ### 5.2 ビジネス影響メトリクス
 
 ```typescript
-// src/shared/lib/metrics/business-impact-calculator.ts
+// src/shared/utils/metrics/business-impact-calculator.ts
 
 /**
  * ビジネス影響度計算サービス

@@ -130,7 +130,7 @@ NODE_ENV="development"
 import { SvelteKitAuth } from "@auth/sveltekit";
 import Google from "@auth/sveltekit/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "$lib/server/prisma";
+import { prisma } from "$shared/server/prisma";
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
   adapter: PrismaAdapter(prisma),

@@ -1,6 +1,22 @@
 # 基本設計エージェント実行ガイド
 
-このディレクトリには、Webアプリケーションの基本設計を行うための専門エージェントが含まれています。各エージェントは特定の設計領域を担当し、定められた順序で実行されます。
+このディレクトリには、**Feature-Sliced Design (FSD) アーキテクチャ**を採用したWebアプリケーションの基本設計を行うための専門エージェントが含まれています。各エージェントは特定の設計領域を担当し、定められた順序で実行されます。
+
+## ⚠️ 重要：FSD準拠について
+すべての設計は階層化アーキテクチャのFSD構造に準拠します：
+```
+src/
+├── routes/api/*/+server.ts # APIエンドポイント実装（DB操作、認証）
+├── shared/components/ui/    # 基本UIコンポーネント  
+├── shared/components/model/ # Interface定義
+├── entities/*/ui/          # ビジネス専用UI（ロジック無し）
+├── entities/*/api/         # API呼び出し（単純なデータ取得）
+├── entities/*/model/       # 型定義
+├── features/*/ui/          # UIとビジネスロジック
+├── features/*/api/         # 複雑なAPI呼び出し+ビジネスロジック  
+├── features/*/composable/  # ユースケースロジック
+├── features/*/model/       # フィーチャー固有型
+```
 
 ## 実行フロー図
 

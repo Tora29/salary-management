@@ -59,7 +59,7 @@ export function formatCurrency(
 **フォルダ構造:**
 
 ```
-src/shared/lib/
+src/shared/utils/
 ├── dates/
 │   ├── formatDate.ts
 │   └── parseDate.ts

@@ -6,11 +6,9 @@
 
 ```
 src/
-├── app/                 # アプリケーション層
-│   ├── providers/      # グローバルプロバイダー
-│   └── styles/         # グローバルスタイル
-│
-├── pages/              # ページ層（非推奨、routesを使用）
+├── app.html            # SvelteKitメインHTMLテンプレート
+├── app.css             # グローバルCSS
+├── app.d.ts            # グローバル型定義
 │
 ├── widgets/            # ウィジェット層
 │   ├── header/        # ヘッダーウィジェット
@@ -26,9 +24,9 @@ src/
 │   ├── stock/         # 株式エンティティ
 │   └── asset/         # 資産エンティティ
 │
-├── shared/            # 共有層（libを使用）
+├── shared/            # 共有層
 │   ├── ui/           # 共通UIコンポーネント
-│   ├── lib/          # ユーティリティ
+│   ├── utils/        # ユーティリティ
 │   └── api/          # API通信
 │
 └── routes/            # SvelteKitルーティング
@@ -42,7 +40,7 @@ src/
 - **widgets**: 複数のfeatureを組み合わせた複雑なUI
 - **features**: ユーザー向け機能の実装
 - **entities**: ビジネスエンティティとその操作
-- **shared/lib**: 共通ユーティリティとコンポーネント
+- **shared/utils**: 共通ユーティリティとコンポーネント
 
 ---
 
@@ -471,7 +469,7 @@ interface DashboardStore {
 ### 7.1 エラー処理パターン
 
 ```typescript
-// lib/utils/error.ts
+// shared/utils/error.ts
 class AppError extends Error {
   constructor(
     public code: ErrorCode,
@@ -539,7 +537,7 @@ function showErrorToast(error: AppError) {
 ### 7.2 フォームバリデーション
 
 ```typescript
-// lib/validation/schemas.ts
+// shared/utils/validation/schemas.ts
 import { z } from 'zod';
 
 // 給料明細バリデーション
@@ -596,7 +594,7 @@ function validateForm<T>(
 ```typescript
 // Auth.js統合による認証・セキュリティ
 import { getServerSession } from '@auth/sveltekit';
-import { authOptions } from '$lib/auth';
+import { authOptions } from '../auth/config';
 
 // セッション管理とCSRF保護（Auth.js自動対応）
 export async function POST({ request, locals }) {
@@ -609,7 +607,7 @@ export async function POST({ request, locals }) {
 }
 
 // 従来のCSRFトークン（併用可能）
-import { csrf } from '$lib/server/csrf';
+import { csrf } from '../shared/utils/server/csrf';
 
 // APIエンドポイントでのCSRF検証
 export async function POST({ request, cookies }) {
@@ -636,7 +634,7 @@ function sanitizeInput(input: string): string {
 }
 
 // レート制限
-import { RateLimiter } from '$lib/server/rate-limiter';
+import { RateLimiter } from '../shared/utils/server/rate-limiter';
 
 const limiter = new RateLimiter({
   windowMs: 15 * 60 * 1000, // 15分
@@ -704,7 +702,7 @@ const memoizedCalculations = derived(
 
 ```typescript
 // ユニットテスト例
-// tests/unit/lib/pdf/parser.test.ts
+// tests/unit/features/pdf/parser.test.ts
 describe('PDF Parser', () => {
   it('should extract salary data from PDF', async () => {
     const mockPDF = createMockPDF();
@@ -757,7 +755,7 @@ test('Upload salary slip PDF', async ({ page }) => {
 - **開発工数削減**: 87% 短縮
 
 ```typescript
-// lib/auth/auth.config.ts - 認証システムのメイン設定
+// src/shared/api/auth/auth.config.ts - 認証システムのメイン設定
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Google from '@auth/sveltekit/providers/google';
 
@@ -796,7 +794,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 });
 
 // hooks.server.ts - SvelteKitとの統合
-export { handle } from '$lib/auth/auth.config';
+export { handle } from './auth/auth.config';
 
 // app.d.ts - TypeScript型定義
 import type { DefaultSession } from '@auth/core/types';
@@ -835,7 +833,7 @@ providers: [
 ### 11.2 株価API統合
 
 ```typescript
-// lib/services/stock-price-service.ts
+// src/features/portfolio/api/stock-price-service.ts
 interface StockPriceService {
   getPrice(symbol: string): Promise<StockPrice>;
   getBulkPrices(symbols: string[]): Promise<Map<string, StockPrice>>;

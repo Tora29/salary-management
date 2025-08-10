@@ -43,7 +43,7 @@ graph TB
 // ✅ 正しい依存関係
 // features層 → entities層
 import { SalarySlip } from '@/entities/salary-slip';
-import { formatCurrency } from '@/shared/lib/format';
+import { formatCurrency } from '@/shared/utils/format';
 
 // ❌ 誤った依存関係
 // entities層 → features層（上位層への依存は禁止）
@@ -52,21 +52,13 @@ import { uploadPDF } from '@/features/salary-slip'; // ERROR!
 
 ### 1.3 各層の詳細設計
 
-#### app層
+#### アプリケーション初期化層（SvelteKit構造）
 ```
-src/app/
-├── providers/              # グローバルプロバイダー
-│   ├── auth/              # 認証プロバイダー
-│   │   └── AuthProvider.svelte
-│   ├── theme/             # テーマプロバイダー
-│   │   └── ThemeProvider.svelte
-│   └── index.ts
-├── styles/                # グローバルスタイル
-│   ├── global.css
-│   └── reset.css
-└── config/                # アプリケーション設定
-    ├── constants.ts
-    └── environment.ts
+src/
+├── app.html               # SvelteKitメインHTMLテンプレート
+├── app.css               # グローバルCSS
+├── app.d.ts              # グローバル型定義
+└── routes/               # SvelteKitページルーティング
 ```
 
 #### widgets層
@@ -96,6 +88,8 @@ src/features/
 │   │   ├── FileDropZone.svelte
 │   │   ├── SalarySlipList.svelte
 │   │   └── ParsedDataPreview.svelte
+│   ├── composable/       # ユースケースロジック
+│   │   └── useSalarySlip.ts
 │   ├── model/
 │   │   ├── store.ts
 │   │   └── types.ts
@@ -107,6 +101,8 @@ src/features/
 │   │   ├── StockForm.svelte
 │   │   ├── StockList.svelte
 │   │   └── PortfolioChart.svelte
+│   ├── composable/       # ユースケースロジック
+│   │   └── usePortfolio.ts
 │   ├── model/
 │   │   ├── store.ts
 │   │   └── calculations.ts
@@ -117,6 +113,8 @@ src/features/
     ├── ui/
     │   ├── IncomeChart.svelte
     │   └── AssetAllocation.svelte
+    ├── composable/       # ユースケースロジック
+    │   └── useDashboard.ts
     ├── model/
     │   └── store.ts
     ├── api/
@@ -128,20 +126,28 @@ src/features/
 ```
 src/entities/
 ├── salary-slip/        # 給料明細エンティティ
-│   ├── model/
-│   │   ├── types.ts
-│   │   └── schema.ts
 │   ├── ui/
 │   │   └── SalarySlipCard.svelte
-│   └── index.ts
-├── stock/             # 株式エンティティ
+│   ├── api/          # 純粋なデータ取得
+│   │   └── salarySlipApi.ts
 │   ├── model/
 │   │   ├── types.ts
 │   │   └── schema.ts
+│   └── index.ts
+├── stock/             # 株式エンティティ
 │   ├── ui/
 │   │   └── StockCard.svelte
+│   ├── api/          # 純粋なデータ取得
+│   │   └── stockApi.ts
+│   ├── model/
+│   │   ├── types.ts
+│   │   └── schema.ts
 │   └── index.ts
 └── asset/            # 資産エンティティ
+    ├── ui/
+    │   └── AssetCard.svelte
+    ├── api/          # 純粋なデータ取得
+    │   └── assetApi.ts
     ├── model/
     │   └── types.ts
     └── index.ts
@@ -150,12 +156,16 @@ src/entities/
 #### shared層
 ```
 src/shared/
-├── ui/               # 共通UIコンポーネント
-│   ├── Button.svelte
-│   ├── Card.svelte
-│   ├── Modal.svelte
-│   └── Table.svelte
-├── lib/              # ユーティリティ
+├── components/       # 共通コンポーネント
+│   ├── ui/          # 基本UIコンポーネント
+│   │   ├── Button.svelte
+│   │   ├── Card.svelte
+│   │   ├── Modal.svelte
+│   │   └── Table.svelte
+│   └── model/       # Interface定義
+│       ├── common.ts
+│       └── api.ts
+├── utils/            # ユーティリティ
 │   ├── format.ts
 │   ├── validation.ts
 │   └── date.ts

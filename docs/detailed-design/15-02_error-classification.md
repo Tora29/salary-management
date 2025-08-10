@@ -185,7 +185,7 @@
 ### 3.2 重要度自動判定ルール
 
 ```typescript
-// src/shared/lib/errors/severity-calculator.ts
+// src/shared/utils/errors/severity-calculator.ts
 
 /**
  * エラー重要度自動判定サービス
@@ -373,7 +373,7 @@ flowchart TD
 ### 5.1 エラーメトリクス定義
 
 ```typescript
-// src/shared/lib/analytics/error-metrics.ts
+// src/shared/utils/analytics/error-metrics.ts
 
 /**
  * エラー統計・分析サービス
@@ -531,7 +531,7 @@ interface ErrorRecommendation {
 ### 5.2 エラー傾向分析
 
 ```typescript
-// src/shared/lib/analytics/error-trend-analyzer.ts
+// src/shared/utils/analytics/error-trend-analyzer.ts
 
 /**
  * エラー傾向分析エンジン

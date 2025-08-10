@@ -75,13 +75,11 @@ graph TB
 #### Feature-Sliced Design 構造
 ```
 src/
-├── app/                    # アプリケーション初期化・グローバル設定
-│   ├── providers/         # 認証・テーマプロバイダー
-│   ├── stores/           # グローバル状態管理
-│   └── types/            # グローバル型定義
+├── app.html               # SvelteKitメインHTMLテンプレート
+├── app.css               # グローバルCSS
+├── app.d.ts              # グローバル型定義
 ├── widgets/               # 複合UIコンポーネント
-│   ├── header/           # ヘッダー統合UI
-│   └── dashboard/        # ダッシュボード統合UI
+│   └── header/           # ヘッダー統合UI
 ├── features/              # ユーザー向け機能
 │   ├── salary-slip/      # 給料明細関連機能
 │   ├── portfolio/        # ポートフォリオ関連機能
@@ -91,9 +89,11 @@ src/
 │   ├── stock/           # 株式エンティティ
 │   └── dashboard/       # ダッシュボードエンティティ
 └── shared/               # 共通機能
-    ├── ui/              # 共通UIコンポーネント
-    ├── lib/             # 共通ライブラリ
-    ├── api/             # API通信層
+    ├── components/      # 共通コンポーネント
+    │   ├── ui/         # 基本UIコンポーネント
+    │   └── model/      # Interface定義
+    ├── utils/           # バリデーションやフォーマッターなど
+    ├── constants/       # エラーメッセージなど
     └── config/          # 設定管理
 ```
 

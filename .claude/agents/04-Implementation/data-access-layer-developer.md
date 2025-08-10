@@ -30,8 +30,11 @@ parallel_group: 1
 
 **技術的ガイドライン:**
 
-- Prismaを使用したデータベースアクセス
-- SvelteKitのサーバーサイド機能（+server.ts）を活用
+- **SvelteKit APIエンドポイント（+server.ts）での実装**
+  - `src/routes/api/*/+server.ts`でAPIエンドポイントを定義
+  - Prismaを使用したデータベース操作の実装
+  - 認証・認可処理の統合
+  - バリデーションとエラーハンドリング
 - 環境変数を使用した接続情報の管理
 - データ転送オブジェクト（DTO）の適切な使用
 - ページネーションとフィルタリングの実装
@@ -56,8 +59,8 @@ parallel_group: 1
 
 ```
 src/
-├── lib/
-│   ├── server/
+├── shared/
+│   ├── api/
 │   │   ├── db.ts
 │   │   └── repositories/
 │   │       ├── userRepository.ts

@@ -61,7 +61,7 @@
 ### 2.1 基底エラー型構造
 
 ```typescript
-// src/shared/lib/errors/base-error.ts
+// src/shared/utils/errors/base-error.ts
 
 /**
  * システム全体の基底エラー型
@@ -182,7 +182,7 @@ export interface ErrorJSON {
 ### 2.2 ドメイン特化エラー型
 
 ```typescript
-// src/shared/lib/errors/domain-errors.ts
+// src/shared/utils/errors/domain-errors.ts
 
 /**
  * バリデーションエラー
@@ -257,7 +257,7 @@ export class BusinessRuleError extends BaseError {
 ### 2.3 インフラストラクチャエラー型
 
 ```typescript
-// src/shared/lib/errors/infrastructure-errors.ts
+// src/shared/utils/errors/infrastructure-errors.ts
 
 /**
  * データベース接続エラー
@@ -353,8 +353,8 @@ export class FileProcessingError extends BaseError {
 
 <script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
-  import type { BaseError } from '$lib/errors/base-error';
-  import { ErrorReportingService } from '$lib/services/error-reporting.service';
+  import type { BaseError } from '$shared/utils/errors/base-error';
+  import { ErrorReportingService } from '$shared/utils/services/error-reporting.service';
   
   export let fallbackComponent: any = null;
   export let showDetails: boolean = false;
@@ -555,7 +555,7 @@ export class FileProcessingError extends BaseError {
 ### 3.2 レイヤー別エラー境界設定
 
 ```typescript
-// src/app/providers/error-boundary-provider.ts
+// src/shared/utils/providers/error-boundary-provider.ts
 
 /**
  * アプリケーションレベルエラー境界プロバイダー
@@ -680,7 +680,7 @@ interface ErrorBoundaryConfig {
 ### 4.1 自動回復サービス
 
 ```typescript
-// src/shared/lib/recovery/auto-recovery.service.ts
+// src/shared/utils/recovery/auto-recovery.service.ts
 
 /**
  * 自動回復サービス
@@ -916,7 +916,7 @@ interface RecoveryResult {
 ### 4.2 サーキットブレーカー実装
 
 ```typescript
-// src/shared/lib/circuit-breaker/circuit-breaker.ts
+// src/shared/utils/circuit-breaker/circuit-breaker.ts
 
 /**
  * サーキットブレーカー実装
@@ -1076,7 +1076,7 @@ export class CircuitBreakerOpenError extends BaseError {
 ### 5.1 多言語対応エラーメッセージ
 
 ```typescript
-// src/shared/lib/i18n/error-messages.ts
+// src/shared/utils/i18n/error-messages.ts
 
 /**
  * エラーメッセージの国際化対応
@@ -1192,7 +1192,7 @@ export class ErrorMessageService {
 ### 5.2 コンテキストアウェアエラーメッセージ
 
 ```typescript
-// src/shared/lib/errors/contextual-error-messages.ts
+// src/shared/utils/errors/contextual-error-messages.ts
 
 /**
  * コンテキストを考慮したエラーメッセージ生成
@@ -1382,7 +1382,7 @@ interface ErrorAction {
 ### 6.1 エラーハンドリング最適化
 
 ```typescript
-// src/shared/lib/performance/error-performance.ts
+// src/shared/utils/performance/error-performance.ts
 
 /**
  * エラーハンドリングパフォーマンス最適化
@@ -1561,7 +1561,7 @@ interface OptimizedErrorHandling {
 ### 7.1 エラーハンドリングテスト設計
 
 ```typescript
-// src/shared/lib/testing/error-handling-test.utils.ts
+// src/shared/utils/testing/error-handling-test.utils.ts
 
 /**
  * エラーハンドリングテストユーティリティ

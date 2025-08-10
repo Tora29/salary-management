@@ -26,7 +26,19 @@ REST API設計、GraphQLスキーマ、モダンなWeb APIのベストプラク�
    - 一貫したデータフォーマットとバリデーションアプローチの使用
    - 該当する場合は既存のTypeScript型とインターフェースを活用
 
-3. **包括的なAPI仕様の作成**（以下を含む）：
+3. **Feature-Sliced Design (FSD) でのAPI設計**：
+   - **FSD API構造**：
+     ```
+     src/routes/api/*/+server.ts  # APIエンドポイント実装（DB操作、認証）
+     src/entities/*/api/          # API呼び出し（単純なデータ取得）
+     src/features/*/api/          # 複雑なAPI呼び出し+ビジネスロジック
+     ```
+   - **API層責任分離**：
+     - routes/api: サーバーサイドのAPI実装（DB操作、認証、バリデーション）
+     - entities/api: クライアント側のAPI呼び出し（単純なデータ取得）
+     - features/api: クライアント側の複雑なAPI処理とビジネスロジック
+
+4. **包括的なAPI仕様の作成**（以下を含む）：
    - エンドポイントパスとHTTPメソッド
    - バリデーションルールを含むリクエストボディスキーマ
    - 成功およびエラーケースのレスポンススキーマ

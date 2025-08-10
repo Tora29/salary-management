@@ -31,12 +31,32 @@ execution_order: 1
 - 障害シナリオを計画し、適切な回復パターンを実装
 - アーキテクチャ決定とその根拠を文書化
 
-特定のアーキテクチャパターンを採用しているプロジェクトの場合。
+**Feature-Sliced Design (FSD) アーキテクチャ採用プロジェクトの場合：**
 
-- レイヤードアーキテクチャの原則を尊重
-- モジュール間の適切な分離を確保
-- クロスモジュール通信のルールを明確化
-- 依存関係の方向性を維持
+- **階層型構造の実装**：
+  ```
+  src/
+  ├── routes/api/*/+server.ts # APIエンドポイント実装（DB操作、認証）
+  ├── shared/components/ui/    # 基本UIコンポーネント  
+  ├── shared/components/model/ # Interface定義
+  ├── entities/*/ui/          # ビジネス専用UI（ロジック無し）
+  ├── entities/*/api/         # API呼び出し（単純なデータ取得）
+  ├── entities/*/model/       # 型定義
+  ├── features/*/ui/          # UIとビジネスロジック
+  ├── features/*/api/         # 複雑なAPI呼び出し+ビジネスロジック  
+  ├── features/*/composable/  # ユースケースロジック
+  ├── features/*/model/       # フィーチャー固有型
+  ```
+
+- **FSD依存関係ルール**：
+  - 上位層は下位層のみ使用可能（shared ← entities ← features ← widgets ← pages）
+  - 同レベル層間での直接依存は禁止（feature間の依存はshared経由）
+  - interfaceはmodel/ディレクトリで分離管理
+
+- **FSDコンポーネント責任分離**：
+  - shared: 汎用UIコンポーネント（ビジネスロジック無し）
+  - entities: ビジネス専用UI（ビジネスロジック無し）
+  - features: ユースケース実装（UIとビジネスロジックの統合）
 
 出力形式。
 

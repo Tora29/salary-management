@@ -63,7 +63,7 @@ graph TD
    - 実装内容: shared/components/uiの集合体で構成されるビジネス専用UI
    - 配置: `src/entities/*/`
      - UI: `src/entities/*/ui/` - ビジネス専用のUIコンポーネント
-     - API: `src/entities/*/api/` - セレクトボックス初期値取得など純粋なデータ取得
+     - API: `src/entities/*/api/` - API呼び出し（単純なデータ取得ロジック）
      - Model: `src/entities/*/model/` - 型定義とデータ構造
    - 前提条件: 共通コンポーネント（shared）の完成
 
@@ -76,7 +76,7 @@ graph TD
    - 実装内容: entitiesの集合体 + ビジネスロジックを組み合わせた機能
    - 配置: `src/features/*/`
      - UI: `src/features/*/ui/` - ビジネスロジック付きのUIコンポーネント
-     - API: `src/features/*/api/` - ビジネスロジックを含むAPI呼び出し
+     - API: `src/features/*/api/` - 複雑なAPI呼び出し（複数APIの統合、ビジネスロジック付き）
      - Composable: `src/features/*/composable/` - ユースケース単位で作成されるビジネスロジック
      - Model: `src/features/*/model/` - フィーチャー固有の型定義
    - 前提条件: エンティティ層の完成

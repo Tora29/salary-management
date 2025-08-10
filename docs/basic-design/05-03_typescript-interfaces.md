@@ -13,7 +13,7 @@
 ### 1.1 基本型定義
 
 ```typescript
-// src/shared/types/common.ts
+// src/shared/components/model/common.ts
 
 /**
  * データベースID型（CUID）
@@ -1046,7 +1046,7 @@ export type UpdateDashboardPreferenceInput = z.infer<typeof updateDashboardPrefe
 ### 8.1 統一APIレスポンス
 
 ```typescript
-// src/shared/types/api.ts
+// src/shared/components/model/api.ts
 
 /**
  * 成功レスポンス
@@ -1097,7 +1097,7 @@ export type ErrorCode =
 ### 8.2 APIクライアント型定義
 
 ```typescript
-// src/shared/api/types.ts
+// src/shared/components/model/types.ts
 
 /**
  * APIクライアント設定
@@ -1139,7 +1139,7 @@ export interface RequestConfig {
 ### 9.1 型ヘルパー
 
 ```typescript
-// src/shared/types/helpers.ts
+// src/shared/components/model/helpers.ts
 
 /**
  * 深いPartial型
@@ -1205,7 +1205,7 @@ export type ReturnType<T extends (...args: any) => any> = T extends (...args: an
 ### 9.2 ブランド型
 
 ```typescript
-// src/shared/types/brand.ts
+// src/shared/components/model/brand.ts
 
 /**
  * ブランド型の作成

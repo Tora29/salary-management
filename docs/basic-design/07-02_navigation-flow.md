@@ -829,7 +829,7 @@ const routes = {
 export const chunkConfig = {
   // 共通チャンク
   vendor: ['svelte', 'svelte/store'],
-  common: ['$lib/components', '$lib/utils'],
+  common: ['$shared/ui', '$shared/utils'],
   
   // 機能別チャンク
   features: {

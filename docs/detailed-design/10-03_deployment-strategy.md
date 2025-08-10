@@ -628,7 +628,7 @@ graph TB
 
 #### 構造化ログ実装
 ```typescript
-// src/lib/server/logging/logger.ts
+// src/shared/utils/server/logging/logger.ts
 import { Logger } from 'pino';
 import { createWriteStream } from 'pino-logflare';
 
@@ -713,7 +713,7 @@ export const logger = new StructuredLogger();
 #### ログミドルウェア実装
 ```typescript
 // src/hooks.server.ts
-import { logger } from '$lib/server/logging/logger';
+import { logger } from '$shared/utils/server/logging/logger';
 import { v4 as uuidv4 } from 'uuid';
 
 export const handle = async ({ event, resolve }) => {
@@ -790,7 +790,7 @@ export const handle = async ({ event, resolve }) => {
 
 #### カスタムアラート実装
 ```typescript
-// src/lib/server/monitoring/alerts.ts
+// src/shared/utils/server/monitoring/alerts.ts
 interface AlertConfig {
   name: string;
   condition: (metrics: Metrics) => boolean;
@@ -948,7 +948,7 @@ export const handle = sequence(
 
 #### GDPR/個人情報保護対応
 ```typescript
-// src/lib/server/privacy/data-protection.ts
+// src/shared/utils/server/privacy/data-protection.ts
 export class DataProtectionService {
   async anonymizeUserData(userId: string): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
@@ -1237,7 +1237,7 @@ interface PerformanceTargets {
 ### 7.3 キャッシュ最適化戦略
 
 ```typescript
-// src/lib/server/cache/cache-manager.ts
+// src/shared/utils/server/cache/cache-manager.ts
 export class CacheManager {
   private redis: Redis;
   
@@ -1359,7 +1359,7 @@ gantt
 
 #### リソース使用量監視
 ```typescript
-// src/lib/server/monitoring/cost-monitor.ts
+// src/shared/utils/server/monitoring/cost-monitor.ts
 export class CostMonitor {
   async generateCostReport(): Promise<CostReport> {
     const [vercelUsage, neonUsage, upstashUsage] = await Promise.all([

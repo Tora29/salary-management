@@ -71,7 +71,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key  # 管理操作用（オプシ�
 既存のローカルデータベースをSupabaseに移行する場合：
 
 1. Supabaseダッシュボードで「SQL Editor」を開く
-2. `src/lib/server/db/schema.sql`の内容をコピーして実行
+2. データベーススキーマをPrismaから生成して実行
 3. 必要に応じてテストデータをインポート
 
 ### 6. 接続テスト

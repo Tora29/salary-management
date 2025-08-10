@@ -95,7 +95,7 @@ interface RequiredTestDesign {
 ```
 
 #### エラーコード体系の実装（期限: 8/11）
-- `/src/lib/errors/` ディレクトリに実装
+- `/src/shared/utils/errors/` ディレクトリに実装
 - ErrorCode enum の定義
 - AppError クラスの実装
 - エラーメッセージの国際化対応
@@ -243,33 +243,53 @@ const sprint2Deliverables = {
 </script>
 ```
 
-### 4.2 Feature-Sliced Design構造
+### 4.2 Feature-Sliced Design構造（04-Implementation準拠）
+
+**⚠️ 重要：04-Implementation/IMPLEMENTATION_ORDER.mdで定義された正式構造に準拠**
 
 ```bash
 src/
-├── app/                    # アプリケーション設定
-│   ├── providers/         # グローバルプロバイダー
-│   └── styles/           # グローバルスタイル
-├── widgets/               # 複合UI（ページレベル）
-│   ├── dashboard/
-│   └── header/
-├── features/              # ユーザー向け機能
+├── shared/components/      # 共通リソース（最下位層）
+│   ├── ui/               # 基本UIコンポーネント
+│   └── model/           # Interface定義
+├── entities/              # ビジネスエンティティ（下位層）
 │   ├── salary-slip/
-│   ├── portfolio/
-│   └── dashboard/
-├── entities/              # ビジネスエンティティ
-│   ├── salary-slip/
+│   │   ├── ui/          # ビジネス専用UI（ロジック無し）
+│   │   ├── api/         # 純粋なデータ取得
+│   │   └── model/       # 型定義
 │   ├── stock/
+│   │   ├── ui/
+│   │   ├── api/
+│   │   └── model/
 │   └── asset/
-├── shared/                # 共通リソース
-│   ├── ui/               # UIコンポーネント
-│   ├── lib/              # ユーティリティ
-│   └── api/              # API クライアント
+│       ├── ui/
+│       ├── api/
+│       └── model/
+├── features/              # ユーザー向け機能（上位層）
+│   ├── salary-slip/
+│   │   ├── ui/          # UIとビジネスロジック
+│   │   ├── api/         # API+ビジネスロジック
+│   │   ├── composable/  # ユースケースロジック
+│   │   └── model/       # フィーチャー固有型
+│   ├── portfolio/
+│   │   ├── ui/
+│   │   ├── api/
+│   │   ├── composable/
+│   │   └── model/
+│   └── dashboard/
+│       ├── ui/
+│       ├── api/
+│       ├── composable/
+│       └── model/
 └── routes/                # SvelteKit ルーティング
     ├── +layout.svelte
     ├── +page.svelte
     └── api/              # API エンドポイント
 ```
+
+**FSD依存関係ルール**：
+- shared ← entities ← features（上位層は下位層のみ使用可能）
+- 同レベル層間での直接依存は禁止
 
 ### 4.3 型安全性の確保
 
@@ -311,7 +331,7 @@ const LazyComponent = lazy(() => import('./HeavyComponent.svelte'));
 import VirtualList from '@tanstack/svelte-virtual';
 
 // 3. デバウンス処理
-import { debounce } from '$lib/utils';
+import { debounce } from '$shared/utils';
 const debouncedSearch = debounce(search, 300);
 
 // 4. メモ化
@@ -320,7 +340,7 @@ const expensiveCalculation = $derived.memo(() => {
 });
 
 // 5. 画像最適化
-import { optimizeImage } from '$lib/utils/image';
+import { optimizeImage } from '$shared/utils/image';
 ```
 
 ---

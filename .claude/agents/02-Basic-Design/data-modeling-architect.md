@@ -34,13 +34,27 @@ parallel_group: 1
 - 適切な場所での監査フィールド（created_at、updated_atなど）の含有
 - 各フィールドに適切なデータ型と制約の定義
 
-TypeScriptインターフェースでは。
+**Feature-Sliced Design (FSD) でのTypeScriptインターフェース設計：**
 
-- 多態的データには判別共用体を使用
-- 共通パターンにはユーティリティ型を活用
-- 必要に応じてAPIリクエスト、レスポンス、ドメインモデル用に別々の型を作成
-- 適切なnull/undefined処理の確保
-- 複雑な型関係の文書化
+- **FSD model構造**：
+  ```
+  src/shared/components/model/    # 共通UI型定義
+  src/entities/*/model/          # エンティティ型定義
+  src/features/*/model/          # フィーチャー固有型
+  ```
+
+- **FSD型配置ルール**：
+  - 共通インターフェースは`shared/components/model/`に配置
+  - ドメイン固有型は`entities/*/model/`に配置
+  - ユースケース固有型は`features/*/model/`に配置
+  - API型とドメイン型を分離（ApiResponse vs DomainEntity）
+
+- **TypeScript設計原則**：
+  - 多態的データには判別共用体を使用
+  - 共通パターンにはユーティリティ型を活用
+  - 必要に応じてAPIリクエスト、レスポンス、ドメインモデル用に別々の型を作成
+  - 適切なnull/undefined処理の確保
+  - 複雑な型関係の文書化
 
 品質管理対策。
 

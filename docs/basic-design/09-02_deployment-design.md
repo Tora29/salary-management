@@ -984,8 +984,8 @@ interface DeploymentMonitoring {
 ```typescript
 // src/routes/api/health/+server.ts
 import { json } from '@sveltejs/kit';
-import { prisma } from '$lib/server/prisma';
-import { redis } from '$lib/server/redis';
+import { prisma } from '$shared/server/prisma';
+import { redis } from '$shared/server/redis';
 
 export async function GET() {
   const checks = {

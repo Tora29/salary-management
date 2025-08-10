@@ -186,7 +186,7 @@ model SalarySlip {
 
 ##### タスク1-4: Repository・Service層実装 (2日)
 ```typescript
-// src/lib/server/repositories/user.repository.ts
+// src/shared/utils/server/repositories/user.repository.ts
 export class UserRepository {
   private prisma = new PrismaClient();
 
@@ -272,7 +272,7 @@ gantt
 
 ##### タスク2-1: PDF解析エンジン選定・実装 (5日)
 ```typescript
-// src/lib/server/services/pdf-parser.service.ts
+// src/shared/utils/server/services/pdf-parser.service.ts
 import { createWorker } from 'tesseract.js';
 import * as pdfParse from 'pdf-parse';
 
@@ -324,7 +324,7 @@ export class PDFParserService {
 
 ##### タスク2-2: データ抽出・構造化 (3日)
 ```typescript
-// src/lib/server/services/salary-data-extractor.service.ts
+// src/shared/utils/server/services/salary-data-extractor.service.ts
 export class SalaryDataExtractor {
   private patterns = {
     companyName: /(?:会社名|勤務先)[：:]\s*(.+?)(?:\n|$)/,
@@ -374,7 +374,7 @@ export class SalaryDataExtractor {
 
 ##### タスク2-3: バリデーション・エラーハンドリング (2日)
 ```typescript
-// src/lib/server/validators/salary-slip.validator.ts
+// src/shared/utils/server/validators/salary-slip.validator.ts
 import { z } from 'zod';
 
 export const SalarySlipSchema = z.object({
@@ -417,7 +417,7 @@ export const SalarySlipSchema = z.object({
 ```typescript
 // src/routes/api/salary-slips/+server.ts
 import type { RequestHandler } from './$types';
-import { SalarySlipService } from '$lib/server/services/salary-slip.service';
+import { SalarySlipService } from '$shared/utils/server/services/salary-slip.service';
 import { json } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
@@ -607,7 +607,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 ##### タスク2-6: UI Components実装 (3日)
 ```svelte
-<!-- src/lib/components/FileDropZone.svelte -->
+<!-- src/shared/components/ui/FileDropZone.svelte -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   
@@ -780,8 +780,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 <!-- src/routes/salary-slips/+page.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
-  import FileDropZone from '$lib/components/FileDropZone.svelte';
-  import SalarySlipCard from '$lib/components/SalarySlipCard.svelte';
+  import FileDropZone from '$shared/components/ui/FileDropZone.svelte';
+  import SalarySlipCard from '$shared/components/ui/SalarySlipCard.svelte';
   
   let salarySlips: SalarySlip[] = [];
   let loading = true;
@@ -1012,7 +1012,7 @@ gantt
 
 ##### タスク3-1: 株式取引管理 (5日)
 ```typescript
-// src/lib/server/services/stock-transaction.service.ts
+// src/shared/utils/server/services/stock-transaction.service.ts
 export class StockTransactionService {
   private prisma = new PrismaClient();
   private stockPriceService = new StockPriceService();
@@ -1100,7 +1100,7 @@ export class StockTransactionService {
 
 ##### タスク3-2: 外部株価API統合 (3日)
 ```typescript
-// src/lib/server/services/stock-price.service.ts
+// src/shared/utils/server/services/stock-price.service.ts
 export class StockPriceService {
   private providers: StockPriceProvider[] = [
     new AlphaVantageProvider(),
@@ -1180,9 +1180,9 @@ export class StockPriceService {
 <script lang="ts">
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
-  import StockTransactionForm from '$lib/components/StockTransactionForm.svelte';
-  import PortfolioSummary from '$lib/components/PortfolioSummary.svelte';
-  import StockList from '$lib/components/StockList.svelte';
+  import StockTransactionForm from '$shared/components/ui/StockTransactionForm.svelte';
+  import PortfolioSummary from '$shared/components/ui/PortfolioSummary.svelte';
+  import StockList from '$shared/components/ui/StockList.svelte';
 
   let portfolio: PortfolioData;
   let loading = true;
@@ -1283,9 +1283,9 @@ export class StockPriceService {
 <!-- src/routes/dashboard/+page.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
-  import Chart from '$lib/components/Chart.svelte';
-  import SummaryCard from '$lib/components/SummaryCard.svelte';
-  import RecentTransactions from '$lib/components/RecentTransactions.svelte';
+  import Chart from '$shared/components/ui/Chart.svelte';
+  import SummaryCard from '$shared/components/ui/SummaryCard.svelte';
+  import RecentTransactions from '$shared/components/ui/RecentTransactions.svelte';
 
   let dashboardData: DashboardData;
   let loading = true;
@@ -1413,7 +1413,7 @@ export class StockPriceService {
 
 ##### タスク3-5: パフォーマンス最適化 (3日)
 ```typescript
-// src/lib/server/services/dashboard.service.ts
+// src/shared/utils/server/services/dashboard.service.ts
 export class DashboardService {
   private cache = new Redis(process.env.REDIS_URL);
 
@@ -1618,7 +1618,7 @@ ANALYZE stock_portfolios;
 
 ##### タスク4-3: 監視システム設定 (3日)
 ```typescript
-// src/lib/server/monitoring/health-check.ts
+// src/shared/utils/server/monitoring/health-check.ts
 export class HealthCheckService {
   async performHealthCheck(): Promise<HealthStatus> {
     const checks = await Promise.allSettled([
@@ -1672,9 +1672,9 @@ export const GET: RequestHandler = async () => {
 ##### タスク4-4: セキュリティ強化 (2日)
 ```typescript
 // src/hooks.server.ts - セキュリティミドルウェア
-import { rateLimit } from '$lib/server/middleware/rate-limit';
-import { securityHeaders } from '$lib/server/middleware/security-headers';
-import { validateRequest } from '$lib/server/middleware/validation';
+import { rateLimit } from '$shared/utils/server/middleware/rate-limit';
+import { securityHeaders } from '$shared/utils/server/middleware/security-headers';
+import { validateRequest } from '$shared/utils/server/middleware/validation';
 
 export const handle = sequence(
   // レート制限

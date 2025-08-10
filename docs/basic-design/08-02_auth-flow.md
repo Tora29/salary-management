@@ -257,7 +257,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 // セッション利用例（SvelteKitページで）
 // +page.server.ts
 import { getServerSession } from '@auth/sveltekit';
-import { authOptions } from '$lib/auth';
+import { authOptions } from '$shared/auth';
 
 export async function load({ request }) {
   const session = await getServerSession(request, authOptions);

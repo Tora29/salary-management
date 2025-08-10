@@ -56,7 +56,7 @@ execution_order: null  # 特定の順序なし
 
 - 常にTypeScriptのstrictモード原則を使用する
 - Svelteコンポーネントには、Svelte 5のrunes構文を使用する
-- FSD構造に従う: shared/, entities/, features/, widgets/, pages/, app/
+- FSD構造に従う: shared/, entities/, features/, widgets/, routes/ (SvelteKitページ構造)
 - 適切な状態管理パターンを実装する
 - 非同期操作にはasync/awaitを使用する
 - パブリックAPIにはJSDocコメントを含める
