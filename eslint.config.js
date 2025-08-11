@@ -132,7 +132,17 @@ export default ts.config(
 
 			// ========== Svelteパフォーマンス ==========
 			'svelte/no-object-in-text-mustaches': 'warn',
-			'svelte/prefer-style-directive': 'warn'
+			'svelte/prefer-style-directive': 'warn',
+
+			// ========== Svelte 5 Runes対応 ==========
+			// $props()の分割代入は再代入されないが、letである必要がある
+			'prefer-const': [
+				'error',
+				{
+					destructuring: 'all',
+					ignoreReadBeforeAssign: true
+				}
+			]
 		}
 	}
 );

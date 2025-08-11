@@ -1,5 +1,5 @@
 ---
-name: Svelte文法チェッカー
+name: svelte4-to-svelte5-migrator
 description: Use this agent when you need to migrate Svelte 4 code to Svelte 5 syntax and patterns. Examples: <example>Context: User has existing Svelte 4 components that need to be updated to Svelte 5 syntax. user: 'I have this Svelte 4 component with stores and need to update it to Svelte 5' assistant: 'I'll use the svelte4-to-svelte5-migrator agent to convert your component to the new Svelte 5 syntax with runes and updated patterns.'</example> <example>Context: User is working on a codebase migration from Svelte 4 to Svelte 5. user: 'Can you help me convert these reactive statements to use Svelte 5 runes?' assistant: 'Let me use the svelte4-to-svelte5-migrator agent to transform your reactive statements into the new runes syntax.'</example>
 model: inherit
 color: red

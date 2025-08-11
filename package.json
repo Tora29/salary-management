@@ -67,6 +67,7 @@
 		"@composio/mcp": "^1.0.9",
 		"@floating-ui/dom": "^1.7.3",
 		"@lucide/svelte": "^0.536.0",
+		"@node-rs/argon2": "^2.0.2",
 		"@prisma/client": "^6.13.0",
 		"@sentry/sveltekit": "^7.120.4",
 		"@skeletonlabs/skeleton": "^2.11.0",
