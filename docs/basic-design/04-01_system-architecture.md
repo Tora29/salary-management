@@ -12,58 +12,68 @@
 
 ### 1.1 システム全体像
 
-個人の給料と資産管理システムは、**3層アーキテクチャ**と**Feature-Sliced Design**を組み合わせた、モダンでスケーラブルな設計を採用します。
+個人の給料と資産管理システムは、**3層アーキテクチャ**と**Feature-Sliced Design**を組み合わせ、**効率化ライブラリ群**により開発期間を54%短縮した設計を採用します。
 
 ```mermaid
 graph TB
     subgraph "Client Layer"
         Browser[ブラウザ<br/>Svelte 5 + SvelteKit]
+        UI[Skeleton UI<br/>🎯 4週間→1週間]
+        Forms[Superforms + Zod<br/>🎯 3日→半日]
+        Query[TanStack Query<br/>🎯 自動キャッシュ]
     end
     
     subgraph "Application Layer"
         subgraph "SvelteKit Server"
             API[API Routes<br/>RESTful API]
             SSR[SSR Engine<br/>Server Side Rendering]
-            MW[Middleware<br/>認証・検証・ログ]
+            MW[Middleware<br/>Auth.js・検証・ログ]
+            OCR[Tesseract.js<br/>🎯 2週間→2日]
         end
     end
     
     subgraph "Data Layer"
         subgraph "Primary Storage"
-            DB[(PostgreSQL<br/>給料・株式データ)]
+            DB[(PostgreSQL<br/>+ Prisma ORM)]
         end
         subgraph "Cache Layer"
-            Cache[(Redis<br/>セッション・キャッシュ)]
+            Cache[(Redis<br/>TanStack Query統合)]
         end
-        subgraph "File Storage"
-            FS[File System<br/>一時PDF保存]
+        subgraph "File Processing"
+            FP[FilePond<br/>🎯 高機能アップロード]
         end
     end
     
     subgraph "External Services"
         StockAPI[株価API<br/>Alpha Vantage]
-        Auth[Auth.js認証<br/>Google OAuth 2.0<br/>🎆 自動化統合]
+        Auth[Auth.js<br/>🎯 3週間→1日]
+        Sentry[Sentry<br/>🎯 リアルタイム監視]
     end
     
     Browser <--> SSR
     Browser <--> API
+    Query <--> Cache
+    Forms --> API
     API --> MW
     MW --> DB
-    MW --> Cache
-    MW --> FS
+    MW --> OCR
+    OCR --> FP
     API --> StockAPI
     SSR --> Auth
+    API --> Sentry
 ```
 
 ### 1.2 アーキテクチャパターン
 
-| パターン | 適用箇所 | 理由 |
-|---------|---------|------|
-| **Feature-Sliced Design** | フロントエンド構造 | 機能単位での開発・保守性向上 |
-| **Repository Pattern** | データアクセス層 | データソースの抽象化 |
-| **Service Layer Pattern** | ビジネスロジック層 | ロジックの集約と再利用 |
-| **Adapter Pattern** | 外部API連携 | 外部依存の抽象化 |
-| **Observer Pattern** | Svelte Store | リアクティブな状態管理 |
+| パターン | 適用箇所 | 理由 | 効率化ライブラリ |
+|---------|---------|------|----------------|
+| **Feature-Sliced Design** | フロントエンド構造 | 機能単位での開発・保守性向上 | - |
+| **Repository Pattern** | データアクセス層 | データソースの抽象化 | Prisma ORM |
+| **Service Layer Pattern** | ビジネスロジック層 | ロジックの集約と再利用 | - |
+| **Adapter Pattern** | 外部API連携 | 外部依存の抽象化 | Auth.js Adapter |
+| **Observer Pattern** | 状態管理 | リアクティブな状態管理 | TanStack Query |
+| **Form State Pattern** | フォーム管理 | フォーム状態の一元管理 | Superforms |
+| **Component Library Pattern** | UI構築 | 再利用可能UIコンポーネント | Skeleton UI |
 
 ---
 
@@ -110,13 +120,13 @@ graph LR
 
 #### コンポーネント責任分担
 
-| レイヤー | 責任 | 例 |
-|---------|------|-----|
-| **app** | グローバル設定・初期化 | 認証プロバイダー、テーマ設定 |
-| **widgets** | 複数機能の統合UI | ダッシュボード全体、ヘッダー |
-| **features** | ユーザー向け機能 | PDF取込、株式登録、グラフ表示 |
-| **entities** | ビジネスエンティティ | 給料明細、株式、資産モデル |
-| **shared** | 共通機能 | ボタン、フォーム、API通信 |
+| レイヤー | 責任 | 例 | 効率化ライブラリ |
+|---------|------|-----|----------------|
+| **app** | グローバル設定・初期化 | 認証プロバイダー、テーマ設定 | Auth.js、TanStack Query Provider |
+| **widgets** | 複数機能の統合UI | ダッシュボード全体、ヘッダー | Skeleton UI AppShell |
+| **features** | ユーザー向け機能 | PDF取込、株式登録、グラフ表示 | Tesseract.js、FilePond、Chart.js |
+| **entities** | ビジネスエンティティ | 給料明細、株式、資産モデル | Prisma Client Models |
+| **shared** | 共通機能 | ボタン、フォーム、API通信 | Skeleton UI Components、Superforms |
 
 ### 2.2 アプリケーション層
 
@@ -225,33 +235,35 @@ erDiagram
 
 ## 3. データフロー設計
 
-### 3.1 給料明細PDF取込フロー
+### 3.1 給料明細PDF取込フロー（効率化版）
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant B as Browser
+    participant FP as FilePond
+    participant SF as Superforms
     participant API as API Server
-    participant PDF as PDF Parser
-    participant DB as PostgreSQL
-    participant FS as File System
+    participant TS as Tesseract.js
+    participant DB as Prisma
     
-    U->>B: PDFファイルをドロップ
-    B->>B: ファイル検証（サイズ・形式）
-    B->>API: POST /api/salary-slips/upload
-    API->>FS: 一時保存
-    API->>PDF: PDFパース処理
-    PDF->>PDF: OCR・データ抽出
-    PDF->>API: 抽出データ返却
-    API->>DB: 重複チェック
-    alt 重複なし
-        API->>DB: データ保存
-        API->>FS: 一時ファイル削除
-        API->>B: 成功レスポンス
-        B->>U: 成功通知表示
-    else 重複あり
-        API->>B: 確認要求
-        B->>U: 上書き確認ダイアログ
+    U->>FP: PDFファイルをドラッグ&ドロップ
+    FP->>FP: 自動検証・プレビュー表示
+    FP->>FP: プログレス表示
+    FP->>API: チャンクアップロード
+    API->>TS: OCR処理（Web Worker）
+    Note over TS: 従来300行→20行で実装
+    TS->>TS: 日本語テキスト抽出
+    TS->>SF: 抽出データ自動入力
+    SF->>SF: Zodバリデーション
+    Note over SF: 自動エラー表示
+    SF->>API: 検証済みデータ送信
+    API->>DB: Prismaで保存
+    alt 成功
+        API->>SF: 成功レスポンス
+        SF->>U: Skeleton UI Toast表示
+    else エラー
+        API->>SF: エラーレスポンス
+        SF->>U: 自動エラー表示
     end
 ```
 
@@ -282,32 +294,37 @@ sequenceDiagram
     API->>S: 完了通知
 ```
 
-### 3.3 ダッシュボード表示フロー
+### 3.3 ダッシュボード表示フロー（TanStack Query統合）
 
 ```mermaid
 graph LR
-    subgraph "データ取得フロー"
-        Start[ページロード] --> Parallel{並列取得}
-        Parallel --> Summary[サマリー取得]
-        Parallel --> Charts[グラフデータ取得]
-        Parallel --> Portfolio[ポートフォリオ取得]
+    subgraph "TanStack Query自動管理"
+        Start[ページロード] --> TQ[TanStack Query]
+        TQ --> QC{Query Cache確認}
         
-        Summary --> Cache1{キャッシュ確認}
-        Charts --> Cache2{キャッシュ確認}
-        Portfolio --> Cache3{キャッシュ確認}
+        QC -->|Fresh| Instant[即座に表示]
+        QC -->|Stale| BG[バックグラウンド更新]
+        QC -->|Empty| Fetch[並列フェッチ]
         
-        Cache1 -->|ヒット| Display1[即座に表示]
-        Cache2 -->|ヒット| Display2[即座に表示]
-        Cache3 -->|ヒット| Display3[即座に表示]
+        subgraph "自動並列取得"
+            Fetch --> Q1[useSummary Query]
+            Fetch --> Q2[useCharts Query]
+            Fetch --> Q3[usePortfolio Query]
+        end
         
-        Cache1 -->|ミス| DB1[DB取得]
-        Cache2 -->|ミス| DB2[DB集計]
-        Cache3 -->|ミス| DB3[DB取得]
+        Q1 --> SK1[Skeleton UI<br/>スケルトン表示]
+        Q2 --> SK2[Chart.js<br/>グラフ描画]
+        Q3 --> SK3[Table<br/>テーブル表示]
         
-        DB1 --> Display1
-        DB2 --> Display2
-        DB3 --> Display3
+        BG --> Optimistic[オプティミスティック更新]
+        
+        subgraph "自動エラーハンドリング"
+            Error[エラー発生] --> Retry[自動リトライ]
+            Retry --> Fallback[フォールバック表示]
+        end
     end
+    
+    Note: TanStack Queryが<br/>loading/error/data状態を<br/>完全自動管理
 ```
 
 ---
@@ -418,7 +435,7 @@ class StockPriceService {
 
 ## 5. セキュリティアーキテクチャ
 
-### 5.1 多層防御戦略
+### 5.1 多層防御戦略（効率化ライブラリ統合）
 
 ```mermaid
 graph TB
@@ -426,18 +443,21 @@ graph TB
         L1[レイヤー1: ネットワーク]
         L2[レイヤー2: アプリケーション]
         L3[レイヤー3: データ]
+        L4[レイヤー4: 監視]
         
         L1 --> |HTTPS/TLS 1.3| SSL[SSL証明書]
         L1 --> |WAF| Firewall[ファイアウォール]
         
-        L2 --> |認証| OAuth[Google OAuth 2.0]
-        L2 --> |認可| RBAC[ロールベースアクセス制御]
-        L2 --> |検証| Validation[入力検証・サニタイゼーション]
-        L2 --> |CSRF| Token[CSRFトークン]
+        L2 --> |Auth.js| AuthJS[完全自動認証<br/>🎯 CSRF/PKCE自動]
+        L2 --> |Superforms| SF[Zodバリデーション<br/>🎯 自動サニタイズ]
+        L2 --> |SvelteKit| SK[ビルトインCSRF保護]
         
+        L3 --> |Prisma| Prisma[SQLインジェクション防止<br/>🎯 型安全クエリ]
         L3 --> |暗号化| Encryption[AES-256-GCM]
-        L3 --> |監査| Audit[監査ログ]
-        L3 --> |バックアップ| Backup[定期バックアップ]
+        L3 --> |バックアップ| Backup[Supabase自動バックアップ]
+        
+        L4 --> |Sentry| Sentry[リアルタイムエラー監視<br/>🎯 自動アラート]
+        L4 --> |Analytics| VA[Vercel Analytics]
     end
 ```
 
@@ -590,41 +610,68 @@ infrastructure:
 
 ## 8. 監視・観測可能性
 
-### 8.1 ログアーキテクチャ
+### 8.1 ログアーキテクチャ（Sentry統合）
 
 ```typescript
-// 構造化ログ設計
+// Sentry統合ログ設計
 interface LogArchitecture {
+  // Sentryレベルマッピング
   levels: {
-    ERROR: "エラー発生";
-    WARN: "警告事項";
-    INFO: "情報ログ";
-    DEBUG: "デバッグ情報";
+    ERROR: "エラー発生"; // → Sentry自動送信
+    WARN: "警告事項";     // → Sentry Breadcrumb
+    INFO: "情報ログ";     // → ローカルログ
+    DEBUG: "デバッグ情報"; // → 開発環境のみ
   };
   
+  // Sentry自動エンリッチメント
   format: {
     timestamp: string;
     level: string;
     message: string;
     context: {
-      userId?: string;
+      userId?: string;      // Auth.jsから自動取得
       requestId: string;
       action: string;
       duration?: number;
+      browser?: string;     // Sentry自動収集
+      os?: string;         // Sentry自動収集
     };
     error?: {
       code: string;
-      stack?: string;
+      stack?: string;       // Sentryソースマップ解析
+      breadcrumbs?: any[];  // Sentry自動追跡
     };
   };
   
+  // Sentryダッシュボード設定
+  monitoring: {
+    realTimeAlerts: true;
+    performanceTracking: true;
+    releaseTracking: true;
+    userFeedback: true;
+  };
+  
   retention: {
-    ERROR: "30 days";
-    WARN: "14 days";
+    ERROR: "90 days";  // Sentry無料枠
+    WARN: "30 days";
     INFO: "7 days";
     DEBUG: "1 day";
   };
 }
+
+// Sentry初期化（app.ts）
+import * as Sentry from '@sentry/sveltekit';
+
+Sentry.init({
+  dsn: process.env.PUBLIC_SENTRY_DSN,
+  integrations: [
+    new Sentry.BrowserTracing(),
+    new Sentry.Replay(),
+  ],
+  tracesSampleRate: 0.1,      // 10%サンプリング
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0, // エラー時は100%記録
+});
 ```
 
 ### 8.2 メトリクス監視
@@ -704,10 +751,39 @@ graph TB
 - 型安全性の確保
 - マイグレーション管理の容易さ
 - JSONデータ型の活用
+- Auth.js統合（@auth/prisma-adapter）
 
 **影響**:
 - TypeScript統合が強力
 - クエリパフォーマンスの最適化が必要
+- Auth.jsとのシームレスな統合
+
+### ADR-003: 効率化ライブラリ群の採用
+
+**ステータス**: 承認済み
+
+**コンテキスト**: 開発期間短縮のためのライブラリ選定
+
+**決定**: 以下のライブラリ群を採用
+- Auth.js: 認証（3週間→1日）
+- Tesseract.js: OCR（2週間→2日）
+- Skeleton UI: UIコンポーネント（4週間→1週間）
+- Superforms: フォーム管理（3日→半日）
+- TanStack Query: 状態管理（自動キャッシュ）
+- FilePond: ファイルアップロード
+- xlsx: エクスポート（1週間→2時間）
+- Sentry: エラー監視
+
+**理由**:
+- 開発期間を13週間から6週間に短縮（54%削減）
+- コード量の大幅削減
+- 保守性の向上
+- ベストプラクティスの自動適用
+
+**影響**:
+- 初期学習コストが発生
+- ライブラリへの依存
+- 長期的な開発効率の大幅向上
 
 ---
 

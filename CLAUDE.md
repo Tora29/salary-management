@@ -33,9 +33,10 @@ Feature-Sliced Design (FSD) アーキテクチャに従っています。
 
 ## 関連ファイル
 
-要件定義時は@~/.claude/agents/01-Requirements-Definition/README.md
-基本設計時は@~/.claude/agents/02-Basic-Design/README.md
-詳細設計時は@~/.claude/agents/03-Detailed-Design/README.md
-実装、テスト時は@~/.claude/agents/04-Implementation/README.md
-実装後の文法チェックは@~/.claude/agents/05-Frontend-Reviewer/svelte4-to-svelte5-migrator.md
+Svelte5の最新仕様は@docs/svelte5-comprehensive-guide.md
+要件定義時は@.claude/agents/01-Requirements-Definition/README.md
+基本設計時は@.claude/agents/02-Basic-Design/README.md
+詳細設計時は@.claude/agents/03-Detailed-Design/README.md
+実装、テスト時は@.claude/agents/04-Implementation/README.md
+実装後の文法チェックは@.claude/agents/05-Frontend-Reviewer/svelte4-to-svelte5-migrator.md
 を参照すること

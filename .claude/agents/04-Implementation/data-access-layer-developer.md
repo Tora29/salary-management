@@ -59,15 +59,19 @@ parallel_group: 1
 
 ```
 src/
+├── routes/
+│   └── api/
+│       ├── users/
+│       │   └── +server.ts
+│       └── products/
+│           └── +server.ts
 ├── shared/
-│   ├── api/
-│   │   ├── db.ts
-│   │   └── repositories/
-│   │       ├── userRepository.ts
-│   │       └── productRepository.ts
 │   └── utils/
 │       └── server/
-│           └── prisma.ts
+│           ├── prisma.ts
+│           └── repositories/
+│               ├── userRepository.ts
+│               └── productRepository.ts
 ```
 
 **エラーハンドリング戦略:**
