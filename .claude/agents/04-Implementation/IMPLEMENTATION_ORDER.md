@@ -35,8 +35,8 @@ graph TD
    - エージェント: `common-components-developer`
    - 実装内容: Button、Card、Form要素などの基本UIコンポーネント
    - 配置:
-      - UI: `src/shared/components/ui/`
-      - Model: `src/shared/components/model/`
+     - UI: `src/shared/components/ui/`
+     - Model: `src/shared/components/model/`
 
 ### フェーズ2: インフラストラクチャ層（並列実行可能）
 
@@ -97,10 +97,10 @@ graph TD
 
 6. **UI実装**
    - エージェント: `ui-component-developer`
-   - 実装内容: 
+   - 実装内容:
      - ページ（`+page.svelte`）: featuresのUIコンポーネントを組み合わせてページを構成
      - ウィジェット: 複数のfeaturesを統合した大きなUI単位
-   - 配置: 
+   - 配置:
      - Pages: `src/routes/*/+page.svelte` - featuresの組み合わせでページ構成
      - Widgets: `src/widgets/` - 複数featuresの統合UI
    - 前提条件: API層とフィーチャー層の完成
@@ -154,6 +154,7 @@ graph TD
 ## FSDアーキテクチャの実装例
 
 ### ページ構成の例
+
 ```typescript
 // src/routes/salary/+page.svelte
 import { SalaryCalculationFeature } from '$features/salary-calculation';
@@ -163,9 +164,10 @@ import { StockPortfolioFeature } from '$features/stock-portfolio';
 ```
 
 ### 層の依存関係
+
 - **Shared**: 汎用的な基本コンポーネント（独立）
 - **Entities**: Sharedを使用してビジネス専用UI構築
-- **Features**: Entitiesを使用してビジネスロジック付き機能構築  
+- **Features**: Entitiesを使用してビジネスロジック付き機能構築
 - **Widgets**: Featuresを組み合わせて大きなUI単位構築
 - **Pages**: FeaturesやWidgetsを組み合わせてページ構成
 

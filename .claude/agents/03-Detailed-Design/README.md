@@ -26,7 +26,9 @@ graph TD
 ## 実行順序詳細
 
 ### 成果物ファイル命名規則
+
 **重要**: 成果物のファイル名には必ず項番を付けてください。
+
 - 形式: `[カテゴリ番号]-[連番]_[ファイル名].md`
 - 例: `10-01_library-selection.md`
 
@@ -34,7 +36,7 @@ graph TD
 
 - **実行タイミング**: 最初に実行
 - **前提条件**: 基本設計の完了、技術要件の明確化
-- **成果物**: 
+- **成果物**:
   - `10-01_library-selection-report.md` - ライブラリ選定レポート
   - `10-02_technology-stack.md` - 技術スタック定義
   - `10-03_dependency-analysis.md` - 依存関係分析
@@ -43,7 +45,7 @@ graph TD
 
 - **実行タイミング**: ライブラリ選定後
 - **前提条件**: ライブラリ選定の完了、要件定義、ビジネス要求仕様の完了
-- **成果物**: 
+- **成果物**:
   - `11-01_api-specification.md` - API仕様
   - `11-02_data-exchange-format.md` - データ交換フォーマット
   - `11-03_external-system-integration.md` - 外部システム連携仕様
@@ -55,7 +57,7 @@ graph TD
 #### 3a. クラス設計（class-design-architect）
 
 - **前提条件**: インターフェース詳細設計の完了
-- **成果物**: 
+- **成果物**:
   - `12-01_class-structure.md` - クラス構造
   - `12-02_business-logic.md` - ビジネスロジック定義
   - `12-03_design-patterns.md` - デザインパターン適用
@@ -63,7 +65,7 @@ graph TD
 #### 3b. データベース詳細設計（database-detail-designer）
 
 - **前提条件**: インターフェース詳細設計の完了
-- **成果物**: 
+- **成果物**:
   - `13-01_database-schema.md` - データベーススキーマ
   - `13-02_index-strategy.md` - インデックス戦略
   - `13-03_access-patterns.md` - アクセスパターン
@@ -72,7 +74,7 @@ graph TD
 
 - **実行タイミング**: クラス設計とデータベース設計の両方が完了後
 - **前提条件**: クラス設計とデータベース設計の成果物
-- **成果物**: 
+- **成果物**:
   - `14-01_process-flow.md` - 処理フロー図
   - `14-02_data-transformation.md` - データ変換定義
   - `14-03_state-transition.md` - 状態遷移図
@@ -84,7 +86,7 @@ graph TD
 #### 5a. エラーハンドリング設計（error-handling-designer）
 
 - **前提条件**: 処理フロー設計の完了
-- **成果物**: 
+- **成果物**:
   - `15-01_error-handling-strategy.md` - エラーハンドリング戦略
   - `15-02_error-classification.md` - エラー分類体系
   - `15-03_monitoring-alerting.md` - モニタリング・アラート仕様
@@ -92,7 +94,7 @@ graph TD
 #### 5b. ロギング設計（logging-design-architect）
 
 - **前提条件**: 処理フロー設計の完了
-- **成果物**: 
+- **成果物**:
   - `16-01_logging-strategy.md` - ロギング戦略
   - `16-02_structured-logging.md` - 構造化ログ仕様
   - `16-03_audit-logging.md` - 監査ログ仕様
@@ -101,7 +103,7 @@ graph TD
 
 - **実行タイミング**: すべての詳細設計の完了後
 - **前提条件**: 上記すべてのエージェントの成果物
-- **成果物**: 
+- **成果物**:
   - `17-01_integrated-design-document.md` - 統合設計ドキュメント
   - `17-02_implementation-guide.md` - 実装ガイド
   - `17-03_design-review-checklist.md` - 設計レビューチェックリスト

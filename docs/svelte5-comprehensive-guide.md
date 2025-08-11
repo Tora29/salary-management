@@ -31,25 +31,26 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 
 ```svelte
 <script>
-  // 基本的な使用法
-  let count = $state(0);
-  
-  // オブジェクト
-  let user = $state({
-    name: 'Alice',
-    age: 30
-  });
-  
-  // 配列
-  let items = $state([1, 2, 3]);
+	// 基本的な使用法
+	let count = $state(0);
+
+	// オブジェクト
+	let user = $state({
+		name: 'Alice',
+		age: 30
+	});
+
+	// 配列
+	let items = $state([1, 2, 3]);
 </script>
 
 <button onclick={() => count++}>
-  Count: {count}
+	Count: {count}
 </button>
 ```
 
 **特徴：**
+
 - 自動的にリアクティブになる
 - プリミティブ値、オブジェクト、配列をサポート
 - 直接変更可能（`count++`のように）
@@ -58,26 +59,26 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 
 ```svelte
 <script>
-  let count = $state(0);
-  
-  // シンプルな派生
-  let doubled = $derived(count * 2);
-  
-  // 複雑な派生
-  let summary = $derived(() => {
-    return {
-      value: count * 2,
-      isEven: count % 2 === 0,
-      label: `Count is ${count}`
-    };
-  });
+	let count = $state(0);
+
+	// シンプルな派生
+	let doubled = $derived(count * 2);
+
+	// 複雑な派生
+	let summary = $derived(() => {
+		return {
+			value: count * 2,
+			isEven: count % 2 === 0,
+			label: `Count is ${count}`
+		};
+	});
 </script>
 
-<p>Count: {count}, Doubled: {doubled}</p>
-<p>Is Even: {summary.isEven}</p>
+<p>Count: {count}, Doubled: {doubled}</p><p>Is Even: {summary.isEven}</p>
 ```
 
 **重要なポイント：**
+
 - 依存する値が変更されると自動的に再計算
 - 純粋関数である必要がある（副作用なし）
 - 参照の同一性による最適化
@@ -86,42 +87,42 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 
 ```svelte
 <script>
-  let count = $state(0);
-  let searchQuery = $state('');
-  
-  // 基本的なeffect
-  $effect(() => {
-    console.log('Count changed:', count);
-  });
-  
-  // クリーンアップ付き
-  $effect(() => {
-    const timer = setInterval(() => {
-      console.log('Tick');
-    }, 1000);
-    
-    // クリーンアップ関数を返す
-    return () => {
-      clearInterval(timer);
-    };
-  });
-  
-  // API呼び出しの例
-  $effect(() => {
-    const controller = new AbortController();
-    
-    fetch(`/api/search?q=${searchQuery}`, {
-      signal: controller.signal
-    })
-      .then(res => res.json())
-      .then(data => {
-        // 結果を処理
-      });
-    
-    return () => {
-      controller.abort();
-    };
-  });
+	let count = $state(0);
+	let searchQuery = $state('');
+
+	// 基本的なeffect
+	$effect(() => {
+		console.log('Count changed:', count);
+	});
+
+	// クリーンアップ付き
+	$effect(() => {
+		const timer = setInterval(() => {
+			console.log('Tick');
+		}, 1000);
+
+		// クリーンアップ関数を返す
+		return () => {
+			clearInterval(timer);
+		};
+	});
+
+	// API呼び出しの例
+	$effect(() => {
+		const controller = new AbortController();
+
+		fetch(`/api/search?q=${searchQuery}`, {
+			signal: controller.signal
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				// 結果を処理
+			});
+
+		return () => {
+			controller.abort();
+		};
+	});
 </script>
 ```
 
@@ -129,25 +130,24 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 
 ```svelte
 <script>
-  import { tick } from 'svelte';
-  
-  let messages = $state([]);
-  let viewport;
-  
-  $effect.pre(() => {
-    // DOM更新前に実行
-    messages; // 依存関係を明示
-    
-    const autoscroll = viewport && 
-      viewport.offsetHeight + viewport.scrollTop > 
-      viewport.scrollHeight - 50;
-    
-    if (autoscroll) {
-      tick().then(() => {
-        viewport.scrollTo(0, viewport.scrollHeight);
-      });
-    }
-  });
+	import { tick } from 'svelte';
+
+	let messages = $state([]);
+	let viewport;
+
+	$effect.pre(() => {
+		// DOM更新前に実行
+		messages; // 依存関係を明示
+
+		const autoscroll =
+			viewport && viewport.offsetHeight + viewport.scrollTop > viewport.scrollHeight - 50;
+
+		if (autoscroll) {
+			tick().then(() => {
+				viewport.scrollTo(0, viewport.scrollHeight);
+			});
+		}
+	});
 </script>
 ```
 
@@ -155,20 +155,20 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 
 ```svelte
 <script>
-  let count = $state(0);
-  
-  const cleanup = $effect.root(() => {
-    $effect(() => {
-      console.log('Count:', count);
-    });
-    
-    return () => {
-      console.log('Root cleanup');
-    };
-  });
-  
-  // 手動でクリーンアップ
-  // cleanup();
+	let count = $state(0);
+
+	const cleanup = $effect.root(() => {
+		$effect(() => {
+			console.log('Count:', count);
+		});
+
+		return () => {
+			console.log('Root cleanup');
+		};
+	});
+
+	// 手動でクリーンアップ
+	// cleanup();
 </script>
 ```
 
@@ -178,16 +178,16 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 <script>
   // 基本的な使用法
   let { name, age = 18 } = $props();
-  
+
   // TypeScript
   interface Props {
     name: string;
     age?: number;
     onUpdate: (value: string) => void;
   }
-  
+
   let { name, age = 18, onUpdate }: Props = $props();
-  
+
   // rest propsの使用
   let { title, ...rest } = $props();
 </script>
@@ -220,19 +220,19 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 
 ```svelte
 <script>
-  let count = $state(0);
-  let user = $state({ name: 'Alice' });
-  
-  // 開発環境でのみ動作
-  $inspect(count); // 値の変更をログ出力
-  
-  // カスタムコールバック
-  $inspect(user).with((type, value) => {
-    if (type === 'update') {
-      console.log('User updated:', value);
-      debugger;
-    }
-  });
+	let count = $state(0);
+	let user = $state({ name: 'Alice' });
+
+	// 開発環境でのみ動作
+	$inspect(count); // 値の変更をログ出力
+
+	// カスタムコールバック
+	$inspect(user).with((type, value) => {
+		if (type === 'update') {
+			console.log('User updated:', value);
+			debugger;
+		}
+	});
 </script>
 ```
 
@@ -242,13 +242,13 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 <svelte:options customElement="my-element" />
 
 <script>
-  // ホスト要素への参照
-  let host = $host();
-  
-  $effect(() => {
-    // ホスト要素にスタイルを適用
-    host.style.display = 'block';
-  });
+	// ホスト要素への参照
+	let host = $host();
+
+	$effect(() => {
+		// ホスト要素にスタイルを適用
+		host.style.display = 'block';
+	});
 </script>
 ```
 
@@ -259,19 +259,20 @@ Svelte 5は、より明示的で細かい制御が可能な新しいリアクテ
 ### マウント/アンマウント
 
 ```javascript
-import { mount, unmount, hydrate } from 'svelte';
 import App from './App.svelte';
+
+import { hydrate, mount, unmount } from 'svelte';
 
 // マウント
 const app = mount(App, {
-  target: document.getElementById('app'),
-  props: { name: 'World' }
+	target: document.getElementById('app'),
+	props: { name: 'World' }
 });
 
 // ハイドレーション（SSR用）
 const hydratedApp = hydrate(App, {
-  target: document.getElementById('app'),
-  props: { name: 'World' }
+	target: document.getElementById('app'),
+	props: { name: 'World' }
 });
 
 // アンマウント
@@ -281,15 +282,16 @@ unmount(app, { outro: true }); // トランジション付き
 ### リアクティブなプロパティ更新
 
 ```javascript
-import { mount } from 'svelte';
 import App from './App.svelte';
+
+import { mount } from 'svelte';
 
 // リアクティブなpropsオブジェクト
 const props = $state({ count: 0 });
 
 const app = mount(App, {
-  target: document.getElementById('app'),
-  props
+	target: document.getElementById('app'),
+	props
 });
 
 // プロパティを更新
@@ -305,7 +307,7 @@ props.count = 10; // 自動的にコンポーネントが更新される
 ```svelte
 <!-- 定義 -->
 {#snippet greeting(name)}
-  <h1>Hello, {name}!</h1>
+	<h1>Hello, {name}!</h1>
 {/snippet}
 
 <!-- 使用 -->
@@ -317,13 +319,13 @@ props.count = 10; // 自動的にコンポーネントが更新される
 
 ```svelte
 {#snippet card(title, description, footer = null)}
-  <div class="card">
-    <h2>{title}</h2>
-    <p>{description}</p>
-    {#if footer}
-      <footer>{footer}</footer>
-    {/if}
-  </div>
+	<div class="card">
+		<h2>{title}</h2>
+		<p>{description}</p>
+		{#if footer}
+			<footer>{footer}</footer>
+		{/if}
+	</div>
 {/snippet}
 
 {@render card('Title', 'Description')}
@@ -342,7 +344,7 @@ props.count = 10; // 自動的にコンポーネントが更新される
   {#snippet header()}
     <h1>Custom Header</h1>
   {/snippet}
-  
+
   {#snippet content(data)}
     <p>Data: {data}</p>
   {/snippet}
@@ -367,14 +369,14 @@ props.count = 10; // 自動的にコンポーネントが更新される
 
 ```svelte
 {#snippet tree(node, depth = 0)}
-  <div style="padding-left: {depth * 20}px">
-    {node.name}
-    {#if node.children}
-      {#each node.children as child}
-        {@render tree(child, depth + 1)}
-      {/each}
-    {/if}
-  </div>
+	<div style="padding-left: {depth * 20}px">
+		{node.name}
+		{#if node.children}
+			{#each node.children as child}
+				{@render tree(child, depth + 1)}
+			{/each}
+		{/if}
+	</div>
 {/snippet}
 
 {@render tree(rootNode)}
@@ -388,22 +390,22 @@ props.count = 10; // 自動的にコンポーネントが更新される
 
 ```svelte
 <script>
-  import { onMount } from 'svelte';
-  
-  onMount(() => {
-    console.log('Component mounted');
-    
-    // クリーンアップ関数を返す
-    return () => {
-      console.log('Component will unmount');
-    };
-  });
-  
-  // 非同期版
-  onMount(async () => {
-    const data = await fetchData();
-    // 処理...
-  });
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		console.log('Component mounted');
+
+		// クリーンアップ関数を返す
+		return () => {
+			console.log('Component will unmount');
+		};
+	});
+
+	// 非同期版
+	onMount(async () => {
+		const data = await fetchData();
+		// 処理...
+	});
 </script>
 ```
 
@@ -411,15 +413,15 @@ props.count = 10; // 自動的にコンポーネントが更新される
 
 ```svelte
 <script>
-  import { onDestroy } from 'svelte';
-  
-  const interval = setInterval(() => {
-    // 定期処理
-  }, 1000);
-  
-  onDestroy(() => {
-    clearInterval(interval);
-  });
+	import { onDestroy } from 'svelte';
+
+	const interval = setInterval(() => {
+		// 定期処理
+	}, 1000);
+
+	onDestroy(() => {
+		clearInterval(interval);
+	});
 </script>
 ```
 
@@ -427,18 +429,18 @@ props.count = 10; // 自動的にコンポーネントが更新される
 
 ```svelte
 <script>
-  import { tick } from 'svelte';
-  
-  async function handleClick() {
-    // 状態を更新
-    count++;
-    
-    // DOM更新を待つ
-    await tick();
-    
-    // DOM更新後の処理
-    console.log('DOM updated');
-  }
+	import { tick } from 'svelte';
+
+	async function handleClick() {
+		// 状態を更新
+		count++;
+
+		// DOM更新を待つ
+		await tick();
+
+		// DOM更新後の処理
+		console.log('DOM updated');
+	}
 </script>
 ```
 
@@ -461,17 +463,17 @@ props.count = 10; // 自動的にコンポーネントが更新される
 <!-- Parent.svelte -->
 <script>
   import Child from './Child.svelte';
-  
+
   function handleIncrement(value) {
     console.log('Increment:', value);
   }
-  
+
   function handleDecrement(value) {
     console.log('Decrement:', value);
   }
 </script>
 
-<Child 
+<Child
   onIncrement={handleIncrement}
   onDecrement={handleDecrement}
 />
@@ -482,17 +484,15 @@ props.count = 10; // 自動的にコンポーネントが更新される
 ```svelte
 <!-- Button.svelte -->
 <script>
-  let { onclick, ...rest } = $props();
+	let { onclick, ...rest } = $props();
 </script>
 
 <button {onclick} {...rest}>
-  <slot />
+	<slot />
 </button>
 
 <!-- 使用例 -->
-<Button onclick={() => console.log('Clicked!')}>
-  Click me
-</Button>
+<Button onclick={() => console.log('Clicked!')}>Click me</Button>
 ```
 
 ---
@@ -502,8 +502,9 @@ props.count = 10; // 自動的にコンポーネントが更新される
 ### Component型
 
 ```typescript
-import type { Component, ComponentProps } from 'svelte';
 import MyComponent from './MyComponent.svelte';
+
+import type { Component, ComponentProps } from 'svelte';
 
 // コンポーネントの型
 let DynamicComponent: Component<{ name: string }>;
@@ -512,11 +513,8 @@ let DynamicComponent: Component<{ name: string }>;
 type Props = ComponentProps<typeof MyComponent>;
 
 // ジェネリック関数
-function renderComponent<T extends Component<any>>(
-  component: T,
-  props: ComponentProps<T>
-) {
-  return mount(component, { target: document.body, props });
+function renderComponent<T extends Component<any>>(component: T, props: ComponentProps<T>) {
+	return mount(component, { target: document.body, props });
 }
 ```
 
@@ -526,9 +524,9 @@ function renderComponent<T extends Component<any>>(
 import type { Snippet } from 'svelte';
 
 interface Props {
-  header: Snippet;
-  content: Snippet<[string]>; // パラメータ付き
-  footer?: Snippet; // オプショナル
+	header: Snippet;
+	content: Snippet<[string]>; // パラメータ付き
+	footer?: Snippet; // オプショナル
 }
 
 let { header, content, footer }: Props = $props();
@@ -555,7 +553,7 @@ let { children, ...rest }: HTMLButtonAttributes = $props();
 <script>
   let count = 0;
   $: doubled = count * 2;
-  
+
   $: {
     console.log('Count changed:', count);
   }
@@ -565,7 +563,7 @@ let { children, ...rest }: HTMLButtonAttributes = $props();
 <script>
   let count = $state(0);
   let doubled = $derived(count * 2);
-  
+
   $effect(() => {
     console.log('Count changed:', count);
   });
@@ -590,14 +588,14 @@ let { children, ...rest }: HTMLButtonAttributes = $props();
 #### 3. スロット → Snippets
 
 ```svelte
+<!-- Svelte 5 -->
+<script>
+	let { header, children } = $props();
+</script>
+
 <!-- Svelte 4 -->
 <slot name="header" />
 <slot />
-
-<!-- Svelte 5 -->
-<script>
-  let { header, children } = $props();
-</script>
 
 {@render header?.()}
 {@render children?.()}
@@ -610,7 +608,7 @@ let { children, ...rest }: HTMLButtonAttributes = $props();
 <script>
   import { createEventDispatcher } from 'svelte';
   const dispatch = createEventDispatcher();
-  
+
   function handleClick() {
     dispatch('message', { text: 'Hello' });
   }
@@ -619,7 +617,7 @@ let { children, ...rest }: HTMLButtonAttributes = $props();
 <!-- Svelte 5 -->
 <script>
   let { onMessage } = $props();
-  
+
   function handleClick() {
     onMessage?.({ text: 'Hello' });
   }
@@ -631,11 +629,11 @@ let { children, ...rest }: HTMLButtonAttributes = $props();
 ```javascript
 // svelte.config.js
 export default {
-  compilerOptions: {
-    compatibility: {
-      componentApi: 4 // Svelte 4のコンポーネントAPIを使用
-    }
-  }
+	compilerOptions: {
+		compatibility: {
+			componentApi: 4 // Svelte 4のコンポーネントAPIを使用
+		}
+	}
 };
 ```
 
@@ -647,27 +645,24 @@ export default {
 
 ```svelte
 <script>
-  // ✅ 良い例：明確な状態定義
-  let user = $state({
-    name: '',
-    email: '',
-    preferences: {
-      theme: 'dark',
-      notifications: true
-    }
-  });
-  
-  // ✅ 良い例：派生値の活用
-  let isValid = $derived(
-    user.name.length > 0 && 
-    user.email.includes('@')
-  );
-  
-  // ❌ 悪い例：$effect内での状態更新
-  $effect(() => {
-    // 無限ループの原因
-    user.name = user.name.toUpperCase();
-  });
+	// ✅ 良い例：明確な状態定義
+	let user = $state({
+		name: '',
+		email: '',
+		preferences: {
+			theme: 'dark',
+			notifications: true
+		}
+	});
+
+	// ✅ 良い例：派生値の活用
+	let isValid = $derived(user.name.length > 0 && user.email.includes('@'));
+
+	// ❌ 悪い例：$effect内での状態更新
+	$effect(() => {
+		// 無限ループの原因
+		user.name = user.name.toUpperCase();
+	});
 </script>
 ```
 
@@ -675,22 +670,20 @@ export default {
 
 ```svelte
 <script>
-  // ✅ 良い例：必要な時だけ計算
-  let items = $state([]);
-  let filter = $state('');
-  
-  let filteredItems = $derived(() => {
-    if (!filter) return items;
-    return items.filter(item => 
-      item.name.includes(filter)
-    );
-  });
-  
-  // ✅ 良い例：適切なクリーンアップ
-  $effect(() => {
-    const subscription = subscribe();
-    return () => subscription.unsubscribe();
-  });
+	// ✅ 良い例：必要な時だけ計算
+	let items = $state([]);
+	let filter = $state('');
+
+	let filteredItems = $derived(() => {
+		if (!filter) return items;
+		return items.filter((item) => item.name.includes(filter));
+	});
+
+	// ✅ 良い例：適切なクリーンアップ
+	$effect(() => {
+		const subscription = subscribe();
+		return () => subscription.unsubscribe();
+	});
 </script>
 ```
 
@@ -699,15 +692,15 @@ export default {
 ```typescript
 // ✅ 良い例：明確な型定義
 interface UserData {
-  id: string;
-  name: string;
-  role: 'admin' | 'user';
+	id: string;
+	name: string;
+	role: 'admin' | 'user';
 }
 
 interface Props {
-  user: UserData;
-  onUpdate: (user: UserData) => void;
-  children: Snippet;
+	user: UserData;
+	onUpdate: (user: UserData) => void;
+	children: Snippet;
 }
 
 let { user, onUpdate, children }: Props = $props();
@@ -718,35 +711,29 @@ let { user, onUpdate, children }: Props = $props();
 ```svelte
 <!-- ✅ 良い例：再利用可能なコンポーネント -->
 <script lang="ts">
-  import type { Snippet } from 'svelte';
-  
-  interface Props {
-    variant?: 'primary' | 'secondary';
-    size?: 'small' | 'medium' | 'large';
-    disabled?: boolean;
-    onclick?: () => void;
-    children: Snippet;
-  }
-  
-  let { 
-    variant = 'primary',
-    size = 'medium',
-    disabled = false,
-    onclick,
-    children
-  }: Props = $props();
-  
-  let className = $derived(
-    `btn btn-${variant} btn-${size}`
-  );
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		variant?: 'primary' | 'secondary';
+		size?: 'small' | 'medium' | 'large';
+		disabled?: boolean;
+		onclick?: () => void;
+		children: Snippet;
+	}
+
+	let {
+		variant = 'primary',
+		size = 'medium',
+		disabled = false,
+		onclick,
+		children
+	}: Props = $props();
+
+	let className = $derived(`btn btn-${variant} btn-${size}`);
 </script>
 
-<button 
-  class={className}
-  {disabled}
-  {onclick}
->
-  {@render children()}
+<button class={className} {disabled} {onclick}>
+	{@render children()}
 </button>
 ```
 
@@ -754,39 +741,39 @@ let { user, onUpdate, children }: Props = $props();
 
 ```svelte
 <script>
-  let data = $state(null);
-  let error = $state(null);
-  let loading = $state(false);
-  
-  async function fetchData() {
-    loading = true;
-    error = null;
-    
-    try {
-      const response = await fetch('/api/data');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      data = await response.json();
-    } catch (e) {
-      error = e.message;
-      console.error('Fetch error:', e);
-    } finally {
-      loading = false;
-    }
-  }
-  
-  $effect(() => {
-    fetchData();
-  });
+	let data = $state(null);
+	let error = $state(null);
+	let loading = $state(false);
+
+	async function fetchData() {
+		loading = true;
+		error = null;
+
+		try {
+			const response = await fetch('/api/data');
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			data = await response.json();
+		} catch (e) {
+			error = e.message;
+			console.error('Fetch error:', e);
+		} finally {
+			loading = false;
+		}
+	}
+
+	$effect(() => {
+		fetchData();
+	});
 </script>
 
 {#if loading}
-  <p>Loading...</p>
+	<p>Loading...</p>
 {:else if error}
-  <p class="error">Error: {error}</p>
+	<p class="error">Error: {error}</p>
 {:else if data}
-  <div>{JSON.stringify(data)}</div>
+	<div>{JSON.stringify(data)}</div>
 {/if}
 ```
 
@@ -797,20 +784,28 @@ let { user, onUpdate, children }: Props = $props();
 ### カスタムストア with Runes
 
 ```javascript
-// store.svelte.js
-export function createCounter(initial = 0) {
-  let count = $state(initial);
-  
-  return {
-    get value() { return count; },
-    increment() { count++; },
-    decrement() { count--; },
-    reset() { count = initial; }
-  };
-}
-
 // 使用例
 import { createCounter } from './store.svelte.js';
+
+// store.svelte.js
+export function createCounter(initial = 0) {
+	let count = $state(initial);
+
+	return {
+		get value() {
+			return count;
+		},
+		increment() {
+			count++;
+		},
+		decrement() {
+			count--;
+		},
+		reset() {
+			count = initial;
+		}
+	};
+}
 
 const counter = createCounter(10);
 ```
@@ -819,43 +814,41 @@ const counter = createCounter(10);
 
 ```svelte
 <script>
-  let filters = $state({
-    search: '',
-    category: 'all',
-    sortBy: 'name'
-  });
-  
-  let items = $state([
-    { id: 1, name: 'Item 1', category: 'A' },
-    { id: 2, name: 'Item 2', category: 'B' }
-  ]);
-  
-  let processedItems = $derived(() => {
-    let result = [...items];
-    
-    // フィルタリング
-    if (filters.search) {
-      result = result.filter(item =>
-        item.name.toLowerCase().includes(filters.search.toLowerCase())
-      );
-    }
-    
-    if (filters.category !== 'all') {
-      result = result.filter(item =>
-        item.category === filters.category
-      );
-    }
-    
-    // ソート
-    result.sort((a, b) => {
-      if (filters.sortBy === 'name') {
-        return a.name.localeCompare(b.name);
-      }
-      return a.id - b.id;
-    });
-    
-    return result;
-  });
+	let filters = $state({
+		search: '',
+		category: 'all',
+		sortBy: 'name'
+	});
+
+	let items = $state([
+		{ id: 1, name: 'Item 1', category: 'A' },
+		{ id: 2, name: 'Item 2', category: 'B' }
+	]);
+
+	let processedItems = $derived(() => {
+		let result = [...items];
+
+		// フィルタリング
+		if (filters.search) {
+			result = result.filter((item) =>
+				item.name.toLowerCase().includes(filters.search.toLowerCase())
+			);
+		}
+
+		if (filters.category !== 'all') {
+			result = result.filter((item) => item.category === filters.category);
+		}
+
+		// ソート
+		result.sort((a, b) => {
+			if (filters.sortBy === 'name') {
+				return a.name.localeCompare(b.name);
+			}
+			return a.id - b.id;
+		});
+
+		return result;
+	});
 </script>
 ```
 
@@ -863,21 +856,21 @@ const counter = createCounter(10);
 
 ```svelte
 <script>
-  import ComponentA from './ComponentA.svelte';
-  import ComponentB from './ComponentB.svelte';
-  
-  let components = {
-    a: ComponentA,
-    b: ComponentB
-  };
-  
-  let selectedType = $state('a');
-  let Component = $derived(components[selectedType]);
+	import ComponentA from './ComponentA.svelte';
+	import ComponentB from './ComponentB.svelte';
+
+	let components = {
+		a: ComponentA,
+		b: ComponentB
+	};
+
+	let selectedType = $state('a');
+	let Component = $derived(components[selectedType]);
 </script>
 
 <select bind:value={selectedType}>
-  <option value="a">Component A</option>
-  <option value="b">Component B</option>
+	<option value="a">Component A</option>
+	<option value="b">Component B</option>
 </select>
 
 <Component />

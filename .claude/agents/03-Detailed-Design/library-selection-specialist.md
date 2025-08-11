@@ -39,6 +39,7 @@ execution_order: 0
 **評価基準:**
 
 ### 1. 技術的適合性
+
 ```yaml
 機能要件:
   - 必要な機能の充足度
@@ -54,6 +55,7 @@ execution_order: 0
 ```
 
 ### 2. 保守性とサポート
+
 ```yaml
 メンテナンス状況:
   - 最終更新日
@@ -69,6 +71,7 @@ execution_order: 0
 ```
 
 ### 3. パフォーマンス影響
+
 ```yaml
 バンドルサイズ:
   - minified size
@@ -83,6 +86,7 @@ execution_order: 0
 ```
 
 ### 4. セキュリティ評価
+
 ```yaml
 脆弱性チェック:
   - 既知の脆弱性（CVE）
@@ -97,6 +101,7 @@ execution_order: 0
 ```
 
 ### 5. ライセンスと法的側面
+
 ```yaml
 ライセンス互換性:
   - プロジェクトライセンスとの互換性
@@ -137,16 +142,17 @@ execution_order: 0
 ```markdown
 ## ライブラリ比較表
 
-| 評価項目 | ライブラリA | ライブラリB | ライブラリC |
-|---------|------------|------------|------------|
-| **機能充足度** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **パフォーマンス** | 優秀 | 良好 | 普通 |
-| **バンドルサイズ** | 50KB | 120KB | 30KB |
-| **メンテナンス** | 活発 | 普通 | 停滞 |
-| **ライセンス** | MIT | Apache 2.0 | GPL-3.0 |
-| **学習コスト** | 低 | 中 | 高 |
+| 評価項目           | ライブラリA | ライブラリB | ライブラリC |
+| ------------------ | ----------- | ----------- | ----------- |
+| **機能充足度**     | ⭐⭐⭐⭐⭐  | ⭐⭐⭐⭐    | ⭐⭐⭐      |
+| **パフォーマンス** | 優秀        | 良好        | 普通        |
+| **バンドルサイズ** | 50KB        | 120KB       | 30KB        |
+| **メンテナンス**   | 活発        | 普通        | 停滞        |
+| **ライセンス**     | MIT         | Apache 2.0  | GPL-3.0     |
+| **学習コスト**     | 低          | 中          | 高          |
 
 ### 推奨事項
+
 - 機能重視の場合: ライブラリA
 - サイズ重視の場合: ライブラリC
 - バランス重視の場合: ライブラリB
@@ -156,20 +162,20 @@ execution_order: 0
 
 ```typescript
 interface LibraryRisk {
-  type: 'security' | 'maintenance' | 'performance' | 'license' | 'compatibility';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
-  mitigation: string;
+	type: 'security' | 'maintenance' | 'performance' | 'license' | 'compatibility';
+	severity: 'low' | 'medium' | 'high' | 'critical';
+	description: string;
+	mitigation: string;
 }
 
 // リスク評価例
 const risks: LibraryRisk[] = [
-  {
-    type: 'maintenance',
-    severity: 'medium',
-    description: '最終更新が6ヶ月前',
-    mitigation: 'フォークの準備またはラッパー層の実装'
-  }
+	{
+		type: 'maintenance',
+		severity: 'medium',
+		description: '最終更新が6ヶ月前',
+		mitigation: 'フォークの準備またはラッパー層の実装'
+	}
 ];
 ```
 

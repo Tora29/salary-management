@@ -1,6 +1,7 @@
 # データベーススキーマ詳細定義書
 
 ## 文書情報
+
 - **作成日**: 2025-08-10
 - **作成者**: データモデリングアーキテクト
 - **バージョン**: 1.0.0
@@ -40,7 +41,7 @@ model User {
   lastLoginAt       DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  
+
   // Relations
   salarySlips       SalarySlip[]
   stockPortfolios   StockPortfolio[]
@@ -50,7 +51,7 @@ model User {
   dashboardPreference DashboardPreference?
   sessions          UserSession[]
   auditLogs         AuditLog[]
-  
+
   @@index([email])
   @@index([googleId])
   @@index([isActive])
@@ -67,10 +68,10 @@ model UserSession {
   expiresAt       DateTime
   createdAt       DateTime @default(now())
   lastActivityAt  DateTime @default(now())
-  
+
   // Relations
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([sessionToken])
   @@index([expiresAt])
@@ -88,10 +89,10 @@ model AuditLog {
   ipAddress   String?
   userAgent   String?
   createdAt   DateTime @default(now())
-  
+
   // Relations
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  
+
   @@index([userId])
   @@index([entityType, entityId])
   @@index([createdAt])
@@ -111,7 +112,7 @@ model SalarySlip {
   paymentDate            DateTime
   targetPeriodStart      DateTime
   targetPeriodEnd        DateTime
-  
+
   // 勤怠情報 (JSON)
   attendance             Json     @default("{}")
   // {
@@ -123,7 +124,7 @@ model SalarySlip {
   //   absenceDays: number,
   //   workingDays: number
   // }
-  
+
   // 収入詳細 (JSON)
   earnings               Json     @default("{}")
   // {
@@ -142,7 +143,7 @@ model SalarySlip {
   //   bonus: number,
   //   otherEarnings: number
   // }
-  
+
   // 控除詳細 (JSON)
   deductions             Json     @default("{}")
   // {
@@ -155,24 +156,24 @@ model SalarySlip {
   //   loan: number,
   //   otherDeductions: number
   // }
-  
+
   // 集計値（パフォーマンス最適化のため非正規化）
   baseSalary             Decimal  @db.Decimal(12, 2)
   totalEarnings          Decimal  @db.Decimal(12, 2)
   totalDeductions        Decimal  @db.Decimal(12, 2)
   netPay                 Decimal  @db.Decimal(12, 2)
-  
+
   currency               String   @default("JPY")
   status                 String   @default("confirmed") // draft, confirmed, archived
   sourceType             String   @default("manual")    // pdf, manual, api
-  
+
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
-  
+
   // Relations
   user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   attachments            SalarySlipAttachment[]
-  
+
   @@unique([userId, paymentDate, companyName])
   @@index([userId])
   @@index([paymentDate])
@@ -189,10 +190,10 @@ model SalarySlipAttachment {
   storageUrl    String
   checksum      String      // MD5ハッシュ
   uploadedAt    DateTime    @default(now())
-  
+
   // Relations
   salarySlip    SalarySlip  @relation(fields: [salarySlipId], references: [id], onDelete: Cascade)
-  
+
   @@index([salarySlipId])
   @@map("salary_slip_attachments")
 }
@@ -215,13 +216,13 @@ model StockMaster {
   delistedDate  DateTime?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-  
+
   // Relations
   portfolios    StockPortfolio[]
   transactions  StockTransaction[]
   currentPrice  StockCurrentPrice?
   priceHistory  StockPriceHistory[]
-  
+
   @@index([symbol])
   @@index([exchange])
   @@index([isActive])
@@ -242,12 +243,12 @@ model StockPortfolio {
   lastPurchaseDate        DateTime?
   createdAt               DateTime    @default(now())
   updatedAt               DateTime    @updatedAt
-  
+
   // Relations
   user                    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   stock                   StockMaster @relation(fields: [stockId], references: [id], onDelete: Restrict)
   transactions            StockTransaction[]
-  
+
   @@unique([userId, stockId])
   @@index([userId])
   @@index([stockId])
@@ -268,12 +269,12 @@ model StockTransaction {
   transactionDate DateTime
   notes           String?
   createdAt       DateTime        @default(now())
-  
+
   // Relations
   portfolio       StockPortfolio  @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   stock           StockMaster     @relation(fields: [stockId], references: [id], onDelete: Restrict)
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([portfolioId])
   @@index([transactionDate])
   @@index([transactionType])
@@ -292,10 +293,10 @@ model StockCurrentPrice {
   volume           BigInt
   marketTime       DateTime
   lastUpdated      DateTime    @default(now())
-  
+
   // Relations
   stock            StockMaster @relation(fields: [stockId], references: [id], onDelete: Cascade)
-  
+
   @@index([stockId])
   @@index([lastUpdated])
   @@map("stock_current_prices")
@@ -312,10 +313,10 @@ model StockPriceHistory {
   adjustedClose Decimal     @db.Decimal(12, 2)
   volume        BigInt
   createdAt     DateTime    @default(now())
-  
+
   // Relations
   stock         StockMaster @relation(fields: [stockId], references: [id], onDelete: Cascade)
-  
+
   @@unique([stockId, date])
   @@index([stockId])
   @@index([date])
@@ -338,10 +339,10 @@ model Asset {
   metadata    Json?    @default("{}")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   // Relations
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([assetType])
   @@index([asOfDate])
@@ -363,11 +364,11 @@ model Budget {
   status      String           @default("active") // active, completed, cancelled
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
-  
+
   // Relations
   user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   categories  BudgetCategory[]
-  
+
   @@index([userId])
   @@index([period])
   @@index([status])
@@ -386,11 +387,11 @@ model BudgetCategory {
   icon            String?
   color           String?
   displayOrder    Int               @default(0)
-  
+
   // Relations
   budget          Budget            @relation(fields: [budgetId], references: [id], onDelete: Cascade)
   trackings       BudgetTracking[]
-  
+
   @@index([budgetId])
   @@index([categoryType])
   @@map("budget_categories")
@@ -404,10 +405,10 @@ model BudgetTracking {
   transactionDate DateTime
   source          String         @default("manual") // manual, automated
   createdAt       DateTime       @default(now())
-  
+
   // Relations
   category        BudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  
+
   @@index([categoryId])
   @@index([transactionDate])
   @@map("budget_trackings")
@@ -431,10 +432,10 @@ model DashboardPreference {
   notificationSettings Json     @default("{}")
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
-  
+
   // Relations
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@map("dashboard_preferences")
 }
 ```
@@ -445,28 +446,28 @@ model DashboardPreference {
 
 ### 2.1 Prisma型とPostgreSQL型の対応
 
-| Prismaデータ型 | PostgreSQL型 | 用途 | 例 |
-|---------------|-------------|------|-----|
-| String @id | VARCHAR(30) | 主キー（CUID） | id |
-| String | VARCHAR(255) | 通常の文字列 | name, email |
-| String @db.Text | TEXT | 長文テキスト | description |
-| Int | INTEGER | 整数 | quantity |
-| BigInt | BIGINT | 大きな整数 | volume |
-| Decimal | DECIMAL(p,s) | 高精度数値 | 金額 |
-| Boolean | BOOLEAN | 真偽値 | isActive |
-| DateTime | TIMESTAMP | 日時 | createdAt |
-| DateTime @db.Date | DATE | 日付のみ | paymentDate |
-| Json | JSONB | 構造化データ | preferences |
+| Prismaデータ型    | PostgreSQL型 | 用途           | 例          |
+| ----------------- | ------------ | -------------- | ----------- |
+| String @id        | VARCHAR(30)  | 主キー（CUID） | id          |
+| String            | VARCHAR(255) | 通常の文字列   | name, email |
+| String @db.Text   | TEXT         | 長文テキスト   | description |
+| Int               | INTEGER      | 整数           | quantity    |
+| BigInt            | BIGINT       | 大きな整数     | volume      |
+| Decimal           | DECIMAL(p,s) | 高精度数値     | 金額        |
+| Boolean           | BOOLEAN      | 真偽値         | isActive    |
+| DateTime          | TIMESTAMP    | 日時           | createdAt   |
+| DateTime @db.Date | DATE         | 日付のみ       | paymentDate |
+| Json              | JSONB        | 構造化データ   | preferences |
 
 ### 2.2 Decimal精度の設計
 
-| 用途 | Decimal精度 | 説明 |
-|------|------------|------|
-| 金額（通常） | DECIMAL(12,2) | 最大999,999,999,999.99 |
-| 金額（大） | DECIMAL(15,2) | 最大999,999,999,999,999.99 |
-| 数量 | DECIMAL(12,4) | 小数点以下4桁まで |
-| パーセンテージ | DECIMAL(5,2) | -999.99～999.99% |
-| 単価 | DECIMAL(10,2) | 最大99,999,999.99 |
+| 用途           | Decimal精度   | 説明                       |
+| -------------- | ------------- | -------------------------- |
+| 金額（通常）   | DECIMAL(12,2) | 最大999,999,999,999.99     |
+| 金額（大）     | DECIMAL(15,2) | 最大999,999,999,999,999.99 |
+| 数量           | DECIMAL(12,4) | 小数点以下4桁まで          |
+| パーセンテージ | DECIMAL(5,2)  | -999.99～999.99%           |
+| 単価           | DECIMAL(10,2) | 最大99,999,999.99          |
 
 ---
 
@@ -476,16 +477,16 @@ model DashboardPreference {
 
 ```typescript
 interface AttendanceInfo {
-  overtimeHours: number;         // 残業時間
-  overtimeHoursOver60: number;   // 60時間超残業
-  lateNightHours: number;        // 深夜労働時間
-  holidayWorkDays: number;       // 休日出勤日数
-  paidLeaveDays: number;         // 有給休暇日数
-  absenceDays: number;           // 欠勤日数
-  workingDays: number;           // 出勤日数
-  scheduledWorkDays: number;     // 所定労働日数
-  lateCount?: number;            // 遅刻回数
-  earlyLeaveCount?: number;      // 早退回数
+	overtimeHours: number; // 残業時間
+	overtimeHoursOver60: number; // 60時間超残業
+	lateNightHours: number; // 深夜労働時間
+	holidayWorkDays: number; // 休日出勤日数
+	paidLeaveDays: number; // 有給休暇日数
+	absenceDays: number; // 欠勤日数
+	workingDays: number; // 出勤日数
+	scheduledWorkDays: number; // 所定労働日数
+	lateCount?: number; // 遅刻回数
+	earlyLeaveCount?: number; // 早退回数
 }
 ```
 
@@ -493,21 +494,21 @@ interface AttendanceInfo {
 
 ```typescript
 interface EarningsDetail {
-  baseSalary: number;                // 基本給
-  overtimePay: number;               // 残業代
-  overtimePayOver60: number;         // 60時間超残業代
-  lateNightPay: number;              // 深夜手当
-  holidayWorkPay: number;            // 休日出勤手当
-  fixedOvertimeAllowance: number;    // 固定残業代
-  transportationAllowance: number;   // 通勤手当
-  housingAllowance: number;          // 住宅手当
-  familyAllowance: number;           // 家族手当
-  qualificationAllowance: number;    // 資格手当
-  expenseReimbursement: number;      // 経費精算
-  stockPurchaseIncentive: number;    // 株式購入奨励金
-  bonus: number;                     // 賞与
-  otherEarnings: number;             // その他収入
-  [key: string]: number;             // 拡張可能
+	baseSalary: number; // 基本給
+	overtimePay: number; // 残業代
+	overtimePayOver60: number; // 60時間超残業代
+	lateNightPay: number; // 深夜手当
+	holidayWorkPay: number; // 休日出勤手当
+	fixedOvertimeAllowance: number; // 固定残業代
+	transportationAllowance: number; // 通勤手当
+	housingAllowance: number; // 住宅手当
+	familyAllowance: number; // 家族手当
+	qualificationAllowance: number; // 資格手当
+	expenseReimbursement: number; // 経費精算
+	stockPurchaseIncentive: number; // 株式購入奨励金
+	bonus: number; // 賞与
+	otherEarnings: number; // その他収入
+	[key: string]: number; // 拡張可能
 }
 ```
 
@@ -515,16 +516,16 @@ interface EarningsDetail {
 
 ```typescript
 interface DeductionsDetail {
-  healthInsurance: number;           // 健康保険料
-  welfareInsurance: number;          // 厚生年金保険料
-  employmentInsurance: number;       // 雇用保険料
-  incomeTax: number;                 // 所得税
-  residentTax: number;               // 住民税
-  stockPurchase: number;             // 株式購入
-  loan: number;                      // 貸付金返済
-  unionFee: number;                  // 組合費
-  otherDeductions: number;           // その他控除
-  [key: string]: number;             // 拡張可能
+	healthInsurance: number; // 健康保険料
+	welfareInsurance: number; // 厚生年金保険料
+	employmentInsurance: number; // 雇用保険料
+	incomeTax: number; // 所得税
+	residentTax: number; // 住民税
+	stockPurchase: number; // 株式購入
+	loan: number; // 貸付金返済
+	unionFee: number; // 組合費
+	otherDeductions: number; // その他控除
+	[key: string]: number; // 拡張可能
 }
 ```
 
@@ -532,13 +533,13 @@ interface DeductionsDetail {
 
 ```typescript
 interface UserPreferences {
-  defaultCurrency: string;
-  fiscalYearStart: number;           // 会計年度開始月（1-12）
-  salaryDayOfMonth: number;           // 給料日（1-31）
-  notificationEmail: boolean;
-  notificationPush: boolean;
-  privacyMode: boolean;               // 金額の非表示モード
-  dataRetentionYears: number;         // データ保持年数
+	defaultCurrency: string;
+	fiscalYearStart: number; // 会計年度開始月（1-12）
+	salaryDayOfMonth: number; // 給料日（1-31）
+	notificationEmail: boolean;
+	notificationPush: boolean;
+	privacyMode: boolean; // 金額の非表示モード
+	dataRetentionYears: number; // データ保持年数
 }
 ```
 
@@ -546,14 +547,14 @@ interface UserPreferences {
 
 ```typescript
 interface DashboardLayout {
-  gridColumns: number;
-  widgets: Array<{
-    id: string;
-    type: string;
-    position: { x: number; y: number };
-    size: { width: number; height: number };
-    config: Record<string, any>;
-  }>;
+	gridColumns: number;
+	widgets: Array<{
+		id: string;
+		type: string;
+		position: { x: number; y: number };
+		size: { width: number; height: number };
+		config: Record<string, any>;
+	}>;
 }
 ```
 
@@ -572,7 +573,7 @@ INSERT INTO salary_slips (
   base_salary, total_earnings, total_deductions, net_pay,
   status, source_type, created_at, updated_at
 )
-SELECT 
+SELECT
   id,
   'default_user_id', -- 後でユーザー管理実装時に更新
   company_name,
@@ -638,7 +639,7 @@ INSERT INTO stock_portfolios (
   total_investment, current_value, unrealized_gain_loss, unrealized_gain_loss_rate,
   first_purchase_date, last_purchase_date, created_at, updated_at
 )
-SELECT 
+SELECT
   s.id,
   'default_user_id',
   sm.id,
@@ -661,26 +662,26 @@ JOIN stock_masters sm ON s.symbol = sm.symbol;
 ```typescript
 // migrations/phase1_user_management.ts
 export async function phase1UserManagement() {
-  // 1. Userテーブルの作成
-  await prisma.$executeRaw`
+	// 1. Userテーブルの作成
+	await prisma.$executeRaw`
     CREATE TABLE users (
       id VARCHAR(30) PRIMARY KEY,
       email VARCHAR(255) UNIQUE NOT NULL,
       -- ... other fields
     )
   `;
-  
-  // 2. デフォルトユーザーの作成
-  await prisma.user.create({
-    data: {
-      id: 'default_user_id',
-      email: 'default@example.com',
-      name: 'Default User',
-    }
-  });
-  
-  // 3. 既存データへのuser_id追加
-  await prisma.$executeRaw`
+
+	// 2. デフォルトユーザーの作成
+	await prisma.user.create({
+		data: {
+			id: 'default_user_id',
+			email: 'default@example.com',
+			name: 'Default User'
+		}
+	});
+
+	// 3. 既存データへのuser_id追加
+	await prisma.$executeRaw`
     ALTER TABLE salary_slips ADD COLUMN user_id VARCHAR(30);
     UPDATE salary_slips SET user_id = 'default_user_id';
     ALTER TABLE salary_slips ALTER COLUMN user_id SET NOT NULL;
@@ -689,17 +690,17 @@ export async function phase1UserManagement() {
 
 // migrations/phase2_stock_restructure.ts
 export async function phase2StockRestructure() {
-  // 1. StockMasterテーブルの作成と移行
-  // 2. StockPortfolioテーブルの作成と移行
-  // 3. 価格履歴テーブルの作成
-  // 4. 古いStockテーブルの削除
+	// 1. StockMasterテーブルの作成と移行
+	// 2. StockPortfolioテーブルの作成と移行
+	// 3. 価格履歴テーブルの作成
+	// 4. 古いStockテーブルの削除
 }
 
 // migrations/phase3_additional_features.ts
 export async function phase3AdditionalFeatures() {
-  // 1. Budget関連テーブルの作成
-  // 2. Asset管理テーブルの作成
-  // 3. Dashboard設定テーブルの作成
+	// 1. Budget関連テーブルの作成
+	// 2. Asset管理テーブルの作成
+	// 3. Dashboard設定テーブルの作成
 }
 ```
 
@@ -712,51 +713,51 @@ export async function phase3AdditionalFeatures() {
 ```typescript
 // 効率的なダッシュボードデータ取得
 const dashboardData = await prisma.$transaction([
-  // 最新の給料明細
-  prisma.salarySlip.findFirst({
-    where: { userId },
-    orderBy: { paymentDate: 'desc' },
-    select: {
-      paymentDate: true,
-      netPay: true,
-      totalEarnings: true,
-      totalDeductions: true,
-    }
-  }),
-  
-  // ポートフォリオサマリー
-  prisma.stockPortfolio.aggregate({
-    where: { userId },
-    _sum: {
-      currentValue: true,
-      unrealizedGainLoss: true,
-    }
-  }),
-  
-  // 資産合計
-  prisma.asset.aggregate({
-    where: { userId },
-    _sum: { amount: true }
-  }),
-  
-  // アクティブな予算
-  prisma.budget.findMany({
-    where: {
-      userId,
-      status: 'active',
-      startDate: { lte: new Date() },
-      endDate: { gte: new Date() },
-    },
-    include: {
-      categories: {
-        select: {
-          categoryName: true,
-          allocatedAmount: true,
-          actualAmount: true,
-        }
-      }
-    }
-  })
+	// 最新の給料明細
+	prisma.salarySlip.findFirst({
+		where: { userId },
+		orderBy: { paymentDate: 'desc' },
+		select: {
+			paymentDate: true,
+			netPay: true,
+			totalEarnings: true,
+			totalDeductions: true
+		}
+	}),
+
+	// ポートフォリオサマリー
+	prisma.stockPortfolio.aggregate({
+		where: { userId },
+		_sum: {
+			currentValue: true,
+			unrealizedGainLoss: true
+		}
+	}),
+
+	// 資産合計
+	prisma.asset.aggregate({
+		where: { userId },
+		_sum: { amount: true }
+	}),
+
+	// アクティブな予算
+	prisma.budget.findMany({
+		where: {
+			userId,
+			status: 'active',
+			startDate: { lte: new Date() },
+			endDate: { gte: new Date() }
+		},
+		include: {
+			categories: {
+				select: {
+					categoryName: true,
+					allocatedAmount: true,
+					actualAmount: true
+				}
+			}
+		}
+	})
 ]);
 ```
 
@@ -765,39 +766,37 @@ const dashboardData = await prisma.$transaction([
 ```typescript
 // 株価更新のバッチ処理
 async function updateStockPrices(stockIds: string[]) {
-  const batchSize = 10;
-  
-  for (let i = 0; i < stockIds.length; i += batchSize) {
-    const batch = stockIds.slice(i, i + batchSize);
-    
-    // 並列で価格取得
-    const prices = await Promise.all(
-      batch.map(id => fetchStockPrice(id))
-    );
-    
-    // バルクアップデート
-    await prisma.$transaction(
-      prices.map(price => 
-        prisma.stockCurrentPrice.upsert({
-          where: { stockId: price.stockId },
-          update: {
-            currentPrice: price.currentPrice,
-            previousClose: price.previousClose,
-            dayChange: price.dayChange,
-            dayChangePercent: price.dayChangePercent,
-            lastUpdated: new Date(),
-          },
-          create: {
-            stockId: price.stockId,
-            ...price,
-          }
-        })
-      )
-    );
-    
-    // レート制限考慮
-    await sleep(1000);
-  }
+	const batchSize = 10;
+
+	for (let i = 0; i < stockIds.length; i += batchSize) {
+		const batch = stockIds.slice(i, i + batchSize);
+
+		// 並列で価格取得
+		const prices = await Promise.all(batch.map((id) => fetchStockPrice(id)));
+
+		// バルクアップデート
+		await prisma.$transaction(
+			prices.map((price) =>
+				prisma.stockCurrentPrice.upsert({
+					where: { stockId: price.stockId },
+					update: {
+						currentPrice: price.currentPrice,
+						previousClose: price.previousClose,
+						dayChange: price.dayChange,
+						dayChangePercent: price.dayChangePercent,
+						lastUpdated: new Date()
+					},
+					create: {
+						stockId: price.stockId,
+						...price
+					}
+				})
+			)
+		);
+
+		// レート制限考慮
+		await sleep(1000);
+	}
 }
 ```
 
@@ -809,28 +808,28 @@ async function updateStockPrices(stockIds: string[]) {
 
 ```sql
 -- 金額の非負制約
-ALTER TABLE salary_slips 
-ADD CONSTRAINT check_positive_amounts 
+ALTER TABLE salary_slips
+ADD CONSTRAINT check_positive_amounts
 CHECK (
-  base_salary >= 0 AND 
-  total_earnings >= 0 AND 
-  total_deductions >= 0 AND 
+  base_salary >= 0 AND
+  total_earnings >= 0 AND
+  total_deductions >= 0 AND
   net_pay >= 0
 );
 
 -- 期間の妥当性チェック
-ALTER TABLE salary_slips 
-ADD CONSTRAINT check_valid_period 
+ALTER TABLE salary_slips
+ADD CONSTRAINT check_valid_period
 CHECK (target_period_start <= target_period_end);
 
 -- 株式数量の正数制約
-ALTER TABLE stock_portfolios 
-ADD CONSTRAINT check_positive_quantity 
+ALTER TABLE stock_portfolios
+ADD CONSTRAINT check_positive_quantity
 CHECK (quantity > 0);
 
 -- パーセンテージの範囲制約
-ALTER TABLE stock_portfolios 
-ADD CONSTRAINT check_valid_percentage 
+ALTER TABLE stock_portfolios
+ADD CONSTRAINT check_valid_percentage
 CHECK (unrealized_gain_loss_rate >= -100 AND unrealized_gain_loss_rate <= 10000);
 ```
 
@@ -843,7 +842,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   -- 平均取得単価の再計算
   UPDATE stock_portfolios
-  SET 
+  SET
     average_purchase_price = (
       SELECT SUM(total_amount) / SUM(quantity)
       FROM stock_transactions
@@ -851,7 +850,7 @@ BEGIN
       AND transaction_type = 'buy'
     ),
     quantity = (
-      SELECT 
+      SELECT
         SUM(CASE WHEN transaction_type = 'buy' THEN quantity ELSE 0 END) -
         SUM(CASE WHEN transaction_type = 'sell' THEN quantity ELSE 0 END)
       FROM stock_transactions
@@ -859,7 +858,7 @@ BEGIN
     ),
     updated_at = NOW()
   WHERE id = NEW.portfolio_id;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -898,20 +897,20 @@ ALTER TABLE budgets ENABLE ROW LEVEL SECURITY;
 
 -- ポリシーの定義
 CREATE POLICY users_policy ON users
-  FOR ALL 
+  FOR ALL
   USING (id = current_setting('app.current_user_id')::text);
 
 CREATE POLICY salary_slips_policy ON salary_slips
-  FOR ALL 
+  FOR ALL
   USING (user_id = current_setting('app.current_user_id')::text);
 
 CREATE POLICY stock_portfolios_policy ON stock_portfolios
-  FOR ALL 
+  FOR ALL
   USING (user_id = current_setting('app.current_user_id')::text);
 
 -- 読み取り専用ポリシー（株価マスタ）
 CREATE POLICY stock_masters_read_policy ON stock_masters
-  FOR SELECT 
+  FOR SELECT
   USING (true);
 ```
 
@@ -925,57 +924,53 @@ const algorithm = 'aes-256-gcm';
 const key = Buffer.from(process.env.ENCRYPTION_KEY!, 'hex');
 
 export function encrypt(text: string): EncryptedData {
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv(algorithm, key, iv);
-  
-  let encrypted = cipher.update(text, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
-  
-  const authTag = cipher.getAuthTag();
-  
-  return {
-    encrypted,
-    iv: iv.toString('hex'),
-    authTag: authTag.toString('hex'),
-  };
+	const iv = crypto.randomBytes(16);
+	const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+	let encrypted = cipher.update(text, 'utf8', 'hex');
+	encrypted += cipher.final('hex');
+
+	const authTag = cipher.getAuthTag();
+
+	return {
+		encrypted,
+		iv: iv.toString('hex'),
+		authTag: authTag.toString('hex')
+	};
 }
 
 export function decrypt(data: EncryptedData): string {
-  const decipher = crypto.createDecipheriv(
-    algorithm,
-    key,
-    Buffer.from(data.iv, 'hex')
-  );
-  
-  decipher.setAuthTag(Buffer.from(data.authTag, 'hex'));
-  
-  let decrypted = decipher.update(data.encrypted, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
-  
-  return decrypted;
+	const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(data.iv, 'hex'));
+
+	decipher.setAuthTag(Buffer.from(data.authTag, 'hex'));
+
+	let decrypted = decipher.update(data.encrypted, 'hex', 'utf8');
+	decrypted += decipher.final('utf8');
+
+	return decrypted;
 }
 
 // Prismaミドルウェアでの自動暗号化
 prisma.$use(async (params, next) => {
-  if (params.model === 'SalarySlip') {
-    if (params.action === 'create' || params.action === 'update') {
-      if (params.args.data.employeeId) {
-        params.args.data.employeeId = encrypt(params.args.data.employeeId);
-      }
-    }
-  }
-  
-  const result = await next(params);
-  
-  if (params.model === 'SalarySlip') {
-    if (params.action === 'findFirst' || params.action === 'findUnique') {
-      if (result?.employeeId) {
-        result.employeeId = decrypt(result.employeeId);
-      }
-    }
-  }
-  
-  return result;
+	if (params.model === 'SalarySlip') {
+		if (params.action === 'create' || params.action === 'update') {
+			if (params.args.data.employeeId) {
+				params.args.data.employeeId = encrypt(params.args.data.employeeId);
+			}
+		}
+	}
+
+	const result = await next(params);
+
+	if (params.model === 'SalarySlip') {
+		if (params.action === 'findFirst' || params.action === 'findUnique') {
+			if (result?.employeeId) {
+				result.employeeId = decrypt(result.employeeId);
+			}
+		}
+	}
+
+	return result;
 });
 ```
 
@@ -1043,7 +1038,7 @@ restore_command = 'cp /archive/%f %p'
 
 ```sql
 -- 遅いクエリの検出
-SELECT 
+SELECT
   query,
   calls,
   total_time,
@@ -1055,7 +1050,7 @@ ORDER BY mean_time DESC
 LIMIT 10;
 
 -- テーブルサイズの監視
-SELECT 
+SELECT
   schemaname,
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
@@ -1064,7 +1059,7 @@ WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
 -- インデックス使用状況
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -1106,16 +1101,16 @@ ANALYZE;
 
 ## 承認
 
-| 役割 | 名前 | 日付 | 署名 |
-|------|------|------|------|
-| データアーキテクト | データモデリングアーキテクト | 2025-08-10 | ✅ |
-| レビュアー | - | - | [ ] |
-| 承認者 | - | - | [ ] |
+| 役割               | 名前                         | 日付       | 署名 |
+| ------------------ | ---------------------------- | ---------- | ---- |
+| データアーキテクト | データモデリングアーキテクト | 2025-08-10 | ✅   |
+| レビュアー         | -                            | -          | [ ]  |
+| 承認者             | -                            | -          | [ ]  |
 
 ---
 
 **改訂履歴**
 
-| バージョン | 日付 | 変更内容 | 作成者 |
-|-----------|------|----------|---------|
-| 1.0.0 | 2025-08-10 | 初版作成 | データモデリングアーキテクト |
+| バージョン | 日付       | 変更内容 | 作成者                       |
+| ---------- | ---------- | -------- | ---------------------------- |
+| 1.0.0      | 2025-08-10 | 初版作成 | データモデリングアーキテクト |

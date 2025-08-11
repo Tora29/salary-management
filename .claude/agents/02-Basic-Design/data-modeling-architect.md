@@ -37,6 +37,7 @@ parallel_group: 1
 **Feature-Sliced Design (FSD) でのTypeScriptインターフェース設計：**
 
 - **FSD model構造**：
+
   ```
   src/shared/components/model/    # 共通UI型定義
   src/entities/*/model/          # エンティティ型定義

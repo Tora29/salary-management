@@ -24,6 +24,7 @@ parallel_group: 1
 ### 層とデータアクセスの責任分離
 
 **階層化データアクセス構造**:
+
 - **サーバー層** (`src/routes/api/*/+server.ts`): SvelteKitのAPIエンドポイント実装（DB操作、認証、バリデーション）
 - **Entities層** (`src/entities/*/api/`): エンティティ固有のAPI呼び出しロジック（単純なデータ取得）
 - **Features層** (`src/features/*/api/`): フィーチャー固有の複雑なAPI呼び出し（ビジネスロジック統合）

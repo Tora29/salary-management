@@ -1,8 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
-
-import type { DefaultSession } from '@auth/core/types';
 import type { AdapterUser } from '@auth/core/adapters';
+import type { DefaultSession } from '@auth/core/types';
 
 declare global {
 	namespace App {

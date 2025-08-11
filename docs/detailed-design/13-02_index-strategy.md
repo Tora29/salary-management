@@ -1,6 +1,7 @@
 # インデックス戦略詳細設計書
 
 ## 文書情報
+
 - **作成日**: 2025-08-10
 - **作成者**: エキスパートデータベース詳細設計アーキテクト
 - **バージョン**: 1.0.0
@@ -16,12 +17,12 @@
 
 本インデックス戦略は、給料・資産管理システムの特性を考慮した最適化戦略です：
 
-| 戦略 | 目的 | 実装手段 |
-|------|------|----------|
-| **クエリパターン最適化** | 頻繁なクエリの高速化 | 使用頻度別インデックス設計 |
-| **複合インデックス活用** | 多条件検索の効率化 | カラムの選択性を考慮した設計 |
-| **カバリングインデックス** | ディスクI/O削減 | INCLUDE句の戦略的活用 |
-| **部分インデックス** | インデックスサイズ最適化 | 条件付きインデックスの活用 |
+| 戦略                       | 目的                       | 実装手段                     |
+| -------------------------- | -------------------------- | ---------------------------- |
+| **クエリパターン最適化**   | 頻繁なクエリの高速化       | 使用頻度別インデックス設計   |
+| **複合インデックス活用**   | 多条件検索の効率化         | カラムの選択性を考慮した設計 |
+| **カバリングインデックス** | ディスクI/O削減            | INCLUDE句の戦略的活用        |
+| **部分インデックス**       | インデックスサイズ最適化   | 条件付きインデックスの活用   |
 | **インデックス保守自動化** | 継続的なパフォーマンス保持 | 統計情報更新・再構築の自動化 |
 
 ### 1.2 クエリパターン分析
@@ -30,10 +31,10 @@
 
 ```sql
 -- パターン1: ダッシュボード表示 (使用頻度: 極高)
-SELECT s.net_pay, s.payment_date, s.total_earnings 
-FROM salary_slips s 
-WHERE s.user_id = ? 
-ORDER BY s.payment_date DESC 
+SELECT s.net_pay, s.payment_date, s.total_earnings
+FROM salary_slips s
+WHERE s.user_id = ?
+ORDER BY s.payment_date DESC
 LIMIT 12;
 
 -- パターン2: ポートフォリオサマリー (使用頻度: 極高)
@@ -43,19 +44,19 @@ JOIN stock_masters sm ON p.stock_id = sm.id
 WHERE p.user_id = ? AND p.quantity > 0;
 
 -- パターン3: 月次レポート生成 (使用頻度: 高)
-SELECT 
+SELECT
     DATE_TRUNC('month', s.payment_date) as month,
     SUM(s.net_pay) as total_income,
     AVG(s.total_earnings) as avg_earnings
 FROM salary_slips s
-WHERE s.user_id = ? 
+WHERE s.user_id = ?
     AND s.payment_date BETWEEN ? AND ?
     AND s.status = 'confirmed'
 GROUP BY DATE_TRUNC('month', s.payment_date);
 
 -- パターン4: 全文検索 (使用頻度: 中)
 SELECT s.* FROM salary_slips s
-WHERE s.user_id = ? 
+WHERE s.user_id = ?
     AND s.search_vector @@ plainto_tsquery('japanese', ?);
 
 -- パターン5: 株価履歴分析 (使用頻度: 中)
@@ -86,16 +87,16 @@ CREATE UNIQUE INDEX idx_stock_masters_symbol_unique ON stock_masters(symbol);
 CREATE UNIQUE INDEX idx_user_sessions_token_unique ON user_sessions(session_token);
 
 -- 複合ユニークインデックス
-CREATE UNIQUE INDEX idx_salary_slips_user_payment_company_unique 
+CREATE UNIQUE INDEX idx_salary_slips_user_payment_company_unique
 ON salary_slips(user_id, payment_date, company_name);
 
-CREATE UNIQUE INDEX idx_stock_portfolios_user_stock_unique 
+CREATE UNIQUE INDEX idx_stock_portfolios_user_stock_unique
 ON stock_portfolios(user_id, stock_id);
 
-CREATE UNIQUE INDEX idx_stock_current_prices_stock_unique 
+CREATE UNIQUE INDEX idx_stock_current_prices_stock_unique
 ON stock_current_prices(stock_id);
 
-CREATE UNIQUE INDEX idx_stock_price_history_stock_date_unique 
+CREATE UNIQUE INDEX idx_stock_price_history_stock_date_unique
 ON stock_price_histories(stock_id, date);
 ```
 
@@ -129,7 +130,7 @@ CREATE INDEX idx_audit_logs_user_id ON audit.audit_logs(user_id);
 
 ```sql
 -- 給料明細ダッシュボード用（最も重要）
-CREATE INDEX idx_salary_dashboard_primary 
+CREATE INDEX idx_salary_dashboard_primary
 ON salary_slips(user_id, payment_date DESC, status)
 INCLUDE (net_pay, total_earnings, total_deductions, company_name);
 
@@ -364,13 +365,13 @@ WITH (pages_per_range = 128);
 -- ダッシュボード用カバリングインデックス
 CREATE INDEX idx_dashboard_salary_full_cover
 ON salary_slips(user_id, payment_date DESC)
-INCLUDE (id, company_name, employee_name, net_pay, total_earnings, total_deductions, 
+INCLUDE (id, company_name, employee_name, net_pay, total_earnings, total_deductions,
          currency, status, created_at);
 
 CREATE INDEX idx_dashboard_portfolio_full_cover
 ON stock_portfolios(user_id)
 WHERE quantity > 0
-INCLUDE (id, stock_id, quantity, current_value, unrealized_gain_loss, 
+INCLUDE (id, stock_id, quantity, current_value, unrealized_gain_loss,
          unrealized_gain_loss_rate, first_purchase_date, last_purchase_date);
 
 -- リスト表示用カバリングインデックス
@@ -380,7 +381,7 @@ INCLUDE (id, company_name, net_pay, currency, source_type, created_at);
 
 CREATE INDEX idx_transaction_list_cover
 ON stock_transactions(user_id, transaction_date DESC)
-INCLUDE (id, transaction_type, quantity, price_per_share, total_amount, 
+INCLUDE (id, transaction_type, quantity, price_per_share, total_amount,
          commission, tax, stock_id, notes);
 
 -- 統計計算用カバリングインデックス
@@ -412,13 +413,13 @@ INCLUDE (symbol, name, exchange, sector, currency);
 -- Transaction + Portfolio JOIN用
 CREATE INDEX idx_transaction_portfolio_join_cover
 ON stock_transactions(portfolio_id, transaction_date DESC)
-INCLUDE (id, transaction_type, quantity, price_per_share, total_amount, 
+INCLUDE (id, transaction_type, quantity, price_per_share, total_amount,
          user_id, stock_id);
 
 -- Budget関連JOIN用
 CREATE INDEX idx_budget_category_join_cover
 ON budget_categories(budget_id, category_type)
-INCLUDE (id, category_name, allocated_amount, actual_amount, variance, 
+INCLUDE (id, category_name, allocated_amount, actual_amount, variance,
          display_order);
 
 CREATE INDEX idx_budget_tracking_join_cover
@@ -434,40 +435,40 @@ INCLUDE (id, amount, description, source);
 
 ```sql
 -- 給料明細パーティション（年別）のインデックス
-CREATE INDEX idx_salary_slips_2024_user_date 
+CREATE INDEX idx_salary_slips_2024_user_date
 ON salary_slips_2024(user_id, payment_date DESC);
 
-CREATE INDEX idx_salary_slips_2025_user_date 
+CREATE INDEX idx_salary_slips_2025_user_date
 ON salary_slips_2025(user_id, payment_date DESC);
 
-CREATE INDEX idx_salary_slips_2026_user_date 
+CREATE INDEX idx_salary_slips_2026_user_date
 ON salary_slips_2026(user_id, payment_date DESC);
 
 -- カバリングインデックス（パーティション用）
-CREATE INDEX idx_salary_slips_2024_cover 
+CREATE INDEX idx_salary_slips_2024_cover
 ON salary_slips_2024(user_id, payment_date DESC)
 INCLUDE (net_pay, total_earnings, company_name, status);
 
-CREATE INDEX idx_salary_slips_2025_cover 
+CREATE INDEX idx_salary_slips_2025_cover
 ON salary_slips_2025(user_id, payment_date DESC)
 INCLUDE (net_pay, total_earnings, company_name, status);
 
 -- 株価履歴パーティション（年別）のインデックス
-CREATE INDEX idx_stock_price_histories_2024_stock_date 
+CREATE INDEX idx_stock_price_histories_2024_stock_date
 ON stock_price_histories_2024(stock_id, date DESC);
 
-CREATE INDEX idx_stock_price_histories_2025_stock_date 
+CREATE INDEX idx_stock_price_histories_2025_stock_date
 ON stock_price_histories_2025(stock_id, date DESC);
 
-CREATE INDEX idx_stock_price_histories_2026_stock_date 
+CREATE INDEX idx_stock_price_histories_2026_stock_date
 ON stock_price_histories_2026(stock_id, date DESC);
 
 -- 技術指標用インデックス
-CREATE INDEX idx_stock_price_histories_2024_indicators 
+CREATE INDEX idx_stock_price_histories_2024_indicators
 ON stock_price_histories_2024(stock_id, date DESC)
 INCLUDE (close, sma20, sma50, rsi);
 
-CREATE INDEX idx_stock_price_histories_2025_indicators 
+CREATE INDEX idx_stock_price_histories_2025_indicators
 ON stock_price_histories_2025(stock_id, date DESC)
 INCLUDE (close, sma20, sma50, rsi);
 
@@ -481,14 +482,14 @@ BEGIN
     FOR i IN 0..12 LOOP
         start_date := date_trunc('month', CURRENT_DATE) + (i - 6) * INTERVAL '1 month';
         partition_name := 'audit_logs_' || to_char(start_date, 'YYYY_MM');
-        
+
         EXECUTE format('
-            CREATE INDEX IF NOT EXISTS idx_%s_user_date 
+            CREATE INDEX IF NOT EXISTS idx_%s_user_date
             ON audit.%s(user_id, created_at DESC)
         ', partition_name, partition_name);
-        
+
         EXECUTE format('
-            CREATE INDEX IF NOT EXISTS idx_%s_entity 
+            CREATE INDEX IF NOT EXISTS idx_%s_entity
             ON audit.%s(entity_type, entity_id, created_at DESC)
         ', partition_name, partition_name);
     END LOOP;
@@ -515,9 +516,9 @@ RETURNS void AS $$
 DECLARE
     table_record RECORD;
 BEGIN
-    FOR table_record IN 
-        SELECT schemaname, tablename 
-        FROM pg_tables 
+    FOR table_record IN
+        SELECT schemaname, tablename
+        FROM pg_tables
         WHERE schemaname IN ('public', 'audit')
     LOOP
         EXECUTE format('ANALYZE %I.%I', table_record.schemaname, table_record.tablename);
@@ -532,7 +533,7 @@ $$ LANGUAGE plpgsql;
 ```sql
 -- インデックス使用統計ビュー
 CREATE VIEW v_index_usage_stats AS
-SELECT 
+SELECT
     schemaname,
     tablename,
     indexname,
@@ -540,7 +541,7 @@ SELECT
     idx_tup_read as tuples_read,
     idx_tup_fetch as tuples_fetched,
     pg_size_pretty(pg_relation_size(indexrelid)) as size,
-    CASE 
+    CASE
         WHEN idx_scan = 0 THEN 'UNUSED'
         WHEN idx_scan < 10 THEN 'LOW_USAGE'
         WHEN idx_scan < 100 THEN 'MEDIUM_USAGE'
@@ -552,7 +553,7 @@ ORDER BY idx_scan DESC, pg_relation_size(indexrelid) DESC;
 -- 重複・冗長インデックス検出
 CREATE VIEW v_duplicate_indexes AS
 WITH index_columns AS (
-    SELECT 
+    SELECT
         i.indexrelid,
         i.indrelid,
         n.nspname as schema_name,
@@ -568,20 +569,20 @@ WITH index_columns AS (
     WHERE i.indisprimary = false
     GROUP BY i.indexrelid, i.indrelid, n.nspname, t.relname, c.relname
 )
-SELECT 
+SELECT
     ic1.schema_name,
     ic1.table_name,
     ic1.index_name as index1,
     ic2.index_name as index2,
     ic1.columns
 FROM index_columns ic1
-JOIN index_columns ic2 ON ic1.indrelid = ic2.indrelid 
-    AND ic1.columns = ic2.columns 
+JOIN index_columns ic2 ON ic1.indrelid = ic2.indrelid
+    AND ic1.columns = ic2.columns
     AND ic1.indexrelid < ic2.indexrelid;
 
 -- パフォーマンスが悪いクエリの特定
 CREATE VIEW v_slow_queries AS
-SELECT 
+SELECT
     query,
     calls,
     total_time,
@@ -612,7 +613,7 @@ DECLARE
     rebuild_sql TEXT;
 BEGIN
     FOR index_record IN
-        SELECT 
+        SELECT
             n.nspname as schema_name,
             t.relname as table_name,
             c.relname as index_name,
@@ -628,19 +629,19 @@ BEGIN
             AND pg_relation_size(c.oid) > 100 * 1024 * 1024 -- 100MB以上
     LOOP
         BEGIN
-            rebuild_sql := format('REINDEX INDEX CONCURRENTLY %I.%I', 
+            rebuild_sql := format('REINDEX INDEX CONCURRENTLY %I.%I',
                                 index_record.schema_name, index_record.index_name);
             EXECUTE rebuild_sql;
-            
-            RETURN QUERY SELECT 
+
+            RETURN QUERY SELECT
                 index_record.schema_name,
                 index_record.table_name,
                 index_record.index_name,
                 'REBUILD'::text,
                 'SUCCESS'::text;
-                
+
         EXCEPTION WHEN OTHERS THEN
-            RETURN QUERY SELECT 
+            RETURN QUERY SELECT
                 index_record.schema_name,
                 index_record.table_name,
                 index_record.index_name,
@@ -662,7 +663,7 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         schemaname::text,
         tablename::text,
         indexname::text,
@@ -725,16 +726,16 @@ USING GIN(search_vector);
 -- 上記で定義した全インデックスを適用
 
 -- 本番環境専用の監視インデックス
-CREATE INDEX idx_prod_performance_monitoring 
+CREATE INDEX idx_prod_performance_monitoring
 ON salary_slips(created_at DESC, user_id)
 WHERE created_at >= CURRENT_DATE - INTERVAL '30 days';
 
-CREATE INDEX idx_prod_error_tracking 
+CREATE INDEX idx_prod_error_tracking
 ON stock_current_prices(last_updated DESC, data_quality)
 WHERE data_quality IN ('warning', 'poor');
 
 -- 本番バックアップ用インデックス
-CREATE INDEX idx_prod_backup_checkpoint 
+CREATE INDEX idx_prod_backup_checkpoint
 ON salary_slips(updated_at DESC)
 WHERE updated_at >= CURRENT_DATE - INTERVAL '1 day';
 ```
@@ -765,7 +766,7 @@ LIMIT 12;
 -- 使用インデックス: idx_dashboard_salary_full_cover
 
 -- Query plan (optimized):
--- Index Scan using idx_dashboard_salary_full_cover on salary_slips s 
+-- Index Scan using idx_dashboard_salary_full_cover on salary_slips s
 --   (cost=0.15..45.23 rows=12 width=50)
 --   Index Cond: (user_id = 'cm3k8n4r90001oe6v8h7x2p1q')
 ```
@@ -798,14 +799,14 @@ WHERE p.user_id = 'cm3k8n4r90001oe6v8h7x2p1q' AND p.quantity > 0;
 -- 2. SELECT * FROM stock_masters WHERE id = ? (N回実行)
 
 -- AFTER: 単一クエリ化 + カバリングインデックス
-SELECT 
+SELECT
     p.id, p.current_value, p.unrealized_gain_loss, p.quantity,
     sm.name, sm.symbol, sm.exchange, sm.sector
 FROM stock_portfolios p
 JOIN stock_masters sm ON p.stock_id = sm.id
 WHERE p.user_id = ? AND p.quantity > 0;
 
--- 使用インデックス: 
+-- 使用インデックス:
 -- - idx_portfolio_stock_join_cover (stock_portfolios)
 -- - idx_stock_master_join_cover (stock_masters)
 ```
@@ -819,13 +820,13 @@ WHERE p.user_id = ? AND p.quantity > 0;
 ```sql
 -- インデックス効率性監視
 CREATE VIEW v_index_efficiency AS
-SELECT 
+SELECT
     schemaname,
     tablename,
     indexname,
     idx_scan,
     idx_tup_read,
-    CASE 
+    CASE
         WHEN idx_scan = 0 THEN 0
         ELSE round((idx_tup_read::numeric / idx_scan), 2)
     END as avg_tuples_per_scan,
@@ -836,14 +837,14 @@ ORDER BY idx_scan DESC;
 
 -- テーブルスキャン監視
 CREATE VIEW v_table_scan_monitoring AS
-SELECT 
+SELECT
     schemaname,
     relname as tablename,
     seq_scan,
     seq_tup_read,
     idx_scan,
     idx_tup_fetch,
-    CASE 
+    CASE
         WHEN seq_scan + idx_scan = 0 THEN 0
         ELSE round((seq_scan::numeric / (seq_scan + idx_scan) * 100), 2)
     END as seq_scan_percentage
@@ -853,7 +854,7 @@ ORDER BY seq_scan DESC;
 
 -- クエリパフォーマンス監視
 CREATE VIEW v_query_performance AS
-SELECT 
+SELECT
     left(query, 100) as query_preview,
     calls,
     total_time,
@@ -884,41 +885,41 @@ BEGIN
     SELECT COUNT(*) INTO slow_query_count
     FROM pg_stat_statements
     WHERE mean_time > 500 AND calls > 100;
-    
+
     IF slow_query_count > 10 THEN
-        RETURN QUERY SELECT 
+        RETURN QUERY SELECT
             'HIGH'::text,
             format('Found %s slow queries (>500ms avg)', slow_query_count)::text,
             'Review query performance and consider adding indexes'::text;
     END IF;
-    
+
     -- 未使用インデックスの検出
     SELECT COUNT(*) INTO unused_index_count
     FROM pg_stat_user_indexes
     WHERE idx_scan = 0 AND pg_relation_size(indexrelid) > 50 * 1024 * 1024;
-    
+
     IF unused_index_count > 5 THEN
-        RETURN QUERY SELECT 
+        RETURN QUERY SELECT
             'MEDIUM'::text,
             format('Found %s large unused indexes (>50MB)', unused_index_count)::text,
             'Consider dropping unused indexes to save space'::text;
     END IF;
-    
+
     -- 大量シーケンシャルスキャンの検出
     SELECT COUNT(*) INTO large_seq_scan_count
     FROM pg_stat_user_tables
     WHERE seq_scan > idx_scan * 2 AND seq_tup_read > 100000;
-    
+
     IF large_seq_scan_count > 0 THEN
-        RETURN QUERY SELECT 
+        RETURN QUERY SELECT
             'HIGH'::text,
             format('Found %s tables with excessive sequential scans', large_seq_scan_count)::text,
             'Add appropriate indexes for frequently scanned tables'::text;
     END IF;
-    
+
     -- 正常状態
     IF slow_query_count <= 10 AND unused_index_count <= 5 AND large_seq_scan_count = 0 THEN
-        RETURN QUERY SELECT 
+        RETURN QUERY SELECT
             'OK'::text,
             'All index performance metrics are within normal ranges'::text,
             'Continue monitoring'::text;
@@ -941,16 +942,16 @@ $$ LANGUAGE plpgsql;
 
 ## 承認
 
-| 役割 | 名前 | 日付 | 署名 |
-|------|------|------|------|
-| データベースアーキテクト | エキスパートデータベース詳細設計アーキテクト | 2025-08-10 | ✅ |
-| レビュアー | - | - | [ ] |
-| 承認者 | - | - | [ ] |
+| 役割                     | 名前                                         | 日付       | 署名 |
+| ------------------------ | -------------------------------------------- | ---------- | ---- |
+| データベースアーキテクト | エキスパートデータベース詳細設計アーキテクト | 2025-08-10 | ✅   |
+| レビュアー               | -                                            | -          | [ ]  |
+| 承認者                   | -                                            | -          | [ ]  |
 
 ---
 
 **改訂履歴**
 
-| バージョン | 日付 | 変更内容 | 作成者 |
-|-----------|------|----------|---------|
-| 1.0.0 | 2025-08-10 | 初版作成 | エキスパートデータベース詳細設計アーキテクト |
+| バージョン | 日付       | 変更内容 | 作成者                                       |
+| ---------- | ---------- | -------- | -------------------------------------------- |
+| 1.0.0      | 2025-08-10 | 初版作成 | エキスパートデータベース詳細設計アーキテクト |

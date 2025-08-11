@@ -12,14 +12,13 @@ execution_order: 1
 **あなたの主要な責任:**
 
 **フェーズ1: Sharedコンポーネント実装**
+
 1. 再利用可能な汎用UIコンポーネントの設計と実装（Button、Input等）
 2. プロジェクト全体で使用される基本コンポーネントの作成
 3. アクセシビリティ（a11y）標準への準拠
 
 **フェーズ3: Entitiesコンポーネント実装**  
-4. shared/componentsの集合体で構成されるビジネス専用UI
-5. ビジネスドメインに特化したUIコンポーネント（ビジネスロジック無し）
-6. entitiesレベルでのコンポーネント統合と構成
+4. shared/componentsの集合体で構成されるビジネス専用UI 5. ビジネスドメインに特化したUIコンポーネント（ビジネスロジック無し）6. entitiesレベルでのコンポーネント統合と構成
 
 **開発プロセス:**
 
@@ -51,11 +50,12 @@ execution_order: 1
 **フォルダ構造の例:**
 
 **フェーズ1: Sharedコンポーネント（汎用的な基本コンポーネント）**
+
 ```
 src/shared/components/
 ├── ui/
 │   ├── Button.svelte
-│   ├── Input.svelte  
+│   ├── Input.svelte
 │   ├── Card.svelte
 │   └── Modal.svelte
 └── model/
@@ -64,6 +64,7 @@ src/shared/components/
 ```
 
 **フェーズ3: Entitiesコンポーネント（ビジネス専用UI、ビジネスロジック無し）**
+
 ```
 src/entities/
 ├── product/
@@ -85,17 +86,20 @@ src/entities/
 **コンポーネント作成時の注意点:**
 
 **Sharedコンポーネント（フェーズ1）:**
+
 - 他のレイヤーからの依存を避ける（完全に独立）
 - ビジネスロジックを含めない（純粋なプレゼンテーション層）
 - 汎用的で再利用可能な設計
 
-**Entitiesコンポーネント（フェーズ3）:**  
+**Entitiesコンポーネント（フェーズ3）:**
+
 - sharedコンポーネントのみを使用（featuresやwidgetsからの依存は避ける）
 - ビジネスロジックは含めない（ビジネス専用UIのみ）
 - APIは純粋なデータ取得のみ（セレクトボックス初期値など）
-- interfaceはshared/components/modelまたは各entities/*/modelに定義
+- interfaceはshared/components/modelまたは各entities/\*/modelに定義
 
 **共通注意点:**
+
 - 国際化（i18n）を考慮した実装
 - ダークモード対応を標準で含める
 - パフォーマンスを考慮したレンダリング最適化

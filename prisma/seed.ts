@@ -3,9 +3,9 @@ import { Decimal } from '@prisma/client/runtime/library';
 
 const prisma = new PrismaClient();
 
-async function main() {
-	console.log('🚀 シードデータ作成開始...');
-	
+async function main(): Promise<void> {
+	console.warn('🚀 シードデータ作成開始...');
+
 	// 既存データを削除（開発環境のみ）
 	await prisma.salarySlip.deleteMany();
 	await prisma.asset.deleteMany();
@@ -13,7 +13,7 @@ async function main() {
 	await prisma.session.deleteMany();
 	await prisma.account.deleteMany();
 	await prisma.user.deleteMany();
-	
+
 	// テスト用ユーザー作成
 	const testUser = await prisma.user.create({
 		data: {
@@ -106,18 +106,18 @@ async function main() {
 		});
 	}
 
-	console.log('✅ シードデータの作成が完了しました！');
+	console.warn('✅ シードデータの作成が完了しました！');
 
 	// 作成されたデータの確認
 	const stockCount = await prisma.stock.count();
 	const assetCount = await prisma.asset.count();
 
 	const userCount = await prisma.user.count();
-	
-	console.log(`📊 作成されたデータ:`);
-	console.log(`  - ユーザー: ${userCount}件`);
-	console.log(`  - 株式データ: ${stockCount}件`);
-	console.log(`  - 資産データ: ${assetCount}件`);
+
+	console.warn(`📊 作成されたデータ:`);
+	console.warn(`  - ユーザー: ${userCount}件`);
+	console.warn(`  - 株式データ: ${stockCount}件`);
+	console.warn(`  - 資産データ: ${assetCount}件`);
 }
 
 main()

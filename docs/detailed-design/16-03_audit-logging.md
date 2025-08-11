@@ -1,6 +1,7 @@
 # 監査ログ設計書
 
 ## 文書情報
+
 - **作成日**: 2025-08-10
 - **作成者**: エキスパートロギング設計アーキテクト
 - **バージョン**: 1.0.0
@@ -15,13 +16,13 @@
 
 本システムの監査ログは、以下の目的を達成するために設計されています：
 
-| 目的 | 詳細 | 重要度 |
-|------|------|--------|
-| **法的コンプライアンス** | 金融データの取り扱いに関する法的要件への対応 | 最高 |
-| **セキュリティ監視** | 不正アクセスや疑わしい活動の検知・追跡 | 最高 |
-| **データ完全性保証** | データ変更の完全な履歴と責任追跡 | 高 |
-| **運用監視** | システム運用状況の把握と問題の早期発見 | 中 |
-| **ビジネス分析** | ユーザー行動分析と業務プロセス改善 | 中 |
+| 目的                     | 詳細                                         | 重要度 |
+| ------------------------ | -------------------------------------------- | ------ |
+| **法的コンプライアンス** | 金融データの取り扱いに関する法的要件への対応 | 最高   |
+| **セキュリティ監視**     | 不正アクセスや疑わしい活動の検知・追跡       | 最高   |
+| **データ完全性保証**     | データ変更の完全な履歴と責任追跡             | 高     |
+| **運用監視**             | システム運用状況の把握と問題の早期発見       | 中     |
+| **ビジネス分析**         | ユーザー行動分析と業務プロセス改善           | 中     |
 
 ### 1.2 監査対象イベント分類
 
@@ -29,7 +30,7 @@
 監査対象イベント
 ├── データ操作監査
 │   ├── 給料明細 CRUD 操作
-│   ├── 株式取引データ操作  
+│   ├── 株式取引データ操作
 │   ├── ユーザー情報変更
 │   └── 設定変更
 ├── セキュリティ監査
@@ -59,197 +60,230 @@
 // src/shared/domain/audit/audit-log.entity.ts
 
 export class AuditLog {
-  private constructor(
-    private readonly _id: EntityId,
-    private readonly _timestamp: Date,
-    private readonly _userId: EntityId | null,
-    private readonly _sessionId: string | null,
-    private readonly _requestId: string,
-    private readonly _traceId: string | null,
-    private readonly _entityType: AuditEntityType,
-    private readonly _entityId: string | null,
-    private readonly _action: AuditAction,
-    private readonly _result: AuditResult,
-    private readonly _oldValue: Record<string, any> | null,
-    private readonly _newValue: Record<string, any> | null,
-    private readonly _reason: string | null,
-    private readonly _metadata: AuditMetadata,
-    private readonly _integrity: IntegrityInfo
-  ) {}
+	private constructor(
+		private readonly _id: EntityId,
+		private readonly _timestamp: Date,
+		private readonly _userId: EntityId | null,
+		private readonly _sessionId: string | null,
+		private readonly _requestId: string,
+		private readonly _traceId: string | null,
+		private readonly _entityType: AuditEntityType,
+		private readonly _entityId: string | null,
+		private readonly _action: AuditAction,
+		private readonly _result: AuditResult,
+		private readonly _oldValue: Record<string, any> | null,
+		private readonly _newValue: Record<string, any> | null,
+		private readonly _reason: string | null,
+		private readonly _metadata: AuditMetadata,
+		private readonly _integrity: IntegrityInfo
+	) {}
 
-  public static create(props: CreateAuditLogProps): AuditLog {
-    const id = EntityId.generate();
-    const timestamp = new Date();
-    
-    const auditLog = new AuditLog(
-      id,
-      timestamp,
-      props.userId,
-      props.sessionId,
-      props.requestId,
-      props.traceId,
-      props.entityType,
-      props.entityId,
-      props.action,
-      props.result,
-      props.oldValue ? this.sanitizeData(props.oldValue) : null,
-      props.newValue ? this.sanitizeData(props.newValue) : null,
-      props.reason,
-      props.metadata,
-      this.generateIntegrity(props)
-    );
+	public static create(props: CreateAuditLogProps): AuditLog {
+		const id = EntityId.generate();
+		const timestamp = new Date();
 
-    return auditLog;
-  }
+		const auditLog = new AuditLog(
+			id,
+			timestamp,
+			props.userId,
+			props.sessionId,
+			props.requestId,
+			props.traceId,
+			props.entityType,
+			props.entityId,
+			props.action,
+			props.result,
+			props.oldValue ? this.sanitizeData(props.oldValue) : null,
+			props.newValue ? this.sanitizeData(props.newValue) : null,
+			props.reason,
+			props.metadata,
+			this.generateIntegrity(props)
+		);
 
-  private static sanitizeData(data: Record<string, any>): Record<string, any> {
-    const sensitiveFields = ['password', 'token', 'apiKey', 'secret'];
-    const sanitized = { ...data };
-    
-    for (const field of sensitiveFields) {
-      if (sanitized[field]) {
-        sanitized[field] = '[REDACTED]';
-      }
-    }
-    
-    return sanitized;
-  }
+		return auditLog;
+	}
 
-  private static generateIntegrity(props: CreateAuditLogProps): IntegrityInfo {
-    const crypto = require('crypto');
-    const content = JSON.stringify({
-      userId: props.userId,
-      entityType: props.entityType,
-      action: props.action,
-      oldValue: props.oldValue,
-      newValue: props.newValue,
-      timestamp: Date.now()
-    });
-    
-    return {
-      hash: crypto.createHash('sha256').update(content).digest('hex'),
-      signature: crypto.createHmac('sha256', process.env.AUDIT_SIGNING_KEY)
-        .update(content).digest('hex'),
-      algorithm: 'HMAC-SHA256'
-    };
-  }
+	private static sanitizeData(data: Record<string, any>): Record<string, any> {
+		const sensitiveFields = ['password', 'token', 'apiKey', 'secret'];
+		const sanitized = { ...data };
 
-  // ゲッター群
-  public get id(): EntityId { return this._id; }
-  public get timestamp(): Date { return this._timestamp; }
-  public get userId(): EntityId | null { return this._userId; }
-  public get sessionId(): string | null { return this._sessionId; }
-  public get requestId(): string { return this._requestId; }
-  public get traceId(): string | null { return this._traceId; }
-  public get entityType(): AuditEntityType { return this._entityType; }
-  public get entityId(): string | null { return this._entityId; }
-  public get action(): AuditAction { return this._action; }
-  public get result(): AuditResult { return this._result; }
-  public get oldValue(): Record<string, any> | null { return this._oldValue; }
-  public get newValue(): Record<string, any> | null { return this._newValue; }
-  public get reason(): string | null { return this._reason; }
-  public get metadata(): AuditMetadata { return this._metadata; }
-  public get integrity(): IntegrityInfo { return this._integrity; }
+		for (const field of sensitiveFields) {
+			if (sanitized[field]) {
+				sanitized[field] = '[REDACTED]';
+			}
+		}
 
-  // 整合性検証
-  public verifyIntegrity(): boolean {
-    const content = JSON.stringify({
-      userId: this._userId,
-      entityType: this._entityType,
-      action: this._action,
-      oldValue: this._oldValue,
-      newValue: this._newValue,
-      timestamp: this._timestamp.getTime()
-    });
-    
-    const crypto = require('crypto');
-    const expectedHash = crypto.createHash('sha256').update(content).digest('hex');
-    const expectedSignature = crypto.createHmac('sha256', process.env.AUDIT_SIGNING_KEY)
-      .update(content).digest('hex');
-    
-    return this._integrity.hash === expectedHash && 
-           this._integrity.signature === expectedSignature;
-  }
+		return sanitized;
+	}
+
+	private static generateIntegrity(props: CreateAuditLogProps): IntegrityInfo {
+		const crypto = require('crypto');
+		const content = JSON.stringify({
+			userId: props.userId,
+			entityType: props.entityType,
+			action: props.action,
+			oldValue: props.oldValue,
+			newValue: props.newValue,
+			timestamp: Date.now()
+		});
+
+		return {
+			hash: crypto.createHash('sha256').update(content).digest('hex'),
+			signature: crypto
+				.createHmac('sha256', process.env.AUDIT_SIGNING_KEY)
+				.update(content)
+				.digest('hex'),
+			algorithm: 'HMAC-SHA256'
+		};
+	}
+
+	// ゲッター群
+	public get id(): EntityId {
+		return this._id;
+	}
+	public get timestamp(): Date {
+		return this._timestamp;
+	}
+	public get userId(): EntityId | null {
+		return this._userId;
+	}
+	public get sessionId(): string | null {
+		return this._sessionId;
+	}
+	public get requestId(): string {
+		return this._requestId;
+	}
+	public get traceId(): string | null {
+		return this._traceId;
+	}
+	public get entityType(): AuditEntityType {
+		return this._entityType;
+	}
+	public get entityId(): string | null {
+		return this._entityId;
+	}
+	public get action(): AuditAction {
+		return this._action;
+	}
+	public get result(): AuditResult {
+		return this._result;
+	}
+	public get oldValue(): Record<string, any> | null {
+		return this._oldValue;
+	}
+	public get newValue(): Record<string, any> | null {
+		return this._newValue;
+	}
+	public get reason(): string | null {
+		return this._reason;
+	}
+	public get metadata(): AuditMetadata {
+		return this._metadata;
+	}
+	public get integrity(): IntegrityInfo {
+		return this._integrity;
+	}
+
+	// 整合性検証
+	public verifyIntegrity(): boolean {
+		const content = JSON.stringify({
+			userId: this._userId,
+			entityType: this._entityType,
+			action: this._action,
+			oldValue: this._oldValue,
+			newValue: this._newValue,
+			timestamp: this._timestamp.getTime()
+		});
+
+		const crypto = require('crypto');
+		const expectedHash = crypto.createHash('sha256').update(content).digest('hex');
+		const expectedSignature = crypto
+			.createHmac('sha256', process.env.AUDIT_SIGNING_KEY)
+			.update(content)
+			.digest('hex');
+
+		return this._integrity.hash === expectedHash && this._integrity.signature === expectedSignature;
+	}
 }
 
 // 列挙型定義
 export enum AuditEntityType {
-  USER = 'user',
-  SALARY_SLIP = 'salary_slip',
-  STOCK_TRANSACTION = 'stock_transaction',
-  STOCK_PORTFOLIO = 'stock_portfolio',
-  USER_PREFERENCES = 'user_preferences',
-  SYSTEM_CONFIG = 'system_config',
-  FILE_UPLOAD = 'file_upload',
-  API_KEY = 'api_key',
-  SESSION = 'session'
+	USER = 'user',
+	SALARY_SLIP = 'salary_slip',
+	STOCK_TRANSACTION = 'stock_transaction',
+	STOCK_PORTFOLIO = 'stock_portfolio',
+	USER_PREFERENCES = 'user_preferences',
+	SYSTEM_CONFIG = 'system_config',
+	FILE_UPLOAD = 'file_upload',
+	API_KEY = 'api_key',
+	SESSION = 'session'
 }
 
 export enum AuditAction {
-  CREATE = 'CREATE',
-  READ = 'READ',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-  LOGIN = 'LOGIN',
-  LOGOUT = 'LOGOUT',
-  EXPORT = 'EXPORT',
-  IMPORT = 'IMPORT',
-  APPROVE = 'APPROVE',
-  REJECT = 'REJECT',
-  LOCK = 'LOCK',
-  UNLOCK = 'UNLOCK',
-  BACKUP = 'BACKUP',
-  RESTORE = 'RESTORE'
+	CREATE = 'CREATE',
+	READ = 'READ',
+	UPDATE = 'UPDATE',
+	DELETE = 'DELETE',
+	LOGIN = 'LOGIN',
+	LOGOUT = 'LOGOUT',
+	EXPORT = 'EXPORT',
+	IMPORT = 'IMPORT',
+	APPROVE = 'APPROVE',
+	REJECT = 'REJECT',
+	LOCK = 'LOCK',
+	UNLOCK = 'UNLOCK',
+	BACKUP = 'BACKUP',
+	RESTORE = 'RESTORE'
 }
 
 export enum AuditResult {
-  SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE',
-  PARTIAL = 'PARTIAL',
-  CANCELLED = 'CANCELLED'
+	SUCCESS = 'SUCCESS',
+	FAILURE = 'FAILURE',
+	PARTIAL = 'PARTIAL',
+	CANCELLED = 'CANCELLED'
 }
 
 // 関連インターフェース
 interface AuditMetadata {
-  ipAddress: string;
-  userAgent: string;
-  source: 'web' | 'mobile' | 'api' | 'system';
-  geolocation?: {
-    country: string;
-    region: string;
-    city: string;
-  };
-  deviceInfo?: {
-    platform: string;
-    browser: string;
-    version: string;
-  };
-  businessContext?: {
-    department: string;
-    role: string;
-    accessLevel: string;
-  };
+	ipAddress: string;
+	userAgent: string;
+	source: 'web' | 'mobile' | 'api' | 'system';
+	geolocation?: {
+		country: string;
+		region: string;
+		city: string;
+	};
+	deviceInfo?: {
+		platform: string;
+		browser: string;
+		version: string;
+	};
+	businessContext?: {
+		department: string;
+		role: string;
+		accessLevel: string;
+	};
 }
 
 interface IntegrityInfo {
-  hash: string;
-  signature: string;
-  algorithm: string;
+	hash: string;
+	signature: string;
+	algorithm: string;
 }
 
 interface CreateAuditLogProps {
-  userId: EntityId | null;
-  sessionId?: string;
-  requestId: string;
-  traceId?: string;
-  entityType: AuditEntityType;
-  entityId?: string;
-  action: AuditAction;
-  result: AuditResult;
-  oldValue?: Record<string, any>;
-  newValue?: Record<string, any>;
-  reason?: string;
-  metadata: AuditMetadata;
+	userId: EntityId | null;
+	sessionId?: string;
+	requestId: string;
+	traceId?: string;
+	entityType: AuditEntityType;
+	entityId?: string;
+	action: AuditAction;
+	result: AuditResult;
+	oldValue?: Record<string, any>;
+	newValue?: Record<string, any>;
+	reason?: string;
+	metadata: AuditMetadata;
 }
 ```
 
@@ -283,7 +317,7 @@ export class AuditLoggerService {
     additionalData?: Record<string, any>
   ): Promise<void> {
     const context = this.contextProvider.getContext();
-    
+
     const auditLog = AuditLog.create({
       userId: context.userId ? EntityId.from(context.userId) : null,
       sessionId: context.sessionId,
@@ -314,7 +348,7 @@ export class AuditLoggerService {
     reason?: string
   ): Promise<void> {
     const context = this.contextProvider.getContext();
-    
+
     const auditLog = AuditLog.create({
       userId: context.userId ? EntityId.from(context.userId) : null,
       sessionId: context.sessionId,
@@ -336,7 +370,7 @@ export class AuditLoggerService {
     });
 
     await this.auditLogRepository.save(auditLog);
-    
+
     // 重要な変更の場合は即座に通知
     if (this.isHighImpactChange(entityType, action)) {
       await this.notifyHighImpactChange(auditLog);
@@ -351,7 +385,7 @@ export class AuditLoggerService {
     additionalData?: Record<string, any>
   ): Promise<void> {
     const context = this.contextProvider.getContext();
-    
+
     const auditLog = AuditLog.create({
       userId: context.userId ? EntityId.from(context.userId) : null,
       sessionId: context.sessionId,
@@ -372,7 +406,7 @@ export class AuditLoggerService {
     });
 
     await this.auditLogRepository.save(auditLog);
-    
+
     // セキュリティイベントは常に監視チームに通知
     await this.notifySecurityTeam(auditLog);
   }
@@ -407,23 +441,23 @@ export class AuditLoggerService {
 
   private determineSource(context: any): 'web' | 'mobile' | 'api' | 'system' {
     if (!context.userAgent) return 'system';
-    
+
     const userAgent = context.userAgent.toLowerCase();
-    
+
     if (userAgent.includes('mobile') || userAgent.includes('android') || userAgent.includes('iphone')) {
       return 'mobile';
     }
-    
+
     if (context.path?.startsWith('/api/')) {
       return 'api';
     }
-    
+
     return 'web';
   }
 
   private extractGeolocation(ipAddress?: string): { geolocation?: any } {
     if (!ipAddress || ipAddress === 'unknown') return {};
-    
+
     // 実際の実装では IP ジオロケーションサービスを使用
     // ここでは簡略化
     return {
@@ -437,7 +471,7 @@ export class AuditLoggerService {
 
   private extractDeviceInfo(userAgent?: string): { deviceInfo?: any } {
     if (!userAgent) return {};
-    
+
     // 実際の実装では User-Agent パーサーライブラリを使用
     return {
       deviceInfo: {
@@ -450,7 +484,7 @@ export class AuditLoggerService {
 
   private async getBusinessContext(userId?: string): Promise<{ businessContext?: any }> {
     if (!userId) return {};
-    
+
     // 実際の実装では UserService から情報を取得
     return {
       businessContext: {
@@ -468,8 +502,8 @@ export class AuditLoggerService {
       { type: AuditEntityType.USER, action: AuditAction.DELETE },
       { type: AuditEntityType.SYSTEM_CONFIG, action: AuditAction.UPDATE },
     ];
-    
-    return highImpactCombinations.some(combo => 
+
+    return highImpactCombinations.some(combo =>
       combo.type === entityType && combo.action === action
     );
   }
@@ -505,13 +539,13 @@ export class AuditInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
     const auditInfo = this.extractAuditInfo(request);
-    
+
     if (!auditInfo) {
       return next.handle();
     }
 
     const startTime = Date.now();
-    
+
     return next.handle().pipe(
       tap(async (response) => {
         // 成功時の監査ログ
@@ -545,7 +579,7 @@ export class AuditInterceptor implements NestInterceptor {
             path: request.path
           }
         );
-        
+
         throw error;
       })
     );
@@ -554,7 +588,7 @@ export class AuditInterceptor implements NestInterceptor {
   private extractAuditInfo(request: any): AuditInfo | null {
     const path = request.path;
     const method = request.method;
-    
+
     // パスベースの監査対象判定
     if (path.includes('/salary-slips')) {
       return {
@@ -563,7 +597,7 @@ export class AuditInterceptor implements NestInterceptor {
         action: this.mapHttpMethodToAction(method)
       };
     }
-    
+
     if (path.includes('/portfolio') || path.includes('/transactions')) {
       return {
         entityType: AuditEntityType.STOCK_TRANSACTION,
@@ -571,7 +605,7 @@ export class AuditInterceptor implements NestInterceptor {
         action: this.mapHttpMethodToAction(method)
       };
     }
-    
+
     if (path.includes('/users')) {
       return {
         entityType: AuditEntityType.USER,
@@ -579,7 +613,7 @@ export class AuditInterceptor implements NestInterceptor {
         action: this.mapHttpMethodToAction(method)
       };
     }
-    
+
     return null;
   }
 
@@ -627,40 +661,40 @@ interface AuditInfo {
 // src/shared/domain/audit/security-event.ts
 
 export enum SecurityEventType {
-  LOGIN_SUCCESS = 'LOGIN_SUCCESS',
-  LOGIN_FAILED = 'LOGIN_FAILED',
-  LOGIN_BLOCKED = 'LOGIN_BLOCKED',
-  LOGOUT = 'LOGOUT',
-  SESSION_EXPIRED = 'SESSION_EXPIRED',
-  UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',
-  PRIVILEGE_ESCALATION = 'PRIVILEGE_ESCALATION',
-  SUSPICIOUS_ACTIVITY = 'SUSPICIOUS_ACTIVITY',
-  BRUTE_FORCE_DETECTED = 'BRUTE_FORCE_DETECTED',
-  DATA_BREACH_ATTEMPT = 'DATA_BREACH_ATTEMPT',
-  MALICIOUS_FILE_UPLOAD = 'MALICIOUS_FILE_UPLOAD',
-  SQL_INJECTION_ATTEMPT = 'SQL_INJECTION_ATTEMPT',
-  XSS_ATTEMPT = 'XSS_ATTEMPT',
-  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED'
+	LOGIN_SUCCESS = 'LOGIN_SUCCESS',
+	LOGIN_FAILED = 'LOGIN_FAILED',
+	LOGIN_BLOCKED = 'LOGIN_BLOCKED',
+	LOGOUT = 'LOGOUT',
+	SESSION_EXPIRED = 'SESSION_EXPIRED',
+	UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',
+	PRIVILEGE_ESCALATION = 'PRIVILEGE_ESCALATION',
+	SUSPICIOUS_ACTIVITY = 'SUSPICIOUS_ACTIVITY',
+	BRUTE_FORCE_DETECTED = 'BRUTE_FORCE_DETECTED',
+	DATA_BREACH_ATTEMPT = 'DATA_BREACH_ATTEMPT',
+	MALICIOUS_FILE_UPLOAD = 'MALICIOUS_FILE_UPLOAD',
+	SQL_INJECTION_ATTEMPT = 'SQL_INJECTION_ATTEMPT',
+	XSS_ATTEMPT = 'XSS_ATTEMPT',
+	RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED'
 }
 
 export enum SecuritySeverity {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL'
+	LOW = 'LOW',
+	MEDIUM = 'MEDIUM',
+	HIGH = 'HIGH',
+	CRITICAL = 'CRITICAL'
 }
 
 export interface SecurityEvent {
-  type: SecurityEventType;
-  severity: SecuritySeverity;
-  userId?: string;
-  sessionId?: string;
-  ipAddress: string;
-  userAgent: string;
-  description: string;
-  evidence?: Record<string, any>;
-  mitigation?: string;
-  timestamp: Date;
+	type: SecurityEventType;
+	severity: SecuritySeverity;
+	userId?: string;
+	sessionId?: string;
+	ipAddress: string;
+	userAgent: string;
+	description: string;
+	evidence?: Record<string, any>;
+	mitigation?: string;
+	timestamp: Date;
 }
 ```
 
@@ -686,7 +720,7 @@ export class SecurityAuditService {
   ): Promise<void> {
     const eventType = success ? SecurityEventType.LOGIN_SUCCESS : SecurityEventType.LOGIN_FAILED;
     const severity = success ? SecuritySeverity.LOW : SecuritySeverity.MEDIUM;
-    
+
     const securityEvent: SecurityEvent = {
       type: eventType,
       severity,
@@ -765,7 +799,7 @@ export class SecurityAuditService {
     ipAddress?: string
   ): Promise<void> {
     const riskLevel = await this.riskAssessment.assessRisk(evidence);
-    
+
     const securityEvent: SecurityEvent = {
       type: SecurityEventType.SUSPICIOUS_ACTIVITY,
       severity: this.mapRiskToSeverity(riskLevel),
@@ -835,7 +869,7 @@ export class SecurityAuditService {
 
   private async checkBruteForce(email: string, ipAddress: string): Promise<void> {
     const recentFailures = await this.auditLogger.countRecentFailures(email, ipAddress, 900); // 15分
-    
+
     if (recentFailures >= 5) {
       const securityEvent: SecurityEvent = {
         type: SecurityEventType.BRUTE_FORCE_DETECTED,
@@ -870,7 +904,7 @@ export class SecurityAuditService {
 
   private async checkUnusualLoginTime(userId: string, ipAddress: string): Promise<void> {
     const hour = new Date().getHours();
-    
+
     // 深夜（23時〜6時）のログインを監視
     if (hour >= 23 || hour <= 6) {
       const securityEvent: SecurityEvent = {
@@ -1040,19 +1074,19 @@ export class ComplianceService {
     switch (requestType) {
       case DataSubjectRightType.ACCESS:
         return await this.handleAccessRequest(userId);
-      
+
       case DataSubjectRightType.RECTIFICATION:
         return await this.handleRectificationRequest(userId, requesterInfo.correctionData);
-      
+
       case DataSubjectRightType.ERASURE:
         return await this.handleErasureRequest(userId);
-      
+
       case DataSubjectRightType.PORTABILITY:
         return await this.handlePortabilityRequest(userId);
-      
+
       case DataSubjectRightType.RESTRICTION:
         return await this.handleRestrictionRequest(userId);
-      
+
       default:
         throw new Error(`Unsupported request type: ${requestType}`);
     }
@@ -1061,7 +1095,7 @@ export class ComplianceService {
   private async handleAccessRequest(userId: string): Promise<DataSubjectResponse> {
     const userData = await this.collectUserData(userId);
     const auditTrail = await this.auditLogRepository.findByUserId(userId);
-    
+
     return {
       type: DataSubjectRightType.ACCESS,
       data: {
@@ -1083,7 +1117,7 @@ export class ComplianceService {
   private async handleErasureRequest(userId: string): Promise<DataSubjectResponse> {
     // 削除前の確認
     const legalBasisCheck = await this.checkLegalBasisForRetention(userId);
-    
+
     if (legalBasisCheck.hasLegalBasis) {
       return {
         type: DataSubjectRightType.ERASURE,
@@ -1095,7 +1129,7 @@ export class ComplianceService {
 
     // 段階的削除の実行
     await this.performErasure(userId);
-    
+
     return {
       type: DataSubjectRightType.ERASURE,
       data: {
@@ -1110,19 +1144,19 @@ export class ComplianceService {
   // 法的根拠の確認
   private async checkLegalBasisForRetention(userId: string): Promise<LegalBasisCheck> {
     const reasons: string[] = [];
-    
+
     // 税務記録の保持義務確認
     const hasFinancialRecords = await this.hasRecentFinancialRecords(userId);
     if (hasFinancialRecords) {
       reasons.push('Tax record retention obligation (7 years)');
     }
-    
+
     // 労働法上の記録保持義務
     const hasEmploymentRecords = await this.hasEmploymentRecords(userId);
     if (hasEmploymentRecords) {
       reasons.push('Employment record retention obligation (5 years)');
     }
-    
+
     // 進行中の法的手続き
     const hasLegalProceedings = await this.hasOngoingLegalProceedings(userId);
     if (hasLegalProceedings) {
@@ -1202,7 +1236,7 @@ export class ComplianceService {
   private async collectUserData(userId: string): Promise<Record<string, any>> {
     // 実際の実装では各サービスからデータを収集
     return {
-      profile: {}, 
+      profile: {},
       salarySlips: [],
       stockTransactions: [],
       preferences: {}
@@ -1220,7 +1254,7 @@ export class ComplianceService {
 // 型定義
 enum DataSubjectRightType {
   ACCESS = 'access',
-  RECTIFICATION = 'rectification', 
+  RECTIFICATION = 'rectification',
   ERASURE = 'erasure',
   RESTRICTION = 'restriction',
   PORTABILITY = 'portability',
@@ -1290,20 +1324,20 @@ export class AuditReportService {
     reportType: ComplianceReportType
   ): Promise<ComplianceReport> {
     const auditLogs = await this.auditLogRepository.findByDateRange(startDate, endDate);
-    
+
     switch (reportType) {
       case ComplianceReportType.SOX:
         return await this.generateSOXReport(auditLogs, startDate, endDate);
-      
+
       case ComplianceReportType.GDPR:
         return await this.generateGDPRReport(auditLogs, startDate, endDate);
-      
+
       case ComplianceReportType.INTERNAL_AUDIT:
         return await this.generateInternalAuditReport(auditLogs, startDate, endDate);
-      
+
       case ComplianceReportType.SECURITY:
         return await this.generateSecurityReport(auditLogs, startDate, endDate);
-      
+
       default:
         throw new Error(`Unsupported report type: ${reportType}`);
     }
@@ -1314,7 +1348,7 @@ export class AuditReportService {
     startDate: Date,
     endDate: Date
   ): Promise<ComplianceReport> {
-    const financialDataAccess = auditLogs.filter(log => 
+    const financialDataAccess = auditLogs.filter(log =>
       log.entityType === AuditEntityType.SALARY_SLIP ||
       log.entityType === AuditEntityType.STOCK_TRANSACTION
     );
@@ -1362,7 +1396,7 @@ export class AuditReportService {
     startDate: Date,
     endDate: Date
   ): Promise<ComplianceReport> {
-    const securityEvents = auditLogs.filter(log => 
+    const securityEvents = auditLogs.filter(log =>
       log.metadata.category === 'security'
     );
 
@@ -1414,8 +1448,8 @@ export class AuditReportService {
     endDate: Date
   ): Promise<UserAuditReport> {
     const userLogs = await this.auditLogRepository.findByUserIdAndDateRange(
-      userId, 
-      startDate, 
+      userId,
+      startDate,
       endDate
     );
 
@@ -1438,7 +1472,7 @@ export class AuditReportService {
   // レポートのPDF出力
   async exportReportToPdf(report: ComplianceReport): Promise<Buffer> {
     const htmlTemplate = await this.generateReportHtml(report);
-    
+
     return await this.pdfService.generatePdf(htmlTemplate, {
       format: 'A4',
       printBackground: true,
@@ -1457,10 +1491,10 @@ export class AuditReportService {
   private reviewSegregationOfDuties(auditLogs: AuditLog[]): ControlReview {
     // 職務分掌の確認
     const userActions = new Map<string, Set<string>>();
-    
+
     auditLogs.forEach(log => {
       if (!log.userId) return;
-      
+
       const actions = userActions.get(log.userId.value) || new Set();
       actions.add(`${log.entityType}_${log.action}`);
       userActions.set(log.userId.value, actions);
@@ -1502,7 +1536,7 @@ export class AuditReportService {
     const totalControls = Object.keys(reviews).length;
     const effectiveControls = Object.values(reviews)
       .filter(review => review.effective).length;
-    
+
     return Math.round((effectiveControls / totalControls) * 100);
   }
 }
@@ -1510,7 +1544,7 @@ export class AuditReportService {
 // 型定義
 enum ComplianceReportType {
   SOX = 'sox',
-  GDPR = 'gdpr', 
+  GDPR = 'gdpr',
   INTERNAL_AUDIT = 'internal_audit',
   SECURITY = 'security'
 }
@@ -1563,18 +1597,18 @@ interface ControlReview {
 
 ## 承認
 
-| 役割 | 名前 | 日付 | 署名 |
-|------|------|------|------|
-| 監査ログ設計アーキテクト | エキスパートロギング設計アーキテクト | 2025-08-10 | ✅ |
-| セキュリティ責任者 | - | - | [ ] |
-| コンプライアンス責任者 | - | - | [ ] |
-| レビュアー | - | - | [ ] |
-| 承認者 | - | - | [ ] |
+| 役割                     | 名前                                 | 日付       | 署名 |
+| ------------------------ | ------------------------------------ | ---------- | ---- |
+| 監査ログ設計アーキテクト | エキスパートロギング設計アーキテクト | 2025-08-10 | ✅   |
+| セキュリティ責任者       | -                                    | -          | [ ]  |
+| コンプライアンス責任者   | -                                    | -          | [ ]  |
+| レビュアー               | -                                    | -          | [ ]  |
+| 承認者                   | -                                    | -          | [ ]  |
 
 ---
 
 **改訂履歴**
 
-| バージョン | 日付 | 変更内容 | 作成者 |
-|-----------|------|----------|---------|
-| 1.0.0 | 2025-08-10 | 初版作成 | エキスパートロギング設計アーキテクト |
+| バージョン | 日付       | 変更内容 | 作成者                               |
+| ---------- | ---------- | -------- | ------------------------------------ |
+| 1.0.0      | 2025-08-10 | 初版作成 | エキスパートロギング設計アーキテクト |

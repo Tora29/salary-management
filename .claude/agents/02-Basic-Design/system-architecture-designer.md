@@ -34,16 +34,17 @@ execution_order: 1
 **Feature-Sliced Design (FSD) アーキテクチャ採用プロジェクトの場合：**
 
 - **階層型構造の実装**：
+
   ```
   src/
   ├── routes/api/*/+server.ts # APIエンドポイント実装（DB操作、認証）
-  ├── shared/components/ui/    # 基本UIコンポーネント  
+  ├── shared/components/ui/    # 基本UIコンポーネント
   ├── shared/components/model/ # Interface定義
   ├── entities/*/ui/          # ビジネス専用UI（ロジック無し）
   ├── entities/*/api/         # API呼び出し（単純なデータ取得）
   ├── entities/*/model/       # 型定義
   ├── features/*/ui/          # UIとビジネスロジック
-  ├── features/*/api/         # 複雑なAPI呼び出し+ビジネスロジック  
+  ├── features/*/api/         # 複雑なAPI呼び出し+ビジネスロジック
   ├── features/*/composable/  # ユースケースロジック
   ├── features/*/model/       # フィーチャー固有型
   ```

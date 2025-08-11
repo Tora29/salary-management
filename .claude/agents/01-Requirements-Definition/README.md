@@ -95,7 +95,9 @@ Task tool --agent requirements-review-approval
 ## 各エージェントの成果物
 
 ### 成果物ファイル命名規則
+
 **重要**: 成果物のファイル名には必ず項番を付けてください。
+
 - 形式: `[カテゴリ番号]-[連番]_[ファイル名].md`
 - 例: `01-01_functional-requirements.md`
 

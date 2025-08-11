@@ -21,12 +21,14 @@
 ### 2. プロジェクト情報の取得
 
 #### Project Reference IDの取得
+
 1. Supabaseダッシュボードで作成したプロジェクトを開く
 2. 左サイドバーの「Project Settings」をクリック
 3. 「General」タブを選択
 4. 「Reference ID」をコピー（例: `abcdefghijklmnop`）
 
 #### Personal Access Tokenの作成
+
 1. [アカウントトークンページ](https://supabase.com/dashboard/account/tokens)にアクセス
 2. 「Generate new token」をクリック
 3. トークン名を入力（例: `salary-management-mcp`）
@@ -38,20 +40,20 @@
 
 ```json
 {
-  "mcpServers": {
-    "supabase": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@supabase/mcp-server-supabase@latest",
-        "--read-only",
-        "--project-ref=YOUR_PROJECT_REF_HERE"  // ← ここを更新
-      ],
-      "env": {
-        "SUPABASE_ACCESS_TOKEN": "YOUR_ACCESS_TOKEN_HERE"  // ← ここを更新
-      }
-    }
-  }
+	"mcpServers": {
+		"supabase": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"@supabase/mcp-server-supabase@latest",
+				"--read-only",
+				"--project-ref=YOUR_PROJECT_REF_HERE" // ← ここを更新
+			],
+			"env": {
+				"SUPABASE_ACCESS_TOKEN": "YOUR_ACCESS_TOKEN_HERE" // ← ここを更新
+			}
+		}
+	}
 }
 ```
 
@@ -88,9 +90,11 @@ npx -y @supabase/mcp-server-supabase@latest --read-only --project-ref=YOUR_PROJE
 ## セキュリティ設定
 
 ### Read-Onlyモード（推奨）
+
 デフォルトで`--read-only`フラグが設定されており、データベースへの書き込み操作を防ぎます。
 
 ### プロジェクトスコープ
+
 `--project-ref`パラメータにより、特定のプロジェクトのみアクセス可能になります。
 
 ## 利用可能なツール
@@ -105,12 +109,15 @@ npx -y @supabase/mcp-server-supabase@latest --read-only --project-ref=YOUR_PROJE
 ## トラブルシューティング
 
 ### エラー: "Invalid access token"
+
 → Personal Access Tokenが正しくコピーされているか確認
 
 ### エラー: "Project not found"
+
 → Project Reference IDが正しいか確認
 
 ### エラー: "Permission denied"
+
 → Read-Onlyモードでwrite操作を試みていないか確認
 
 ## 次のステップ

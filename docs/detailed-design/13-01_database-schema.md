@@ -1,6 +1,7 @@
 # データベーススキーマ詳細設計書
 
 ## 文書情報
+
 - **作成日**: 2025-08-10
 - **作成者**: エキスパートデータベース詳細設計アーキテクト
 - **バージョン**: 1.0.0
@@ -16,17 +17,18 @@
 
 本データベース詳細設計は、以下の原則に基づいて実装されています：
 
-| 原則 | 詳細 | 実装手段 |
-|------|------|----------|
-| **ACID準拠** | データの一貫性と信頼性を保証 | PostgreSQLのトランザクション機能を最大活用 |
-| **パフォーマンス最適化** | 高速なデータアクセスの実現 | 戦略的インデックス設計とクエリ最適化 |
-| **スケーラビリティ** | 将来の成長に対応可能な設計 | パーティショニングと効率的なデータ分散 |
-| **データ整合性** | ビジネスルールの厳密な強制 | 制約・トリガー・ストアドプロシージャの活用 |
-| **セキュリティ** | 多層防御による包括的保護 | RLS・暗号化・監査ログの実装 |
+| 原則                     | 詳細                         | 実装手段                                   |
+| ------------------------ | ---------------------------- | ------------------------------------------ |
+| **ACID準拠**             | データの一貫性と信頼性を保証 | PostgreSQLのトランザクション機能を最大活用 |
+| **パフォーマンス最適化** | 高速なデータアクセスの実現   | 戦略的インデックス設計とクエリ最適化       |
+| **スケーラビリティ**     | 将来の成長に対応可能な設計   | パーティショニングと効率的なデータ分散     |
+| **データ整合性**         | ビジネスルールの厳密な強制   | 制約・トリガー・ストアドプロシージャの活用 |
+| **セキュリティ**         | 多層防御による包括的保護     | RLS・暗号化・監査ログの実装                |
 
 ### 1.2 PostgreSQL 15+ 機能活用
 
 #### 最新機能の戦略的活用
+
 - **JSONB演算子**: 構造化データの効率的格納と検索
 - **パーティション化**: 時系列データの高速処理
 - **Row Level Security (RLS)**: きめ細かいアクセス制御
@@ -69,7 +71,7 @@ model User {
   lastLoginAt       DateTime? @db.Timestamptz
   createdAt         DateTime  @default(now()) @db.Timestamptz
   updatedAt         DateTime  @updatedAt @db.Timestamptz
-  
+
   // Relations
   salarySlips       SalarySlip[]
   stockPortfolios   StockPortfolio[]
@@ -79,7 +81,7 @@ model User {
   dashboardPreference DashboardPreference?
   sessions          UserSession[]
   auditLogs         AuditLog[]
-  
+
   // Indexes
   @@index([email])
   @@index([googleId])
@@ -98,10 +100,10 @@ model UserSession {
   expiresAt       DateTime @db.Timestamptz
   createdAt       DateTime @default(now()) @db.Timestamptz
   lastActivityAt  DateTime @default(now()) @db.Timestamptz
-  
+
   // Relations
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  
+
   // Indexes
   @@index([userId])
   @@index([sessionToken])
@@ -121,10 +123,10 @@ model AuditLog {
   ipAddress   String?  @db.Inet
   userAgent   String?  @db.Text
   createdAt   DateTime @default(now()) @db.Timestamptz
-  
+
   // Relations
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  
+
   // Indexes
   @@index([userId])
   @@index([entityType, entityId])
@@ -147,39 +149,39 @@ model SalarySlip {
   paymentDate            DateTime @db.Date
   targetPeriodStart      DateTime @db.Date
   targetPeriodEnd        DateTime @db.Date
-  
+
   // 勤怠情報 (JSONB)
   attendance             Json     @default("{\"overtimeHours\":0,\"overtimeHoursOver60\":0,\"lateNightHours\":0,\"holidayWorkDays\":0,\"paidLeaveDays\":0,\"absenceDays\":0,\"workingDays\":20,\"scheduledWorkDays\":20,\"lateCount\":0,\"earlyLeaveCount\":0}") @db.JsonB
-  
+
   // 収入詳細 (JSONB)
   earnings               Json     @default("{\"baseSalary\":\"0\",\"overtimePay\":\"0\",\"overtimePayOver60\":\"0\",\"lateNightPay\":\"0\",\"holidayWorkPay\":\"0\",\"fixedOvertimeAllowance\":\"0\",\"transportationAllowance\":\"0\",\"housingAllowance\":\"0\",\"familyAllowance\":\"0\",\"qualificationAllowance\":\"0\",\"expenseReimbursement\":\"0\",\"stockPurchaseIncentive\":\"0\",\"bonus\":\"0\",\"otherEarnings\":\"0\"}") @db.JsonB
-  
+
   // 控除詳細 (JSONB)
   deductions             Json     @default("{\"healthInsurance\":\"0\",\"welfareInsurance\":\"0\",\"employmentInsurance\":\"0\",\"incomeTax\":\"0\",\"residentTax\":\"0\",\"stockPurchase\":\"0\",\"loan\":\"0\",\"unionFee\":\"0\",\"otherDeductions\":\"0\"}") @db.JsonB
-  
+
   // 集計値（パフォーマンス最適化のため非正規化）
   baseSalary             Decimal  @db.Decimal(12, 2)
   totalEarnings          Decimal  @db.Decimal(12, 2)
   totalDeductions        Decimal  @db.Decimal(12, 2)
   netPay                 Decimal  @db.Decimal(12, 2)
-  
+
   // Generated Columns (PostgreSQL 12+)
   netPayGenerated        Decimal? @db.Decimal(12, 2) // GENERATED ALWAYS AS (total_earnings - total_deductions) STORED
-  
+
   currency               String   @default("JPY") @db.VarChar(3)
   status                 String   @default("confirmed") @db.VarChar(20) // draft, confirmed, archived
   sourceType             String   @default("manual") @db.VarChar(20)    // pdf, manual, api
-  
+
   // Full-Text Search用
   searchVector           Unsupported("tsvector")?
-  
+
   createdAt              DateTime @default(now()) @db.Timestamptz
   updatedAt              DateTime @updatedAt @db.Timestamptz
-  
+
   // Relations
   user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   attachments            SalarySlipAttachment[]
-  
+
   // Constraints & Indexes
   @@unique([userId, paymentDate, companyName])
   @@index([userId])
@@ -201,10 +203,10 @@ model SalarySlipAttachment {
   storageUrl    String      @db.VarChar(2048)
   checksum      String      @db.VarChar(64) // SHA-256 hash
   uploadedAt    DateTime    @default(now()) @db.Timestamptz
-  
+
   // Relations
   salarySlip    SalarySlip  @relation(fields: [salarySlipId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  
+
   // Indexes
   @@index([salarySlipId])
   @@index([checksum])
@@ -227,19 +229,19 @@ model StockMaster {
   isActive      Boolean     @default(true)
   listedDate    DateTime?   @db.Date
   delistedDate  DateTime?   @db.Date
-  
+
   // メタデータ (JSONB)
   metadata      Json?       @db.JsonB
-  
+
   createdAt     DateTime    @default(now()) @db.Timestamptz
   updatedAt     DateTime    @updatedAt @db.Timestamptz
-  
+
   // Relations
   portfolios    StockPortfolio[]
   transactions  StockTransaction[]
   currentPrice  StockCurrentPrice?
   priceHistory  StockPriceHistory[]
-  
+
   // Indexes
   @@index([symbol])
   @@index([exchange])
@@ -261,19 +263,19 @@ model StockPortfolio {
   unrealizedGainLossRate  Decimal     @db.Decimal(5, 2)
   firstPurchaseDate       DateTime?   @db.Date
   lastPurchaseDate        DateTime?   @db.Date
-  
+
   // キャッシュフィールド（パフォーマンス最適化）
   cachedTotalValue        Decimal?    @db.Decimal(15, 2)
   cachedLastUpdated       DateTime?   @db.Timestamptz
-  
+
   createdAt               DateTime    @default(now()) @db.Timestamptz
   updatedAt               DateTime    @updatedAt @db.Timestamptz
-  
+
   // Relations
   user                    User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stock                   StockMaster @relation(fields: [stockId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   transactions            StockTransaction[]
-  
+
   // Constraints & Indexes
   @@unique([userId, stockId])
   @@index([userId])
@@ -296,17 +298,17 @@ model StockTransaction {
   tax             Decimal         @db.Decimal(10, 2) @default(0)
   transactionDate DateTime        @db.Date
   notes           String?         @db.Text
-  
+
   // Generated Column
   netAmount       Decimal?        @db.Decimal(15, 2) // GENERATED ALWAYS AS (total_amount - commission - tax) STORED
-  
+
   createdAt       DateTime        @default(now()) @db.Timestamptz
-  
+
   // Relations
   portfolio       StockPortfolio  @relation(fields: [portfolioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stock           StockMaster     @relation(fields: [stockId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  
+
   // Indexes
   @@index([portfolioId])
   @@index([transactionDate])
@@ -328,14 +330,14 @@ model StockCurrentPrice {
   volume           BigInt
   marketTime       DateTime    @db.Timestamptz
   lastUpdated      DateTime    @default(now()) @db.Timestamptz
-  
+
   // データ品質管理
   dataQuality      String?     @default("good") @db.VarChar(20) // good, warning, poor
   sourceApi        String?     @db.VarChar(50)
-  
+
   // Relations
   stock            StockMaster @relation(fields: [stockId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  
+
   // Indexes
   @@index([stockId])
   @@index([lastUpdated])
@@ -353,17 +355,17 @@ model StockPriceHistory {
   close         Decimal     @db.Decimal(12, 2)
   adjustedClose Decimal     @db.Decimal(12, 2)
   volume        BigInt
-  
+
   // 技術指標 (計算済み)
   sma20         Decimal?    @db.Decimal(12, 2) // 20日移動平均
   sma50         Decimal?    @db.Decimal(12, 2) // 50日移動平均
   rsi           Decimal?    @db.Decimal(5, 2)  // RSI
-  
+
   createdAt     DateTime    @default(now()) @db.Timestamptz
-  
+
   // Relations
   stock         StockMaster @relation(fields: [stockId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  
+
   // Constraints & Indexes
   @@unique([stockId, date])
   @@index([stockId])
@@ -385,19 +387,19 @@ model Asset {
   amount      Decimal  @db.Decimal(18, 2)
   currency    String   @default("JPY") @db.VarChar(3)
   asOfDate    DateTime @default(now()) @db.Date
-  
+
   // 拡張メタデータ (JSONB)
   metadata    Json?    @default("{}") @db.JsonB
-  
+
   // 評価額履歴（スナップショット）
   valuationHistory Json? @db.JsonB
-  
+
   createdAt   DateTime @default(now()) @db.Timestamptz
   updatedAt   DateTime @updatedAt @db.Timestamptz
-  
+
   // Relations
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  
+
   // Indexes
   @@index([userId])
   @@index([assetType])
@@ -420,18 +422,18 @@ model Budget {
   endDate     DateTime         @db.Date
   totalBudget Decimal          @db.Decimal(15, 2)
   status      String           @default("active") @db.VarChar(20) // active, completed, cancelled
-  
+
   // 進捗追跡
   actualSpent Decimal?         @db.Decimal(15, 2)
   variance    Decimal?         @db.Decimal(15, 2)
-  
+
   createdAt   DateTime         @default(now()) @db.Timestamptz
   updatedAt   DateTime         @updatedAt @db.Timestamptz
-  
+
   // Relations
   user        User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   categories  BudgetCategory[]
-  
+
   // Indexes
   @@index([userId])
   @@index([period])
@@ -452,14 +454,14 @@ model BudgetCategory {
   icon            String?           @db.VarChar(50)
   color           String?           @db.VarChar(7) // #RRGGBB
   displayOrder    Int               @default(0)
-  
+
   // 予算アラート設定
   alertThreshold  Decimal?          @db.Decimal(5, 2) // パーセンテージ
-  
+
   // Relations
   budget          Budget            @relation(fields: [budgetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   trackings       BudgetTracking[]
-  
+
   // Indexes
   @@index([budgetId])
   @@index([categoryType])
@@ -474,16 +476,16 @@ model BudgetTracking {
   description     String?        @db.Text
   transactionDate DateTime       @db.Date
   source          String         @default("manual") @db.VarChar(20) // manual, automated
-  
+
   // 関連データ
   relatedEntityType String?      @db.VarChar(50)
   relatedEntityId   String?      @db.VarChar(30)
-  
+
   createdAt       DateTime       @default(now()) @db.Timestamptz
-  
+
   // Relations
   category        BudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  
+
   // Indexes
   @@index([categoryId])
   @@index([transactionDate])
@@ -498,32 +500,32 @@ model BudgetTracking {
 model DashboardPreference {
   id                   String   @id @default(cuid())
   userId               String   @unique @db.VarChar(30)
-  
+
   // レイアウト設定 (JSONB)
   layout               Json     @default("{\"gridColumns\":12,\"gridGap\":16,\"containerPadding\":24,\"breakpoints\":{\"lg\":1200,\"md\":996,\"sm\":768,\"xs\":480}}") @db.JsonB
-  
+
   // ウィジェット設定 (JSONB)
   widgets              Json     @default("[]") @db.JsonB
-  
+
   // グラフ設定 (JSONB)
   chartPreferences     Json     @default("{\"defaultChartType\":\"line\",\"colorScheme\":[\"#4F46E5\",\"#7C3AED\",\"#DB2777\",\"#DC2626\",\"#EA580C\"],\"showLegend\":true,\"showTooltip\":true,\"animationDuration\":300,\"dateFormat\":\"YYYY-MM-DD\",\"numberFormat\":\"0,0\"}") @db.JsonB
-  
+
   // 基本設定
   theme                String   @default("light") @db.VarChar(20) // light, dark, auto
   locale               String   @default("ja") @db.VarChar(10)     // ja, en
   timezone             String   @default("Asia/Tokyo") @db.VarChar(50)
-  
+
   // 通知設定
   emailNotifications   Boolean  @default(false)
   pushNotifications    Boolean  @default(false)
   notificationSettings Json     @default("{\"salaryAlert\":true,\"portfolioAlert\":true,\"budgetAlert\":true,\"priceAlert\":false,\"alertThresholds\":{\"portfolioChangePercent\":5.0,\"budgetOverrunPercent\":90.0,\"priceChangePercent\":10.0},\"quietHours\":{\"enabled\":false,\"startTime\":\"22:00\",\"endTime\":\"08:00\"}}") @db.JsonB
-  
+
   createdAt            DateTime @default(now()) @db.Timestamptz
   updatedAt            DateTime @updatedAt @db.Timestamptz
-  
+
   // Relations
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  
+
   @@map("dashboard_preferences")
 }
 
@@ -540,7 +542,7 @@ model SystemConfig {
   isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now()) @db.Timestamptz
   updatedAt   DateTime @updatedAt @db.Timestamptz
-  
+
   // Indexes
   @@index([key])
   @@index([category])
@@ -554,7 +556,7 @@ model DatabaseMigration {
   description String?  @db.Text
   checksum    String   @db.VarChar(64)
   executedAt  DateTime @default(now()) @db.Timestamptz
-  
+
   @@index([version])
   @@index([executedAt])
   @@map("database_migrations")
@@ -596,9 +598,9 @@ CREATE TABLE user_sessions (
     expires_at TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     last_activity_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
-    CONSTRAINT fk_user_sessions_user_id 
-        FOREIGN KEY (user_id) REFERENCES users(id) 
+
+    CONSTRAINT fk_user_sessions_user_id
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -616,9 +618,9 @@ CREATE TABLE audit.audit_logs (
     ip_address INET,
     user_agent TEXT,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
-    CONSTRAINT fk_audit_logs_user_id 
-        FOREIGN KEY (user_id) REFERENCES public.users(id) 
+
+    CONSTRAINT fk_audit_logs_user_id
+        FOREIGN KEY (user_id) REFERENCES public.users(id)
         ON DELETE SET NULL ON UPDATE CASCADE
 );
 ```
@@ -636,48 +638,48 @@ CREATE TABLE salary_slips (
     payment_date DATE NOT NULL,
     target_period_start DATE NOT NULL,
     target_period_end DATE NOT NULL,
-    
+
     -- JSONB fields for structured data
     attendance JSONB DEFAULT '{"overtimeHours":0,"overtimeHoursOver60":0,"lateNightHours":0,"holidayWorkDays":0,"paidLeaveDays":0,"absenceDays":0,"workingDays":20,"scheduledWorkDays":20,"lateCount":0,"earlyLeaveCount":0}' NOT NULL,
     earnings JSONB DEFAULT '{"baseSalary":"0","overtimePay":"0","overtimePayOver60":"0","lateNightPay":"0","holidayWorkPay":"0","fixedOvertimeAllowance":"0","transportationAllowance":"0","housingAllowance":"0","familyAllowance":"0","qualificationAllowance":"0","expenseReimbursement":"0","stockPurchaseIncentive":"0","bonus":"0","otherEarnings":"0"}' NOT NULL,
     deductions JSONB DEFAULT '{"healthInsurance":"0","welfareInsurance":"0","employmentInsurance":"0","incomeTax":"0","residentTax":"0","stockPurchase":"0","loan":"0","unionFee":"0","otherDeductions":"0"}' NOT NULL,
-    
+
     -- Calculated fields
     base_salary DECIMAL(12, 2) NOT NULL,
     total_earnings DECIMAL(12, 2) NOT NULL,
     total_deductions DECIMAL(12, 2) NOT NULL,
     net_pay DECIMAL(12, 2) NOT NULL,
-    
+
     -- Generated column (PostgreSQL 12+)
     net_pay_generated DECIMAL(12, 2) GENERATED ALWAYS AS (total_earnings - total_deductions) STORED,
-    
+
     -- Metadata
     currency VARCHAR(3) DEFAULT 'JPY' NOT NULL,
     status VARCHAR(20) DEFAULT 'confirmed' NOT NULL,
     source_type VARCHAR(20) DEFAULT 'manual' NOT NULL,
-    
+
     -- Full-text search
     search_vector TSVECTOR,
-    
+
     -- Timestamps
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
+
     -- Constraints
-    CONSTRAINT fk_salary_slips_user_id 
-        FOREIGN KEY (user_id) REFERENCES users(id) 
+    CONSTRAINT fk_salary_slips_user_id
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT unique_salary_slip 
+    CONSTRAINT unique_salary_slip
         UNIQUE (user_id, payment_date, company_name),
-    CONSTRAINT valid_period 
+    CONSTRAINT valid_period
         CHECK (target_period_start <= target_period_end),
-    CONSTRAINT valid_amounts 
+    CONSTRAINT valid_amounts
         CHECK (base_salary >= 0 AND total_earnings >= 0 AND total_deductions >= 0 AND net_pay >= 0),
-    CONSTRAINT valid_status 
+    CONSTRAINT valid_status
         CHECK (status IN ('draft', 'confirmed', 'archived')),
-    CONSTRAINT valid_source_type 
+    CONSTRAINT valid_source_type
         CHECK (source_type IN ('pdf', 'manual', 'api')),
-    CONSTRAINT valid_currency 
+    CONSTRAINT valid_currency
         CHECK (currency IN ('JPY', 'USD', 'EUR', 'GBP', 'CNY'))
 );
 
@@ -691,11 +693,11 @@ CREATE TABLE salary_slip_attachments (
     storage_url VARCHAR(2048) NOT NULL,
     checksum VARCHAR(64) NOT NULL, -- SHA-256
     uploaded_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
-    CONSTRAINT fk_salary_slip_attachments_salary_slip_id 
-        FOREIGN KEY (salary_slip_id) REFERENCES salary_slips(id) 
+
+    CONSTRAINT fk_salary_slip_attachments_salary_slip_id
+        FOREIGN KEY (salary_slip_id) REFERENCES salary_slips(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT valid_file_size 
+    CONSTRAINT valid_file_size
         CHECK (file_size > 0 AND file_size <= 10485760) -- 10MB max
 );
 ```
@@ -719,12 +721,12 @@ CREATE TABLE stock_masters (
     metadata JSONB,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
-    CONSTRAINT valid_exchange 
+
+    CONSTRAINT valid_exchange
         CHECK (exchange IN ('TSE', 'NYSE', 'NASDAQ', 'LSE', 'HKEX', 'SSE', 'SZSE')),
-    CONSTRAINT valid_currency_stock 
+    CONSTRAINT valid_currency_stock
         CHECK (currency IN ('JPY', 'USD', 'EUR', 'GBP', 'CNY', 'HKD')),
-    CONSTRAINT valid_dates 
+    CONSTRAINT valid_dates
         CHECK (delisted_date IS NULL OR listed_date IS NULL OR listed_date <= delisted_date)
 );
 
@@ -741,25 +743,25 @@ CREATE TABLE stock_portfolios (
     unrealized_gain_loss_rate DECIMAL(5, 2) NOT NULL,
     first_purchase_date DATE,
     last_purchase_date DATE,
-    
+
     -- Cache fields for performance
     cached_total_value DECIMAL(15, 2),
     cached_last_updated TIMESTAMPTZ,
-    
+
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
-    CONSTRAINT fk_stock_portfolios_user_id 
-        FOREIGN KEY (user_id) REFERENCES users(id) 
+
+    CONSTRAINT fk_stock_portfolios_user_id
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_stock_portfolios_stock_id 
-        FOREIGN KEY (stock_id) REFERENCES stock_masters(id) 
+    CONSTRAINT fk_stock_portfolios_stock_id
+        FOREIGN KEY (stock_id) REFERENCES stock_masters(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT unique_portfolio 
+    CONSTRAINT unique_portfolio
         UNIQUE (user_id, stock_id),
-    CONSTRAINT positive_quantity 
+    CONSTRAINT positive_quantity
         CHECK (quantity > 0),
-    CONSTRAINT valid_gain_loss_rate 
+    CONSTRAINT valid_gain_loss_rate
         CHECK (unrealized_gain_loss_rate >= -100)
 );
 
@@ -777,28 +779,28 @@ CREATE TABLE stock_transactions (
     tax DECIMAL(10, 2) DEFAULT 0 NOT NULL,
     transaction_date DATE NOT NULL,
     notes TEXT,
-    
+
     -- Generated column
     net_amount DECIMAL(15, 2) GENERATED ALWAYS AS (total_amount - commission - tax) STORED,
-    
+
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
-    CONSTRAINT fk_stock_transactions_portfolio_id 
-        FOREIGN KEY (portfolio_id) REFERENCES stock_portfolios(id) 
+
+    CONSTRAINT fk_stock_transactions_portfolio_id
+        FOREIGN KEY (portfolio_id) REFERENCES stock_portfolios(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_stock_transactions_stock_id 
-        FOREIGN KEY (stock_id) REFERENCES stock_masters(id) 
+    CONSTRAINT fk_stock_transactions_stock_id
+        FOREIGN KEY (stock_id) REFERENCES stock_masters(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT fk_stock_transactions_user_id 
-        FOREIGN KEY (user_id) REFERENCES users(id) 
+    CONSTRAINT fk_stock_transactions_user_id
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT valid_transaction_type 
+    CONSTRAINT valid_transaction_type
         CHECK (transaction_type IN ('buy', 'sell', 'dividend')),
-    CONSTRAINT positive_quantity_transaction 
+    CONSTRAINT positive_quantity_transaction
         CHECK (quantity > 0),
-    CONSTRAINT positive_price 
+    CONSTRAINT positive_price
         CHECK (price_per_share > 0),
-    CONSTRAINT non_negative_fees 
+    CONSTRAINT non_negative_fees
         CHECK (commission >= 0 AND tax >= 0)
 );
 
@@ -815,19 +817,19 @@ CREATE TABLE stock_current_prices (
     volume BIGINT NOT NULL,
     market_time TIMESTAMPTZ NOT NULL,
     last_updated TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
+
     -- Data quality management
     data_quality VARCHAR(20) DEFAULT 'good',
     source_api VARCHAR(50),
-    
-    CONSTRAINT fk_stock_current_prices_stock_id 
-        FOREIGN KEY (stock_id) REFERENCES stock_masters(id) 
+
+    CONSTRAINT fk_stock_current_prices_stock_id
+        FOREIGN KEY (stock_id) REFERENCES stock_masters(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT positive_prices 
+    CONSTRAINT positive_prices
         CHECK (current_price > 0 AND previous_close > 0 AND day_high > 0 AND day_low > 0),
-    CONSTRAINT valid_high_low 
+    CONSTRAINT valid_high_low
         CHECK (day_high >= day_low),
-    CONSTRAINT valid_data_quality 
+    CONSTRAINT valid_data_quality
         CHECK (data_quality IN ('good', 'warning', 'poor'))
 );
 
@@ -842,23 +844,23 @@ CREATE TABLE stock_price_histories (
     close DECIMAL(12, 2) NOT NULL,
     adjusted_close DECIMAL(12, 2) NOT NULL,
     volume BIGINT NOT NULL,
-    
+
     -- Technical indicators
     sma20 DECIMAL(12, 2),  -- 20-day Simple Moving Average
     sma50 DECIMAL(12, 2),  -- 50-day Simple Moving Average
     rsi DECIMAL(5, 2),     -- RSI
-    
+
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-    
+
     PRIMARY KEY (id, date),
-    CONSTRAINT fk_stock_price_histories_stock_id 
-        FOREIGN KEY (stock_id) REFERENCES stock_masters(id) 
+    CONSTRAINT fk_stock_price_histories_stock_id
+        FOREIGN KEY (stock_id) REFERENCES stock_masters(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT unique_stock_date 
+    CONSTRAINT unique_stock_date
         UNIQUE (stock_id, date),
-    CONSTRAINT valid_ohlc 
+    CONSTRAINT valid_ohlc
         CHECK (open > 0 AND high > 0 AND low > 0 AND close > 0 AND adjusted_close > 0),
-    CONSTRAINT valid_high_low_history 
+    CONSTRAINT valid_high_low_history
         CHECK (high >= low AND high >= open AND high >= close AND low <= open AND low <= close)
 ) PARTITION BY RANGE (date);
 
@@ -881,31 +883,31 @@ FOR VALUES FROM ('2026-01-01') TO ('2027-01-01');
 
 ```sql
 -- Additional business rule constraints
-ALTER TABLE salary_slips 
-ADD CONSTRAINT check_payment_after_period 
+ALTER TABLE salary_slips
+ADD CONSTRAINT check_payment_after_period
 CHECK (payment_date >= target_period_end);
 
-ALTER TABLE salary_slips 
-ADD CONSTRAINT check_realistic_amounts 
+ALTER TABLE salary_slips
+ADD CONSTRAINT check_realistic_amounts
 CHECK (
     total_earnings <= base_salary * 3 AND  -- 総支給額は基本給の3倍以内
     total_deductions <= total_earnings     -- 控除額は総支給額以内
 );
 
-ALTER TABLE stock_portfolios 
-ADD CONSTRAINT check_purchase_dates 
+ALTER TABLE stock_portfolios
+ADD CONSTRAINT check_purchase_dates
 CHECK (
-    first_purchase_date IS NULL OR 
-    last_purchase_date IS NULL OR 
+    first_purchase_date IS NULL OR
+    last_purchase_date IS NULL OR
     first_purchase_date <= last_purchase_date
 );
 
-ALTER TABLE budgets 
-ADD CONSTRAINT check_budget_period 
+ALTER TABLE budgets
+ADD CONSTRAINT check_budget_period
 CHECK (start_date < end_date);
 
-ALTER TABLE budget_categories 
-ADD CONSTRAINT check_positive_allocated 
+ALTER TABLE budget_categories
+ADD CONSTRAINT check_positive_allocated
 CHECK (allocated_amount >= 0);
 ```
 
@@ -968,28 +970,28 @@ DECLARE
 BEGIN
     -- Get portfolio record
     SELECT * INTO portfolio_rec FROM stock_portfolios WHERE id = COALESCE(NEW.portfolio_id, OLD.portfolio_id);
-    
+
     IF portfolio_rec IS NOT NULL THEN
         -- Calculate totals from transactions
-        SELECT 
+        SELECT
             COALESCE(SUM(CASE WHEN transaction_type = 'buy' THEN total_amount ELSE 0 END), 0),
             COALESCE(SUM(CASE WHEN transaction_type = 'buy' THEN quantity ELSE 0 END), 0),
             COALESCE(SUM(CASE WHEN transaction_type = 'sell' THEN quantity ELSE 0 END), 0)
         INTO total_buy_amount, total_buy_quantity, total_sell_quantity
         FROM stock_transactions
         WHERE portfolio_id = portfolio_rec.id;
-        
+
         current_quantity := total_buy_quantity - total_sell_quantity;
-        
+
         IF current_quantity > 0 THEN
             avg_price := total_buy_amount / total_buy_quantity;
             total_investment := avg_price * current_quantity;
-            
+
             -- Get current stock price
-            SELECT current_price INTO current_price 
-            FROM stock_current_prices 
+            SELECT current_price INTO current_price
+            FROM stock_current_prices
             WHERE stock_id = portfolio_rec.stock_id;
-            
+
             IF current_price IS NOT NULL THEN
                 current_value := current_price * current_quantity;
                 gain_loss := current_value - total_investment;
@@ -999,7 +1001,7 @@ BEGIN
                 gain_loss := 0;
                 gain_loss_rate := 0;
             END IF;
-            
+
             -- Update portfolio
             UPDATE stock_portfolios SET
                 quantity = current_quantity,
@@ -1015,7 +1017,7 @@ BEGIN
             DELETE FROM stock_portfolios WHERE id = portfolio_rec.id;
         END IF;
     END IF;
-    
+
     RETURN COALESCE(NEW, OLD);
 END;
 $$ LANGUAGE plpgsql;
@@ -1065,17 +1067,17 @@ BEGIN
     -- Extract user ID from current session or JWT
     user_id_val := current_setting('app.current_user_id', true);
     table_name_val := TG_TABLE_NAME;
-    
+
     CASE TG_OP
         WHEN 'INSERT' THEN
             action_val := 'create';
             INSERT INTO audit.audit_logs (user_id, entity_type, entity_id, action, new_value, ip_address)
             VALUES (
-                user_id_val, 
-                table_name_val, 
-                NEW.id, 
-                action_val, 
-                to_jsonb(NEW), 
+                user_id_val,
+                table_name_val,
+                NEW.id,
+                action_val,
+                to_jsonb(NEW),
                 inet_client_addr()
             );
             RETURN NEW;
@@ -1083,12 +1085,12 @@ BEGIN
             action_val := 'update';
             INSERT INTO audit.audit_logs (user_id, entity_type, entity_id, action, old_value, new_value, ip_address)
             VALUES (
-                user_id_val, 
-                table_name_val, 
-                NEW.id, 
-                action_val, 
-                to_jsonb(OLD), 
-                to_jsonb(NEW), 
+                user_id_val,
+                table_name_val,
+                NEW.id,
+                action_val,
+                to_jsonb(OLD),
+                to_jsonb(NEW),
                 inet_client_addr()
             );
             RETURN NEW;
@@ -1096,16 +1098,16 @@ BEGIN
             action_val := 'delete';
             INSERT INTO audit.audit_logs (user_id, entity_type, entity_id, action, old_value, ip_address)
             VALUES (
-                user_id_val, 
-                table_name_val, 
-                OLD.id, 
-                action_val, 
-                to_jsonb(OLD), 
+                user_id_val,
+                table_name_val,
+                OLD.id,
+                action_val,
+                to_jsonb(OLD),
                 inet_client_addr()
             );
             RETURN OLD;
     END CASE;
-    
+
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
@@ -1193,26 +1195,26 @@ CREATE INDEX idx_audit_logs_created ON audit.audit_logs(created_at DESC);
 
 ```sql
 -- Dashboard optimization indexes
-CREATE INDEX idx_dashboard_salary_summary ON salary_slips(user_id, payment_date DESC) 
+CREATE INDEX idx_dashboard_salary_summary ON salary_slips(user_id, payment_date DESC)
 INCLUDE (net_pay, total_earnings, total_deductions, status);
 
-CREATE INDEX idx_dashboard_portfolio_summary ON stock_portfolios(user_id) 
+CREATE INDEX idx_dashboard_portfolio_summary ON stock_portfolios(user_id)
 INCLUDE (current_value, unrealized_gain_loss, unrealized_gain_loss_rate);
 
 -- Reporting optimization indexes
-CREATE INDEX idx_report_monthly_income ON salary_slips(user_id, payment_date DESC) 
+CREATE INDEX idx_report_monthly_income ON salary_slips(user_id, payment_date DESC)
 INCLUDE (net_pay, total_earnings, currency)
 WHERE status = 'confirmed';
 
-CREATE INDEX idx_report_stock_transactions ON stock_transactions(user_id, transaction_date DESC, transaction_type) 
+CREATE INDEX idx_report_stock_transactions ON stock_transactions(user_id, transaction_date DESC, transaction_type)
 INCLUDE (quantity, price_per_share, total_amount, commission, tax);
 
 -- Performance critical queries
-CREATE INDEX idx_portfolio_valuation ON stock_portfolios(stock_id) 
+CREATE INDEX idx_portfolio_valuation ON stock_portfolios(stock_id)
 INCLUDE (quantity, current_value)
 WHERE quantity > 0;
 
-CREATE INDEX idx_budget_tracking_summary ON budget_trackings(category_id, transaction_date DESC) 
+CREATE INDEX idx_budget_tracking_summary ON budget_trackings(category_id, transaction_date DESC)
 INCLUDE (amount, source);
 ```
 
@@ -1225,10 +1227,10 @@ CREATE INDEX idx_active_stocks ON stock_masters(symbol) WHERE is_active = true;
 CREATE INDEX idx_current_portfolios ON stock_portfolios(user_id, stock_id) WHERE quantity > 0;
 
 -- Recent data optimization
-CREATE INDEX idx_recent_salary_slips ON salary_slips(user_id, payment_date DESC) 
+CREATE INDEX idx_recent_salary_slips ON salary_slips(user_id, payment_date DESC)
 WHERE payment_date >= CURRENT_DATE - INTERVAL '2 years';
 
-CREATE INDEX idx_recent_transactions ON stock_transactions(portfolio_id, transaction_date DESC) 
+CREATE INDEX idx_recent_transactions ON stock_transactions(portfolio_id, transaction_date DESC)
 WHERE transaction_date >= CURRENT_DATE - INTERVAL '5 years';
 
 -- Status-specific indexes
@@ -1262,41 +1264,41 @@ ALTER TABLE user_sessions ENABLE ROW LEVEL SECURITY;
 
 -- User can only access their own data
 CREATE POLICY users_policy ON users
-FOR ALL 
+FOR ALL
 USING (id = current_setting('app.current_user_id', true)::text);
 
 CREATE POLICY salary_slips_policy ON salary_slips
-FOR ALL 
+FOR ALL
 USING (user_id = current_setting('app.current_user_id', true)::text);
 
 CREATE POLICY stock_portfolios_policy ON stock_portfolios
-FOR ALL 
+FOR ALL
 USING (user_id = current_setting('app.current_user_id', true)::text);
 
 CREATE POLICY stock_transactions_policy ON stock_transactions
-FOR ALL 
+FOR ALL
 USING (user_id = current_setting('app.current_user_id', true)::text);
 
 CREATE POLICY assets_policy ON assets
-FOR ALL 
+FOR ALL
 USING (user_id = current_setting('app.current_user_id', true)::text);
 
 CREATE POLICY budgets_policy ON budgets
-FOR ALL 
+FOR ALL
 USING (user_id = current_setting('app.current_user_id', true)::text);
 
 -- Cascade policies for related data
 CREATE POLICY budget_categories_policy ON budget_categories
-FOR ALL 
+FOR ALL
 USING (
     budget_id IN (
-        SELECT id FROM budgets 
+        SELECT id FROM budgets
         WHERE user_id = current_setting('app.current_user_id', true)::text
     )
 );
 
 CREATE POLICY budget_trackings_policy ON budget_trackings
-FOR ALL 
+FOR ALL
 USING (
     category_id IN (
         SELECT bc.id FROM budget_categories bc
@@ -1306,21 +1308,21 @@ USING (
 );
 
 CREATE POLICY dashboard_preferences_policy ON dashboard_preferences
-FOR ALL 
+FOR ALL
 USING (user_id = current_setting('app.current_user_id', true)::text);
 
 CREATE POLICY user_sessions_policy ON user_sessions
-FOR ALL 
+FOR ALL
 USING (user_id = current_setting('app.current_user_id', true)::text);
 
 -- Read-only policies for master data
 CREATE POLICY stock_masters_read_policy ON stock_masters
-FOR SELECT 
+FOR SELECT
 USING (true);
 
 -- Admin policies for system configuration
 CREATE POLICY system_configs_admin_policy ON system_configs
-FOR ALL 
+FOR ALL
 USING (
     current_setting('app.current_user_role', true)::text = 'admin'
     OR is_public = true
@@ -1398,7 +1400,7 @@ BEGIN
         start_date := date_trunc('month', CURRENT_DATE) + (i - 6) * INTERVAL '1 month';
         end_date := start_date + INTERVAL '1 month';
         partition_name := 'audit_logs_' || to_char(start_date, 'YYYY_MM');
-        
+
         EXECUTE format('
             CREATE TABLE IF NOT EXISTS audit.%I PARTITION OF audit.audit_logs_partitioned
             FOR VALUES FROM (%L) TO (%L)
@@ -1416,9 +1418,9 @@ DECLARE
     partition_name TEXT;
 BEGIN
     -- Create future partitions for next 3 months
-    FOR table_record IN 
-        SELECT schemaname, tablename, partition_key 
-        FROM pg_tables 
+    FOR table_record IN
+        SELECT schemaname, tablename, partition_key
+        FROM pg_tables
         WHERE tablename LIKE '%_partitioned'
     LOOP
         FOR i IN 1..3 LOOP
@@ -1431,23 +1433,23 @@ BEGIN
                 end_date := start_date + INTERVAL '1 month';
                 partition_name := 'audit_logs_' || to_char(start_date, 'YYYY_MM');
             END IF;
-            
+
             -- Check if partition exists
             IF NOT EXISTS (
-                SELECT 1 FROM pg_tables 
-                WHERE schemaname = table_record.schemaname 
+                SELECT 1 FROM pg_tables
+                WHERE schemaname = table_record.schemaname
                 AND tablename = partition_name
             ) THEN
                 EXECUTE format('
                     CREATE TABLE %I.%I PARTITION OF %I.%I
                     FOR VALUES FROM (%L) TO (%L)
-                ', table_record.schemaname, partition_name, 
+                ', table_record.schemaname, partition_name,
                    table_record.schemaname, table_record.tablename,
                    start_date, end_date);
             END IF;
         END LOOP;
     END LOOP;
-    
+
     -- Drop old partitions (older than 5 years for salary slips, 2 years for audit logs)
     -- Implementation would go here...
 END;
@@ -1466,7 +1468,7 @@ $$ LANGUAGE plpgsql;
 ```sql
 -- User portfolio summary view
 CREATE VIEW v_user_portfolio_summary AS
-SELECT 
+SELECT
     p.user_id,
     COUNT(p.id) as total_holdings,
     SUM(p.current_value) as total_portfolio_value,
@@ -1481,7 +1483,7 @@ GROUP BY p.user_id;
 
 -- Monthly salary summary view
 CREATE VIEW v_monthly_salary_summary AS
-SELECT 
+SELECT
     user_id,
     date_trunc('month', payment_date) as month,
     COUNT(*) as slip_count,
@@ -1490,13 +1492,13 @@ SELECT
     AVG(total_earnings) as avg_total_earnings,
     AVG(total_deductions) as avg_total_deductions,
     AVG((attendance->>'overtimeHours')::numeric) as avg_overtime_hours
-FROM salary_slips 
+FROM salary_slips
 WHERE status = 'confirmed'
 GROUP BY user_id, date_trunc('month', payment_date);
 
 -- Budget performance view
 CREATE VIEW v_budget_performance AS
-SELECT 
+SELECT
     b.user_id,
     b.id as budget_id,
     b.name as budget_name,
@@ -1505,7 +1507,7 @@ SELECT
     COALESCE(SUM(bc.actual_amount), 0) as total_actual,
     b.total_budget - COALESCE(SUM(bc.actual_amount), 0) as remaining_budget,
     (COALESCE(SUM(bc.actual_amount), 0) / b.total_budget * 100) as completion_percentage,
-    CASE 
+    CASE
         WHEN COALESCE(SUM(bc.actual_amount), 0) > b.total_budget THEN 'over_budget'
         WHEN COALESCE(SUM(bc.actual_amount), 0) > b.total_budget * 0.9 THEN 'warning'
         ELSE 'on_track'
@@ -1517,7 +1519,7 @@ GROUP BY b.id, b.user_id, b.name, b.period, b.total_budget;
 
 -- Asset allocation view
 CREATE VIEW v_asset_allocation AS
-SELECT 
+SELECT
     user_id,
     asset_type,
     COUNT(*) as asset_count,
@@ -1546,30 +1548,30 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         COALESCE(portfolio_total, 0) + COALESCE(assets_total, 0) as total_wealth,
         COALESCE(portfolio_total, 0) as portfolio_value,
         COALESCE(other_assets_total, 0) as other_assets_value,
         COALESCE(cash_total, 0) as cash_equivalent,
         'JPY'::VARCHAR(3) as currency
     FROM (
-        SELECT 
-            (SELECT COALESCE(SUM(current_value), 0) 
-             FROM stock_portfolios 
+        SELECT
+            (SELECT COALESCE(SUM(current_value), 0)
+             FROM stock_portfolios
              WHERE user_id = p_user_id AND quantity > 0) as portfolio_total,
-            (SELECT COALESCE(SUM(amount), 0) 
-             FROM assets 
-             WHERE user_id = p_user_id 
+            (SELECT COALESCE(SUM(amount), 0)
+             FROM assets
+             WHERE user_id = p_user_id
              AND currency = 'JPY') as assets_total,
-            (SELECT COALESCE(SUM(amount), 0) 
-             FROM assets 
-             WHERE user_id = p_user_id 
-             AND asset_type IN ('cash', 'deposit') 
+            (SELECT COALESCE(SUM(amount), 0)
+             FROM assets
+             WHERE user_id = p_user_id
+             AND asset_type IN ('cash', 'deposit')
              AND currency = 'JPY') as cash_total,
-            (SELECT COALESCE(SUM(amount), 0) 
-             FROM assets 
-             WHERE user_id = p_user_id 
-             AND asset_type NOT IN ('cash', 'deposit') 
+            (SELECT COALESCE(SUM(amount), 0)
+             FROM assets
+             WHERE user_id = p_user_id
+             AND asset_type NOT IN ('cash', 'deposit')
              AND currency = 'JPY') as other_assets_total
     ) wealth_calculation;
 END;
@@ -1597,16 +1599,16 @@ DECLARE
 BEGIN
     report_month := make_date(p_year, p_month, 1);
     prev_month := report_month - INTERVAL '1 month';
-    
+
     RETURN QUERY
-    SELECT 
+    SELECT
         report_month as report_date,
         COALESCE(salary_data.total_net_pay, 0) as total_income,
         COALESCE(budget_data.total_expenses, 0) as total_expenses,
         COALESCE(salary_data.total_net_pay, 0) - COALESCE(budget_data.total_expenses, 0) as savings_amount,
-        CASE 
+        CASE
             WHEN COALESCE(salary_data.total_net_pay, 0) > 0 THEN
-                ((COALESCE(salary_data.total_net_pay, 0) - COALESCE(budget_data.total_expenses, 0)) / 
+                ((COALESCE(salary_data.total_net_pay, 0) - COALESCE(budget_data.total_expenses, 0)) /
                  COALESCE(salary_data.total_net_pay, 0)) * 100
             ELSE 0
         END as savings_rate,
@@ -1617,7 +1619,7 @@ BEGIN
         SELECT p_user_id as user_id -- Anchor for joins
     ) base
     LEFT JOIN (
-        SELECT 
+        SELECT
             user_id,
             SUM(net_pay) as total_net_pay
         FROM salary_slips
@@ -1627,7 +1629,7 @@ BEGIN
         GROUP BY user_id
     ) salary_data ON base.user_id = salary_data.user_id
     LEFT JOIN (
-        SELECT 
+        SELECT
             b.user_id,
             SUM(CASE WHEN bc.category_type = 'expense' THEN bc.actual_amount ELSE 0 END) as total_expenses,
             AVG(CASE WHEN bc.allocated_amount > 0 THEN (bc.actual_amount / bc.allocated_amount) * 100 ELSE 100 END) as adherence
@@ -1638,7 +1640,7 @@ BEGIN
         GROUP BY b.user_id
     ) budget_data ON base.user_id = budget_data.user_id
     LEFT JOIN (
-        SELECT 
+        SELECT
             user_id,
             SUM(current_value) as total_value
         FROM stock_portfolios
@@ -1647,7 +1649,7 @@ BEGIN
         GROUP BY user_id
     ) current_portfolio ON base.user_id = current_portfolio.user_id
     LEFT JOIN (
-        SELECT 
+        SELECT
             user_id,
             SUM(current_value) as total_value
         FROM stock_portfolios
@@ -1667,7 +1669,7 @@ DECLARE
     portfolio_record RECORD;
     current_stock_price DECIMAL(12, 2);
 BEGIN
-    FOR portfolio_record IN 
+    FOR portfolio_record IN
         SELECT p.id, p.quantity, p.total_investment, p.stock_id
         FROM stock_portfolios p
         WHERE p.quantity > 0
@@ -1676,14 +1678,14 @@ BEGIN
         SELECT current_price INTO current_stock_price
         FROM stock_current_prices
         WHERE stock_id = portfolio_record.stock_id;
-        
+
         IF current_stock_price IS NOT NULL THEN
             UPDATE stock_portfolios SET
                 current_value = portfolio_record.quantity * current_stock_price,
                 unrealized_gain_loss = (portfolio_record.quantity * current_stock_price) - portfolio_record.total_investment,
-                unrealized_gain_loss_rate = 
+                unrealized_gain_loss_rate =
                     CASE WHEN portfolio_record.total_investment > 0 THEN
-                        (((portfolio_record.quantity * current_stock_price) - portfolio_record.total_investment) / 
+                        (((portfolio_record.quantity * current_stock_price) - portfolio_record.total_investment) /
                          portfolio_record.total_investment) * 100
                     ELSE 0
                     END,
@@ -1691,11 +1693,11 @@ BEGIN
                 cached_last_updated = now(),
                 updated_at = now()
             WHERE id = portfolio_record.id;
-            
+
             updated_count := updated_count + 1;
         END IF;
     END LOOP;
-    
+
     RETURN updated_count;
 END;
 $$ LANGUAGE plpgsql;
@@ -1721,9 +1723,9 @@ RETURNS TEXT AS $$
 BEGIN
     RETURN encode(
         pgp_sym_encrypt(
-            data, 
+            data,
             current_setting('app.encryption_key', false)
-        ), 
+        ),
         'base64'
     );
 EXCEPTION
@@ -1773,34 +1775,34 @@ DECLARE
     user_record RECORD;
     retention_years INTEGER;
 BEGIN
-    FOR user_record IN 
+    FOR user_record IN
         SELECT id, preferences->'dataRetentionYears' as retention_setting
-        FROM users 
+        FROM users
         WHERE is_active = true
     LOOP
         retention_years := COALESCE((user_record.retention_setting)::INTEGER, 5);
-        
+
         -- Archive old salary slips
         UPDATE salary_slips SET status = 'archived'
         WHERE user_id = user_record.id
         AND payment_date < CURRENT_DATE - (retention_years || ' years')::INTERVAL
         AND status != 'archived';
-        
+
         -- Delete old audit logs (keep 2 years regardless of user preference)
         DELETE FROM audit.audit_logs
         WHERE user_id = user_record.id
         AND created_at < CURRENT_DATE - INTERVAL '2 years';
-        
+
         GET DIAGNOSTICS deleted_count = ROW_COUNT;
     END LOOP;
-    
+
     -- Clean up expired sessions
     DELETE FROM user_sessions WHERE expires_at < now();
-    
+
     -- Clean up old price history (keep 10 years)
-    DELETE FROM stock_price_histories 
+    DELETE FROM stock_price_histories
     WHERE date < CURRENT_DATE - INTERVAL '10 years';
-    
+
     RETURN deleted_count;
 END;
 $$ LANGUAGE plpgsql;
@@ -1821,16 +1823,16 @@ $$ LANGUAGE plpgsql;
 
 ## 承認
 
-| 役割 | 名前 | 日付 | 署名 |
-|------|------|------|------|
-| データベースアーキテクト | エキスパートデータベース詳細設計アーキテクト | 2025-08-10 | ✅ |
-| レビュアー | - | - | [ ] |
-| 承認者 | - | - | [ ] |
+| 役割                     | 名前                                         | 日付       | 署名 |
+| ------------------------ | -------------------------------------------- | ---------- | ---- |
+| データベースアーキテクト | エキスパートデータベース詳細設計アーキテクト | 2025-08-10 | ✅   |
+| レビュアー               | -                                            | -          | [ ]  |
+| 承認者                   | -                                            | -          | [ ]  |
 
 ---
 
 **改訂履歴**
 
-| バージョン | 日付 | 変更内容 | 作成者 |
-|-----------|------|----------|---------|
-| 1.0.0 | 2025-08-10 | 初版作成 | エキスパートデータベース詳細設計アーキテクト |
+| バージョン | 日付       | 変更内容 | 作成者                                       |
+| ---------- | ---------- | -------- | -------------------------------------------- |
+| 1.0.0      | 2025-08-10 | 初版作成 | エキスパートデータベース詳細設計アーキテクト |

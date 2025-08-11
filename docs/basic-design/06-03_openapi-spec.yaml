@@ -3,14 +3,14 @@ info:
   title: 給料・資産管理システム API
   description: |
     個人の給料明細と株式ポートフォリオを一元管理するWebアプリケーションのREST API仕様書。
-    
+
     ## 主要機能
     - 給料明細のCRUD操作とPDF解析
     - 株式ポートフォリオ管理と時価評価
     - 統合ダッシュボード
     - 予算管理
     - データエクスポート
-    
+
     ## 認証
     - Bearer Token (JWT)
     - Google OAuth 2.0
@@ -238,7 +238,7 @@ paths:
   /salary-slips/{id}:
     parameters:
       - $ref: '#/components/parameters/IdParam'
-    
+
     get:
       tags:
         - Salary Slips

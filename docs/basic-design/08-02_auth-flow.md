@@ -1,6 +1,7 @@
 # Auth.js による認証・認可フロー設計書
 
 ## 文書情報
+
 - **作成日**: 2025-08-10
 - **作成者**: セキュリティアーキテクト
 - **バージョン**: 2.0.0
@@ -13,22 +14,22 @@
 
 ### 1.1 Auth.js 採用による簡素化効果
 
-| 認証方式 | 採用 | Auth.js効果 | コード削減 |
-|---------|------|-------------|------------|
-| **Auth.js + Google OAuth 2.0** | 採用 | **自動化** | **1200+行 → 10行** |
-| カスタムOAuth実装 | 削除 | 開発工数削減 | **3週間 → 1日** |
-| パスワード認証 | 削除 | セキュリティリスク排除 | **複雑性100%削減** |
-| WebAuthn/FIDO2 | 将来 | Auth.jsで数行追加のみ | **設定のみで実装可能** |
+| 認証方式                       | 採用 | Auth.js効果            | コード削減             |
+| ------------------------------ | ---- | ---------------------- | ---------------------- |
+| **Auth.js + Google OAuth 2.0** | 採用 | **自動化**             | **1200+行 → 10行**     |
+| カスタムOAuth実装              | 削除 | 開発工数削減           | **3週間 → 1日**        |
+| パスワード認証                 | 削除 | セキュリティリスク排除 | **複雑性100%削減**     |
+| WebAuthn/FIDO2                 | 将来 | Auth.jsで数行追加のみ  | **設定のみで実装可能** |
 
 #### 実装工数削減
 
-| 項目 | 従来実装 | Auth.js実装 | 削減効果 |
-|------|----------|-------------|----------|
-| **実装期間** | 3週間 | **1日** | **95%削減** |
-| **コード行数** | 1200+行 | **10行** | **99%削減** |
-| **テスト工数** | 1週間 | **不要** | **100%削減** |
-| **セキュリティ監査** | 1週間 | **不要** | **100%削減** |
-| **保守コスト** | 継続的 | **ほぼゼロ** | **98%削減** |
+| 項目                 | 従来実装 | Auth.js実装  | 削減効果     |
+| -------------------- | -------- | ------------ | ------------ |
+| **実装期間**         | 3週間    | **1日**      | **95%削減**  |
+| **コード行数**       | 1200+行  | **10行**     | **99%削減**  |
+| **テスト工数**       | 1週間    | **不要**     | **100%削減** |
+| **セキュリティ監査** | 1週間    | **不要**     | **100%削減** |
+| **保守コスト**       | 継続的   | **ほぼゼロ** | **98%削減**  |
 
 ### 1.2 認証アーキテクチャ全体像
 
@@ -37,27 +38,27 @@ graph TB
     subgraph "Client"
         Browser[ブラウザ]
     end
-    
+
     subgraph "Application Server"
         App[SvelteKit App]
         AuthJS[Auth.js<br/>自動認証ミドルウェア]
     end
-    
+
     subgraph "Session Storage (選択可能)"
         JWT[JWT Tokens<br/>サーバーレス]
         Database[(Database<br/>サーバーフル)]
     end
-    
+
     subgraph "External"
         Google[Google OAuth 2.0<br/>Identity Provider]
     end
-    
+
     Browser --> App
     App --> AuthJS
     AuthJS --> JWT
     AuthJS --> Database
     AuthJS --> Google
-    
+
     Note1[Auth.jsが自動処理:<br/>PKCE, CSRF, セッション,<br/>トークンリフレッシュ]
 ```
 
@@ -74,27 +75,27 @@ sequenceDiagram
     participant AuthJS as Auth.js<br/>(自動処理)
     participant Google as Google OAuth
     participant Storage as セッションストレージ
-    
+
     User->>Browser: ログインボタンクリック
     Browser->>AuthJS: GET /auth/signin
-    
+
     Note over AuthJS: Auth.jsが自動処理:<br/>PKCE生成、CSRF保護、<br/>state管理
-    
+
     AuthJS->>Google: OAuth認証リクエスト
     Note over Google: Auth.jsが自動構成:<br/>PKCE, state, scope
-    
+
     Google->>User: ログイン画面表示
     User->>Google: 認証情報入力
-    
+
     Google->>AuthJS: コールバック with code
-    
+
     Note over AuthJS: Auth.jsが自動処理:<br/>トークン取得、検証、<br/>ユーザー情報取得
-    
+
     AuthJS->>Storage: セッション保存
     AuthJS->>Browser: セキュアクッキー設定
-    
+
     Browser->>User: ダッシュボード表示
-    
+
     Note right of AuthJS: Auth.jsによる実装<br/>10行の設定で完了<br/>工数: 3週間 → 1日<br/>セキュリティ: 高水準
 ```
 
@@ -103,24 +104,23 @@ sequenceDiagram
 ```typescript
 // 簡素化
 // 旧実装: 60+行の複雑なPKCE実装 → Auth.js: 自動処理
-
 // Auth.js設定のみで全て完了
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Google from '@auth/sveltekit/providers/google';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-  // Auth.jsが以下を自動処理:
-  // ✅ PKCE生成・管理
-  // ✅ State生成・検証
-  // ✅ Code Challenge生成
-  // ✅ CSRF対策
-  // ✅ セキュアなセッション管理
+	providers: [
+		Google({
+			clientId: process.env.GOOGLE_CLIENT_ID,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET
+		})
+	]
+	// Auth.jsが以下を自動処理:
+	// ✅ PKCE生成・管理
+	// ✅ State生成・検証
+	// ✅ Code Challenge生成
+	// ✅ CSRF対策
+	// ✅ セキュアなセッション管理
 });
 
 // Auth.js設定例
@@ -128,18 +128,18 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 
 #### Auth.jsが自動処理する機能
 
-| 機能カテゴリ | 旧カスタム実装 | Auth.js | 削減効果 |
-|-------------|----------------|---------|----------|
-| **PKCE処理** | 60行の複雑コード | **自動処理** | **100%削減** |
-| **CSRF対策** | 45行のセキュリティ処理 | **自動処理** | **100%削減** |
-| **JWT管理** | 270行の巨大クラス | **自動処理** | **100%削減** |
-| **セッション管理** | 120行のSessionManager | **自動処理** | **100%削減** |
-| **トークン検証** | 150行の検証処理 | **自動処理** | **100%削減** |
-| **📊 監査ログ** | 80行のログ処理 | **自動処理** | **100%削減** |
-| **🚨 レート制限** | 60行の制限処理 | **自動処理** | **100%削減** |
-| **リフレッシュ処理** | 180行のトークン処理 | **自動処理** | **100%削減** |
-| **エラーハンドリング** | 90行のエラー処理 | **自動処理** | **100%削減** |
-| **合計** | **1055行** | **0行** | **100%削減** |
+| 機能カテゴリ           | 旧カスタム実装         | Auth.js      | 削減効果     |
+| ---------------------- | ---------------------- | ------------ | ------------ |
+| **PKCE処理**           | 60行の複雑コード       | **自動処理** | **100%削減** |
+| **CSRF対策**           | 45行のセキュリティ処理 | **自動処理** | **100%削減** |
+| **JWT管理**            | 270行の巨大クラス      | **自動処理** | **100%削減** |
+| **セッション管理**     | 120行のSessionManager  | **自動処理** | **100%削減** |
+| **トークン検証**       | 150行の検証処理        | **自動処理** | **100%削減** |
+| **📊 監査ログ**        | 80行のログ処理         | **自動処理** | **100%削減** |
+| **🚨 レート制限**      | 60行の制限処理         | **自動処理** | **100%削減** |
+| **リフレッシュ処理**   | 180行のトークン処理    | **自動処理** | **100%削減** |
+| **エラーハンドリング** | 90行のエラー処理       | **自動処理** | **100%削減** |
+| **合計**               | **1055行**             | **0行**      | **100%削減** |
 
 ---
 
@@ -150,18 +150,18 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 ```mermaid
 stateDiagram-v2
     [*] --> Created: ログイン成功
-    
+
     Created --> Active: 初回アクセス
-    
+
     Active --> Active: アクティビティ継続
     Active --> Idle: 非アクティブ
-    
+
     Idle --> Active: 再アクティブ化
     Idle --> Expired: タイムアウト
-    
+
     Active --> Refreshed: トークンリフレッシュ
     Refreshed --> Active: 継続利用
-    
+
     Active --> Revoked: ログアウト
     Expired --> [*]: セッション削除
     Revoked --> [*]: セッション削除
@@ -174,71 +174,8 @@ stateDiagram-v2
 // 設定のみで自動化
 // 実装時間: 2週間 → 30分
 // セキュリティ: 高水準を自動適用
-
+import { authOptions } from '$shared/auth';
 import { SvelteKitAuth } from '@auth/sveltekit';
-import Google from '@auth/sveltekit/providers/google';
-
-export const { handle, signIn, signOut } = SvelteKitAuth({
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-  
-  // セッション戦略の選択（JWTまたはDatabase）
-  session: {
-    strategy: 'jwt', // または 'database'
-    
-    // JWT設定（JWTモード時）
-    maxAge: 30 * 24 * 60 * 60, // 30日
-    
-    // セッション更新間隔
-    updateAge: 24 * 60 * 60, // 24時間
-  },
-  
-  // JWT設定
-  jwt: {
-    // 自動署名・検証・暗号化
-    maxAge: 30 * 24 * 60 * 60,
-  },
-  
-  // セキュリティ設定
-  useSecureCookies: process.env.NODE_ENV === 'production',
-  
-  // コールバック
-  callbacks: {
-    // セッション情報のカスタマイズ
-    session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub!;
-      }
-      return session;
-    },
-    
-    // JWT情報のカスタマイズ
-    jwt({ token, account, profile }) {
-      if (account) {
-        token.accessToken = account.access_token;
-      }
-      return token;
-    },
-  },
-  
-  // Auth.jsが完全自動処理する機能:
-  // ✅ セッション作成・検証・削除（旧120行 → 0行）
-  // ✅ 暗号化・復号化（旧60行 → 0行）
-  // ✅ セキュアクッキー管理（旧40行 → 0行）
-  // ✅ トークンリフレッシュ（旧180行 → 0行）
-  // ✅ セッション期限管理（旧80行 → 0行）
-  // ✅ セキュリティヘッダー（旧30行 → 0行）
-  // ✅ CSRF保護（旧45行 → 0行）
-  // ✅ レート制限（旧60行 → 0行）
-  // ✅ 監査ログ（旧80行 → 0行）
-  // ✅ エラーハンドリング（旧90行 → 0行）
-  // 総削減: 785行 → 0行（100%自動化）
-});
-
 // 削減効果: カスタム実装 vs Auth.js
 // | 機能カテゴリ | 旧実装 | Auth.js | 削減効果 |
 // |------------|--------|---------|----------|
@@ -257,15 +194,76 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 // セッション利用例（SvelteKitページで）
 // +page.server.ts
 import { getServerSession } from '@auth/sveltekit';
-import { authOptions } from '$shared/auth';
+import Google from '@auth/sveltekit/providers/google';
+
+export const { handle, signIn, signOut } = SvelteKitAuth({
+	providers: [
+		Google({
+			clientId: process.env.GOOGLE_CLIENT_ID,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET
+		})
+	],
+
+	// セッション戦略の選択（JWTまたはDatabase）
+	session: {
+		strategy: 'jwt', // または 'database'
+
+		// JWT設定（JWTモード時）
+		maxAge: 30 * 24 * 60 * 60, // 30日
+
+		// セッション更新間隔
+		updateAge: 24 * 60 * 60 // 24時間
+	},
+
+	// JWT設定
+	jwt: {
+		// 自動署名・検証・暗号化
+		maxAge: 30 * 24 * 60 * 60
+	},
+
+	// セキュリティ設定
+	useSecureCookies: process.env.NODE_ENV === 'production',
+
+	// コールバック
+	callbacks: {
+		// セッション情報のカスタマイズ
+		session({ session, token }) {
+			if (session.user) {
+				session.user.id = token.sub!;
+			}
+			return session;
+		},
+
+		// JWT情報のカスタマイズ
+		jwt({ token, account, profile }) {
+			if (account) {
+				token.accessToken = account.access_token;
+			}
+			return token;
+		}
+	}
+
+	// Auth.jsが完全自動処理する機能:
+	// ✅ セッション作成・検証・削除（旧120行 → 0行）
+	// ✅ 暗号化・復号化（旧60行 → 0行）
+	// ✅ セキュアクッキー管理（旧40行 → 0行）
+	// ✅ トークンリフレッシュ（旧180行 → 0行）
+	// ✅ セッション期限管理（旧80行 → 0行）
+	// ✅ セキュリティヘッダー（旧30行 → 0行）
+	// ✅ CSRF保護（旧45行 → 0行）
+	// ✅ レート制限（旧60行 → 0行）
+	// ✅ 監査ログ（旧80行 → 0行）
+	// ✅ エラーハンドリング（旧90行 → 0行）
+	// 総削減: 785行 → 0行（100%自動化）
+});
 
 export async function load({ request }) {
-  const session = await getServerSession(request, authOptions);
-  
-  // セッション情報が自動で利用可能
-  return {
-    session,
-  };
+	const session = await getServerSession(request, authOptions);
+
+	// セッション情報が自動で利用可能
+	return {
+		session
+	};
 }
 ```
 
@@ -279,49 +277,49 @@ export async function load({ request }) {
 graph TB
     subgraph "認可システム"
         Request[リクエスト]
-        
+
         subgraph "認可エンジン"
             RBAC[Role-Based<br/>Access Control]
             ABAC[Attribute-Based<br/>Access Control]
             PolicyEngine[ポリシーエンジン]
         end
-        
+
         subgraph "権限定義"
             Roles[ロール]
             Permissions[パーミッション]
             Attributes[属性]
         end
-        
+
         Decision[認可決定]
     end
-    
+
     Request --> RBAC
     Request --> ABAC
-    
+
     RBAC --> PolicyEngine
     ABAC --> PolicyEngine
-    
+
     Roles --> RBAC
     Permissions --> RBAC
     Attributes --> ABAC
-    
+
     PolicyEngine --> Decision
 ```
 
 ### 4.2 権限マトリクス
 
-| リソース | アクション | 所有者 | 閲覧者 | 管理者 | ゲスト |
-|---------|-----------|--------|--------|--------|--------|
-| **給料明細** | 作成 | ✅ | ❌ | ✅ | ❌ |
-| **給料明細** | 閲覧 | ✅ | 条件付き | ✅ | ❌ |
-| **給料明細** | 更新 | ✅ | ❌ | ✅ | ❌ |
-| **給料明細** | 削除 | ✅ | ❌ | ✅ | ❌ |
-| **ポートフォリオ** | 作成 | ✅ | ❌ | ✅ | ❌ |
-| **ポートフォリオ** | 閲覧 | ✅ | 条件付き | ✅ | ❌ |
-| **ポートフォリオ** | 更新 | ✅ | ❌ | ✅ | ❌ |
-| **ポートフォリオ** | 削除 | ✅ | ❌ | ✅ | ❌ |
-| **エクスポート** | 実行 | ✅ | ❌ | ✅ | ❌ |
-| **設定** | 変更 | ✅ | ❌ | ✅ | ❌ |
+| リソース           | アクション | 所有者 | 閲覧者   | 管理者 | ゲスト |
+| ------------------ | ---------- | ------ | -------- | ------ | ------ |
+| **給料明細**       | 作成       | ✅     | ❌       | ✅     | ❌     |
+| **給料明細**       | 閲覧       | ✅     | 条件付き | ✅     | ❌     |
+| **給料明細**       | 更新       | ✅     | ❌       | ✅     | ❌     |
+| **給料明細**       | 削除       | ✅     | ❌       | ✅     | ❌     |
+| **ポートフォリオ** | 作成       | ✅     | ❌       | ✅     | ❌     |
+| **ポートフォリオ** | 閲覧       | ✅     | 条件付き | ✅     | ❌     |
+| **ポートフォリオ** | 更新       | ✅     | ❌       | ✅     | ❌     |
+| **ポートフォリオ** | 削除       | ✅     | ❌       | ✅     | ❌     |
+| **エクスポート**   | 実行       | ✅     | ❌       | ✅     | ❌     |
+| **設定**           | 変更       | ✅     | ❌       | ✅     | ❌     |
 
 ### 4.3 認可実装
 
@@ -334,22 +332,22 @@ function authorize(permission: string) {
     descriptor: PropertyDescriptor
   ) {
     const originalMethod = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       const context = args[0] as RequestContext;
-      
+
       // 認証チェック
       if (!context.user) {
         throw new UnauthorizedError('Authentication required');
       }
-      
+
       // 権限チェック
       const hasPermission = await checkPermission(
         context.user,
         permission,
         context.resource
       );
-      
+
       if (!hasPermission) {
         // 監査ログ記録
         await auditLog({
@@ -358,10 +356,10 @@ function authorize(permission: string) {
           permission,
           resource: context.resource,
         });
-        
+
         throw new ForbiddenError('Insufficient permissions');
       }
-      
+
       // 監査ログ記録（成功）
       await auditLog({
         action: 'ACCESS_GRANTED',
@@ -369,11 +367,11 @@ function authorize(permission: string) {
         permission,
         resource: context.resource,
       });
-      
+
       // オリジナルメソッド実行
       return originalMethod.apply(this, args);
     };
-    
+
     return descriptor;
   };
 }
@@ -381,12 +379,12 @@ function authorize(permission: string) {
 // ポリシーベースの認可
 class AuthorizationService {
   private policies: Map<string, Policy> = new Map();
-  
+
   // ポリシー登録
   registerPolicy(name: string, policy: Policy): void {
     this.policies.set(name, policy);
   }
-  
+
   // 認可チェック
   async authorize(
     user: User,
@@ -399,7 +397,7 @@ class AuthorizationService {
     if (rolePermissions.includes(`${resource.type}:${action}`)) {
       return true;
     }
-    
+
     // 2. 属性ベースチェック
     const attributes = {
       user: {
@@ -420,7 +418,7 @@ class AuthorizationService {
         ...context,
       },
     };
-    
+
     // 3. ポリシー評価
     for (const [name, policy] of this.policies) {
       if (policy.applies(attributes)) {
@@ -433,11 +431,11 @@ class AuthorizationService {
         }
       }
     }
-    
+
     // デフォルト拒否
     return false;
   }
-  
+
   // データレベルセキュリティ
   async applyDataFilters(
     user: User,
@@ -445,17 +443,17 @@ class AuthorizationService {
     resourceType: string
   ): Promise<any> {
     const filters = [];
-    
+
     // 所有者フィルター
     if (!user.roles.includes('admin')) {
       filters.push({ ownerId: user.id });
     }
-    
+
     // 部門フィルター（将来実装）
     if (user.department) {
       filters.push({ department: user.department });
     }
-    
+
     // 時間ベースフィルター
     const timeRestriction = await this.getTimeRestriction(user);
     if (timeRestriction) {
@@ -466,7 +464,7 @@ class AuthorizationService {
         },
       });
     }
-    
+
     return {
       ...query,
       where: {
@@ -484,7 +482,7 @@ class SalarySlipController {
     // 認可済みのロジック
     return await salarySlipService.get(context.params.id);
   }
-  
+
   @authorize('salary-slip:write')
   async updateSalarySlip(context: RequestContext): Promise<SalarySlip> {
     // 認可済みのロジック
@@ -507,131 +505,131 @@ graph TB
     subgraph "Auth.js 自動処理"
         AuthJS[Auth.js<br/>全自動トークン管理]
     end
-    
+
     subgraph "トークン処理（自動）"
         Generate[🤖 自動生成]
         Validate[🤖 自動検証]
         Refresh[🤖 自動更新]
         Revoke[🤖 自動無効化]
     end
-    
+
     subgraph "セキュア保存（自動）"
         SecureCookie[🔐 HTTPOnly<br/>Secure Cookie]
         SessionStorage[🔐 セッション<br/>ストレージ]
     end
-    
+
     AuthJS --> Generate
     AuthJS --> Validate
     AuthJS --> Refresh
     AuthJS --> Revoke
-    
+
     Generate --> SecureCookie
     Generate --> SessionStorage
-    
+
     Note1[旧実装: 233行の複雑コード]
     Note2[Auth.js: 設定のみで完全自動]
 ```
 
 #### 簡素化の比較
 
-| 機能 | 旧カスタム実装 | Auth.js 自動処理 |
-|------|----------------|------------------|
-| **JWT生成** | 25行の複雑コード | 自動処理 |
-| **署名・検証** | RS256実装 20行 | 自動処理 |
-| **トークンリフレッシュ** | 30行の処理 | 自動処理 |
-| **ブラックリスト管理** | Redis実装 15行 | 自動処理 |
-| **セキュリティヘッダー** | 10行の設定 | 自動処理 |
-| **Cookie管理** | 15行の処理 | 自動処理 |
-| **有効期限管理** | 20行の処理 | 自動処理 |
-| **エラーハンドリング** | 25行の処理 | 自動処理 |
-| **鍵管理** | FS読み込み 10行 | 自動処理 |
-| **セッション連携** | 20行の処理 | 自動処理 |
-| **監査ログ** | 15行の処理 | 自動処理 |
-| **レート制限** | 20行の処理 | 自動処理 |
-| **CSRF対策** | 15行の処理 | 自動処理 |
-| **合計** | **233行** | **0行** |
+| 機能                     | 旧カスタム実装   | Auth.js 自動処理 |
+| ------------------------ | ---------------- | ---------------- |
+| **JWT生成**              | 25行の複雑コード | 自動処理         |
+| **署名・検証**           | RS256実装 20行   | 自動処理         |
+| **トークンリフレッシュ** | 30行の処理       | 自動処理         |
+| **ブラックリスト管理**   | Redis実装 15行   | 自動処理         |
+| **セキュリティヘッダー** | 10行の設定       | 自動処理         |
+| **Cookie管理**           | 15行の処理       | 自動処理         |
+| **有効期限管理**         | 20行の処理       | 自動処理         |
+| **エラーハンドリング**   | 25行の処理       | 自動処理         |
+| **鍵管理**               | FS読み込み 10行  | 自動処理         |
+| **セッション連携**       | 20行の処理       | 自動処理         |
+| **監査ログ**             | 15行の処理       | 自動処理         |
+| **レート制限**           | 20行の処理       | 自動処理         |
+| **CSRF対策**             | 15行の処理       | 自動処理         |
+| **合計**                 | **233行**        | **0行**          |
 
 ### 5.2 Auth.js 実装
 
 ```typescript
 // 削除された旧実装: 270行の巨大JWTManagerクラス
 // Auth.js新実装: シンプル設定
-
 // 基本設定（hooks.server.ts）
-import { SvelteKitAuth } from '@auth/sveltekit';
-import Google from '@auth/sveltekit/providers/google';
-import type { Handle } from '@sveltejs/kit';
-
-export const { handle: authHandle } = SvelteKitAuth({
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-  
-  // JWT設定（すべて自動処理）
-  jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 30日
-    encryption: true, // 自動暗号化
-  },
-  
-  // セッション設定
-  session: {
-    strategy: 'jwt', // JWTモード
-    maxAge: 30 * 24 * 60 * 60,
-    updateAge: 24 * 60 * 60, // 24時間で更新
-  },
-  
-  // セキュリティ設定（自動適用）
-  useSecureCookies: process.env.NODE_ENV === 'production',
-  
-  // Auth.jsが自動で以下を処理:
-  // ✅ JWT署名・検証（RS256/HS256自動選択）
-  // ✅ トークンリフレッシュ機能
-  // ✅ セキュアクッキー管理
-  // ✅ CSRF対策
-  // ✅ セッション暗号化
-  // ✅ 有効期限管理
-  // ✅ エラーハンドリング
-});
-
-// API保護の使用例（+server.ts）
-import { getServerSession } from '@auth/sveltekit';
-import { error } from '@sveltejs/kit';
-
-export async function GET({ request }) {
-  // 🎆 旧実装: 30行の認証チェックコード
-  // Auth.js: 1行で完了
-  const session = await getServerSession(request);
-  
-  if (!session) {
-    throw error(401, 'Unauthorized');
-  }
-  
-  // ユーザー情報が自動で利用可能
-  console.log('User:', session.user);
-  
-  return new Response(JSON.stringify({ 
-    message: 'Protected data',
-    user: session.user 
-  }));
-}
-
 // フロントエンドでの使用（+page.svelte）
 import { page } from '$app/stores';
+
+import { SvelteKitAuth } from '@auth/sveltekit';
+// API保護の使用例（+server.ts）
+import { getServerSession } from '@auth/sveltekit';
 import { signIn, signOut } from '@auth/sveltekit/client';
+import Google from '@auth/sveltekit/providers/google';
+import type { Handle } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
+
+export const { handle: authHandle } = SvelteKitAuth({
+	providers: [
+		Google({
+			clientId: process.env.GOOGLE_CLIENT_ID,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET
+		})
+	],
+
+	// JWT設定（すべて自動処理）
+	jwt: {
+		maxAge: 30 * 24 * 60 * 60, // 30日
+		encryption: true // 自動暗号化
+	},
+
+	// セッション設定
+	session: {
+		strategy: 'jwt', // JWTモード
+		maxAge: 30 * 24 * 60 * 60,
+		updateAge: 24 * 60 * 60 // 24時間で更新
+	},
+
+	// セキュリティ設定（自動適用）
+	useSecureCookies: process.env.NODE_ENV === 'production'
+
+	// Auth.jsが自動で以下を処理:
+	// ✅ JWT署名・検証（RS256/HS256自動選択）
+	// ✅ トークンリフレッシュ機能
+	// ✅ セキュアクッキー管理
+	// ✅ CSRF対策
+	// ✅ セッション暗号化
+	// ✅ 有効期限管理
+	// ✅ エラーハンドリング
+});
+
+export async function GET({ request }) {
+	// 🎆 旧実装: 30行の認証チェックコード
+	// Auth.js: 1行で完了
+	const session = await getServerSession(request);
+
+	if (!session) {
+		throw error(401, 'Unauthorized');
+	}
+
+	// ユーザー情報が自動で利用可能
+	console.log('User:', session.user);
+
+	return new Response(
+		JSON.stringify({
+			message: 'Protected data',
+			user: session.user
+		})
+	);
+}
 
 // セッション情報が自動で注入される
 $: session = $page.data.session;
 
 // ログイン・ログアウトが1行で完了
 async function login() {
-  await signIn('google');
+	await signIn('google');
 }
 
 async function logout() {
-  await signOut();
+	await signOut();
 }
 
 // 自動化により以下が不要:
@@ -685,13 +683,13 @@ sequenceDiagram
     participant App as アプリケーション
     participant Auth as 認証サービス
     participant TOTP as TOTP Generator
-    
+
     User->>App: ログイン（第1要素）
     App->>Auth: 認証検証
     Auth-->>App: 第1要素成功
-    
+
     App->>User: MFAチャレンジ要求
-    
+
     alt TOTP方式
         User->>TOTP: コード生成
         TOTP-->>User: 6桁コード
@@ -703,14 +701,14 @@ sequenceDiagram
         User->>App: WebAuthn応答
         App->>Auth: WebAuthn検証
     end
-    
+
     Auth-->>App: MFA成功
     App->>User: ログイン完了
 ```
 
 ### 6.2 TOTP実装
 
-```typescript
+````typescript
 ### 6.2 🎆 Auth.js による MFA 簡単実装
 
 ```typescript
@@ -729,20 +727,20 @@ export const { handle } = SvelteKitAuth({
       // MFA設定も簡単（Google側でMFA有効時自動対応）
     }),
   ],
-  
+
   // Auth.jsが将来サポート予定:
   // ✅ TOTP自動生成・検証
   // ✅ QRコード自動生成
   // ✅ バックアップコード管理
   // ✅ WebAuthn統合
   // ✅ SMS/Email MFA
-  
+
   // 🎯 実装予想:
   // - 旧カスタム実装: 200+行のMFAクラス
   // - Auth.js実装: 数行の設定追加のみ
 });
 
-/* 
+/*
 🏆 MFA実装の劇的簡素化見込み:
 
 ❌ 削除予定コード:
@@ -752,19 +750,20 @@ export const { handle } = SvelteKitAuth({
   - 検証ロジック: 45行
   - エラーハンドリング: 35行
   - 総計: 255行
-  
+
 ✅ Auth.js実装予定:
   - 設定追加のみ: 数行
   - 自動UI生成: 0行
   - セキュリティ自動適用: 0行
-  
+
 🎯 期待効果:
   - 実装時間: 1週間 → 数分
   - コード: 255行 → 数行
   - セキュリティ: 業界標準自動適用
 */
-```
-```
+````
+
+````
 
 ---
 
@@ -783,67 +782,67 @@ interface AuthenticationEvents {
     ipAddress: string;
     userAgent: string;
   };
-  
+
   LOGIN_SUCCESS: {
     userId: string;
     sessionId: string;
     method: 'oauth' | 'refresh';
   };
-  
+
   LOGIN_FAILURE: {
     email: string;
     reason: string;
     attemptCount: number;
   };
-  
+
   // セッション関連
   SESSION_CREATED: {
     userId: string;
     sessionId: string;
     expiresAt: Date;
   };
-  
+
   SESSION_REFRESHED: {
     sessionId: string;
     oldExpiry: Date;
     newExpiry: Date;
   };
-  
+
   SESSION_EXPIRED: {
     sessionId: string;
     userId: string;
   };
-  
+
   SESSION_REVOKED: {
     sessionId: string;
     userId: string;
     reason: string;
   };
-  
+
   // MFA関連
   MFA_ENABLED: {
     userId: string;
     method: 'totp' | 'webauthn';
   };
-  
+
   MFA_CHALLENGE_SUCCESS: {
     userId: string;
     method: 'totp' | 'webauthn';
   };
-  
+
   MFA_CHALLENGE_FAILURE: {
     userId: string;
     method: 'totp' | 'webauthn';
     attemptCount: number;
   };
-  
+
   // 異常検知
   SUSPICIOUS_ACTIVITY: {
     userId: string;
     type: string;
     details: any;
   };
-  
+
   ACCOUNT_LOCKED: {
     userId: string;
     reason: string;
@@ -861,7 +860,7 @@ class AuthAuditLogger {
       severity: this.getSeverity(event),
       correlationId: crypto.randomUUID(),
     };
-    
+
     // データベースに保存
     await prisma.auditLog.create({
       data: {
@@ -870,24 +869,24 @@ class AuthAuditLogger {
         ...auditEntry,
       },
     });
-    
+
     // リアルタイムアラート
     if (this.isHighSeverity(event)) {
       await this.sendAlert(auditEntry);
     }
   }
-  
+
   private static getSeverity(event: string): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     const criticalEvents = ['ACCOUNT_LOCKED', 'SUSPICIOUS_ACTIVITY'];
     const highEvents = ['LOGIN_FAILURE', 'MFA_CHALLENGE_FAILURE'];
-    
+
     if (criticalEvents.includes(event)) return 'CRITICAL';
     if (highEvents.includes(event)) return 'HIGH';
     if (event.includes('FAILURE')) return 'MEDIUM';
     return 'LOW';
   }
 }
-```
+````
 
 ---
 
@@ -898,7 +897,6 @@ class AuthAuditLogger {
 ```typescript
 // 🔥 削除された旧実装: 90行の複雑なエラーハンドリング
 // 🎆 Auth.js: 完全自動エラー処理！
-
 /* 
 ❌ 削除されたコード:
   - AuthenticationError クラス: 15行
@@ -915,21 +913,20 @@ class AuthAuditLogger {
   - 監査ログ: 自動記録
   - レート制限連携: 自動
 */
-
 // SvelteKitでのAuth.js使用例（エラー処理も自動）
 import { getServerSession } from '@auth/sveltekit';
 import { error } from '@sveltejs/kit';
 
 export async function load({ request }) {
-  const session = await getServerSession(request);
-  
-  if (!session) {
-    // Auth.jsが適切なエラー処理を自動実行
-    throw error(401, 'Authentication required');
-  }
-  
-  // ✨ たったこれだけ！Auth.jsが残りを全て自動処理
-  return { session };
+	const session = await getServerSession(request);
+
+	if (!session) {
+		// Auth.jsが適切なエラー処理を自動実行
+		throw error(401, 'Authentication required');
+	}
+
+	// ✨ たったこれだけ！Auth.jsが残りを全て自動処理
+	return { session };
 }
 
 // 🏆 削減効果:
@@ -962,18 +959,18 @@ export async function load({ request }) {
 
 // Auth.js設定でレート制限も自動適用
 export const { handle } = SvelteKitAuth({
-  // Auth.jsが自動で以下を処理:
-  // ✅ ログイン試行回数制限
-  // ✅ IP別レート制限  
-  // ✅ ブルートフォース検知
-  // ✅ 自動遅延処理
-  // ✅ 異常アクセス検知
-  
-  // 🎯 カスタム制限が必要な場合も簡単設定可能（将来）
-  rateLimit: {
-    enabled: true,
-    // その他詳細設定も設定ファイルで簡単指定
-  },
+	// Auth.jsが自動で以下を処理:
+	// ✅ ログイン試行回数制限
+	// ✅ IP別レート制限
+	// ✅ ブルートフォース検知
+	// ✅ 自動遅延処理
+	// ✅ 異常アクセス検知
+
+	// 🎯 カスタム制限が必要な場合も簡単設定可能（将来）
+	rateLimit: {
+		enabled: true
+		// その他詳細設定も設定ファイルで簡単指定
+	}
 });
 
 // 🏆 削減効果:
@@ -982,7 +979,8 @@ export const { handle } = SvelteKitAuth({
 // - 実装時間: 2日 → 自動
 // - 保守コスト: 継続 → ゼロ
 ```
-```
+
+````
 
 ---
 
@@ -994,27 +992,27 @@ export const { handle } = SvelteKitAuth({
   - [ ] Code Verifierの安全な生成（128文字）
   - [ ] Code ChallengeのSHA256ハッシュ化
   - [ ] Stateパラメータによ CSRF対策
-  
+
 - [ ] **セッション管理**
   - [ ] セッションの暗号化保存
   - [ ] スライディングウィンドウの実装
   - [ ] デバイスフィンガープリント検証
-  
+
 - [ ] **トークン管理**
   - [ ] JWTのRS256署名
   - [ ] リフレッシュトークンのローテーション
   - [ ] トークンブラックリスト機能
-  
+
 - [ ] **認可**
   - [ ] RBACの実装
   - [ ] リソース所有者チェック
   - [ ] データレベルセキュリティ
-  
+
 - [ ] **監査ログ**
   - [ ] 全認証イベントの記録
   - [ ] ログの改ざん防止
   - [ ] リアルタイムアラート
-  
+
 - [ ] **エラーハンドリング**
   - [ ] エラー情報の適切な隠蔽
   - [ ] レート制限の実装
@@ -1034,7 +1032,7 @@ const securityConfig = {
     path: '/',
     domain: process.env.COOKIE_DOMAIN,
   },
-  
+
   // CORS設定
   cors: {
     origin: process.env.ALLOWED_ORIGINS?.split(','),
@@ -1044,7 +1042,7 @@ const securityConfig = {
     exposedHeaders: ['X-Request-ID'],
     maxAge: 86400, // 24時間
   },
-  
+
   // CSP設定
   csp: {
     directives: {
@@ -1060,7 +1058,7 @@ const securityConfig = {
     },
   },
 };
-```
+````
 
 ---
 
@@ -1068,25 +1066,27 @@ const securityConfig = {
 
 ### 10.1 🎆 Auth.js採用による超高速実装計画
 
-| フェーズ | 実装内容 | 従来期間 | **Auth.js期間** | 削減効果 |
-|---------|---------|----------|----------------|----------|
-| **Phase 1** | Google OAuth 2.0基本実装 | 2週間 | **半日** 🚀 | **96%削減** |
-| **Phase 2** | セッション管理強化 | 1週間 | **不要** ⚡ | **100%削減** |
-| **Phase 3** | レート制限・監査ログ | 1週間 | **不要** ✨ | **100%削減** |
-| **Phase 4** | MFA実装（TOTP） | 2週間 | **設定のみ** 🎯 | **95%削減** |
-| **Phase 5** | WebAuthn対応 | 3週間 | **数行追加** 🎊 | **98%削減** |
-| **🏆 合計** | **全実装** | **9週間** | **1日** | **🔥 98%削減** |
+| フェーズ    | 実装内容                 | 従来期間  | **Auth.js期間** | 削減効果       |
+| ----------- | ------------------------ | --------- | --------------- | -------------- |
+| **Phase 1** | Google OAuth 2.0基本実装 | 2週間     | **半日** 🚀     | **96%削減**    |
+| **Phase 2** | セッション管理強化       | 1週間     | **不要** ⚡     | **100%削減**   |
+| **Phase 3** | レート制限・監査ログ     | 1週間     | **不要** ✨     | **100%削減**   |
+| **Phase 4** | MFA実装（TOTP）          | 2週間     | **設定のみ** 🎯 | **95%削減**    |
+| **Phase 5** | WebAuthn対応             | 3週間     | **数行追加** 🎊 | **98%削減**    |
+| **🏆 合計** | **全実装**               | **9週間** | **1日**         | **🔥 98%削減** |
 
 #### 🚀 実装スケジュール詳細
 
 **Day 1（Auth.js導入）:**
+
 - 午前: Auth.js設定・Google OAuth連携
 - 午後: テスト・デバッグ・本番デプロイ
 - 夕方: ドキュメント更新・チーム共有
 
 **従来実装との比較:**
+
 - **実装工数**: 9週間 → **1日**（**98%削減**）
-- **コード量**: 1200+行 → **10行**（**99%削減**） 
+- **コード量**: 1200+行 → **10行**（**99%削減**）
 - **テスト工数**: 2週間 → **不要**（**100%削減**）
 - **セキュリティ監査**: 1週間 → **不要**（**100%削減**）
 
@@ -1104,17 +1104,17 @@ const securityConfig = {
 
 ## 承認
 
-| 役割 | 名前 | 日付 | 署名 |
-|------|------|------|------|
-| セキュリティアーキテクト | セキュリティアーキテクト | 2025-08-10 | ✅ |
-| レビュアー | - | - | [ ] |
-| 承認者 | - | - | [ ] |
+| 役割                     | 名前                     | 日付       | 署名 |
+| ------------------------ | ------------------------ | ---------- | ---- |
+| セキュリティアーキテクト | セキュリティアーキテクト | 2025-08-10 | ✅   |
+| レビュアー               | -                        | -          | [ ]  |
+| 承認者                   | -                        | -          | [ ]  |
 
 ---
 
 **改訂履歴**
 
-| バージョン | 日付 | 変更内容 | 作成者 |
-|-----------|------|----------|--------|
-| 1.0.0 | 2025-08-10 | 初版作成（旧カスタム実装） | セキュリティアーキテクト |
-| 2.0.0 | 2025-08-10 | **🎆 Auth.js採用により87%簡素化** | セキュリティアーキテクト |
+| バージョン | 日付       | 変更内容                          | 作成者                   |
+| ---------- | ---------- | --------------------------------- | ------------------------ |
+| 1.0.0      | 2025-08-10 | 初版作成（旧カスタム実装）        | セキュリティアーキテクト |
+| 2.0.0      | 2025-08-10 | **🎆 Auth.js採用により87%簡素化** | セキュリティアーキテクト |

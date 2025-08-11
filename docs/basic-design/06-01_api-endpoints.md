@@ -1,6 +1,7 @@
 # APIエンドポイント仕様書
 
 ## 文書情報
+
 - **作成日**: 2025-08-10
 - **作成者**: APIアーキテクト
 - **バージョン**: 1.0.0
@@ -12,14 +13,14 @@
 
 ### 1.1 基本原則
 
-| 原則 | 説明 |
-|------|------|
-| **RESTful設計** | リソース指向URL、適切なHTTPメソッドの使用 |
-| **一貫性** | 命名規則、レスポンス形式、エラー処理の統一 |
+| 原則               | 説明                                       |
+| ------------------ | ------------------------------------------ |
+| **RESTful設計**    | リソース指向URL、適切なHTTPメソッドの使用  |
+| **一貫性**         | 命名規則、レスポンス形式、エラー処理の統一 |
 | **バージョニング** | URLパスベースのバージョニング (`/api/v1/`) |
-| **セキュリティ** | HTTPS必須、認証/認可、入力検証 |
+| **セキュリティ**   | HTTPS必須、認証/認可、入力検証             |
 | **パフォーマンス** | ページネーション、キャッシング、レート制限 |
-| **開発者体験** | 明確なドキュメント、予測可能な動作 |
+| **開発者体験**     | 明確なドキュメント、予測可能な動作         |
 
 ### 1.2 URL設計規則
 
@@ -39,13 +40,13 @@
 
 ### 1.3 HTTPメソッドの使用
 
-| メソッド | 用途 | 冪等性 | 安全性 |
-|---------|------|--------|--------|
-| **GET** | リソース取得 | ✅ | ✅ |
-| **POST** | リソース作成 | ❌ | ❌ |
-| **PUT** | リソース全体更新 | ✅ | ❌ |
-| **PATCH** | リソース部分更新 | ❌ | ❌ |
-| **DELETE** | リソース削除 | ✅ | ❌ |
+| メソッド   | 用途             | 冪等性 | 安全性 |
+| ---------- | ---------------- | ------ | ------ |
+| **GET**    | リソース取得     | ✅     | ✅     |
+| **POST**   | リソース作成     | ❌     | ❌     |
+| **PUT**    | リソース全体更新 | ✅     | ❌     |
+| **PATCH**  | リソース部分更新 | ❌     | ❌     |
+| **DELETE** | リソース削除     | ✅     | ❌     |
 
 ---
 
@@ -54,6 +55,7 @@
 ### 2.1 認証エンドポイント
 
 #### POST /api/v1/auth/login
+
 **説明**: ユーザーログイン（Google OAuth含む）
 
 ```typescript
@@ -83,6 +85,7 @@
 ```
 
 #### POST /api/v1/auth/logout
+
 **説明**: ユーザーログアウト
 
 ```typescript
@@ -96,6 +99,7 @@
 ```
 
 #### GET /api/v1/auth/session
+
 **説明**: 現在のセッション情報取得
 
 ```typescript
@@ -110,6 +114,7 @@
 ```
 
 #### POST /api/v1/auth/refresh
+
 **説明**: セッショントークンのリフレッシュ
 
 ```typescript
@@ -130,6 +135,7 @@
 ### 3.1 ユーザープロファイル
 
 #### GET /api/v1/users/me
+
 **説明**: 現在のユーザー情報取得
 
 ```typescript
@@ -149,6 +155,7 @@
 ```
 
 #### PATCH /api/v1/users/me
+
 **説明**: ユーザー情報更新
 
 ```typescript
@@ -167,6 +174,7 @@
 ```
 
 #### DELETE /api/v1/users/me
+
 **説明**: アカウント削除
 
 ```typescript
@@ -181,6 +189,7 @@
 ### 4.1 CRUD操作
 
 #### GET /api/v1/salary-slips
+
 **説明**: 給料明細一覧取得
 
 ```typescript
@@ -210,6 +219,7 @@
 ```
 
 #### GET /api/v1/salary-slips/{id}
+
 **説明**: 特定の給料明細取得
 
 ```typescript
@@ -221,6 +231,7 @@
 ```
 
 #### POST /api/v1/salary-slips
+
 **説明**: 給料明細作成（手動入力）
 
 ```typescript
@@ -247,6 +258,7 @@
 ```
 
 #### PUT /api/v1/salary-slips/{id}
+
 **説明**: 給料明細全体更新
 
 ```typescript
@@ -273,6 +285,7 @@
 ```
 
 #### PATCH /api/v1/salary-slips/{id}
+
 **説明**: 給料明細部分更新
 
 ```typescript
@@ -292,6 +305,7 @@
 ```
 
 #### DELETE /api/v1/salary-slips/{id}
+
 **説明**: 給料明細削除
 
 ```typescript
@@ -302,6 +316,7 @@
 ### 4.2 PDF処理
 
 #### POST /api/v1/salary-slips/upload
+
 **説明**: PDF一括アップロード・解析
 
 ```typescript
@@ -329,6 +344,7 @@
 ```
 
 #### GET /api/v1/salary-slips/{id}/pdf
+
 **説明**: 給料明細PDF再生成・ダウンロード
 
 ```typescript
@@ -341,6 +357,7 @@
 ### 4.3 統計・集計
 
 #### GET /api/v1/salary-slips/statistics
+
 **説明**: 給料統計情報取得
 
 ```typescript
@@ -378,6 +395,7 @@
 ### 5.1 ポートフォリオ管理
 
 #### GET /api/v1/portfolio
+
 **説明**: ポートフォリオサマリー取得
 
 ```typescript
@@ -396,6 +414,7 @@
 ```
 
 #### GET /api/v1/portfolio/stocks
+
 **説明**: 保有株式一覧取得
 
 ```typescript
@@ -413,6 +432,7 @@
 ```
 
 #### GET /api/v1/portfolio/stocks/{id}
+
 **説明**: 特定銘柄の詳細取得
 
 ```typescript
@@ -431,6 +451,7 @@
 ### 5.2 株式取引
 
 #### POST /api/v1/portfolio/transactions
+
 **説明**: 株式取引記録
 
 ```typescript
@@ -454,6 +475,7 @@
 ```
 
 #### GET /api/v1/portfolio/transactions
+
 **説明**: 取引履歴取得
 
 ```typescript
@@ -476,6 +498,7 @@
 ```
 
 #### PUT /api/v1/portfolio/transactions/{id}
+
 **説明**: 取引記録更新
 
 ```typescript
@@ -497,6 +520,7 @@
 ```
 
 #### DELETE /api/v1/portfolio/transactions/{id}
+
 **説明**: 取引記録削除
 
 ```typescript
@@ -507,6 +531,7 @@
 ### 5.3 株価情報
 
 #### GET /api/v1/stocks/search
+
 **説明**: 銘柄検索
 
 ```typescript
@@ -531,6 +556,7 @@
 ```
 
 #### GET /api/v1/stocks/{symbol}/price
+
 **説明**: 現在株価取得
 
 ```typescript
@@ -542,6 +568,7 @@
 ```
 
 #### GET /api/v1/stocks/{symbol}/history
+
 **説明**: 株価履歴取得
 
 ```typescript
@@ -560,6 +587,7 @@
 ```
 
 #### POST /api/v1/stocks/prices/update
+
 **説明**: 株価一括更新（バッチ処理）
 
 ```typescript
@@ -591,6 +619,7 @@
 ### 6.1 資産CRUD
 
 #### GET /api/v1/assets
+
 **説明**: 資産一覧取得
 
 ```typescript
@@ -608,6 +637,7 @@
 ```
 
 #### GET /api/v1/assets/{id}
+
 **説明**: 特定資産の詳細取得
 
 ```typescript
@@ -619,6 +649,7 @@
 ```
 
 #### POST /api/v1/assets
+
 **説明**: 資産登録
 
 ```typescript
@@ -641,6 +672,7 @@
 ```
 
 #### PUT /api/v1/assets/{id}
+
 **説明**: 資産情報更新
 
 ```typescript
@@ -663,6 +695,7 @@
 ```
 
 #### DELETE /api/v1/assets/{id}
+
 **説明**: 資産削除
 
 ```typescript
@@ -673,6 +706,7 @@
 ### 6.2 資産集計
 
 #### GET /api/v1/assets/summary
+
 **説明**: 資産サマリー取得
 
 ```typescript
@@ -696,6 +730,7 @@
 ### 7.1 予算CRUD
 
 #### GET /api/v1/budgets
+
 **説明**: 予算一覧取得
 
 ```typescript
@@ -713,6 +748,7 @@
 ```
 
 #### GET /api/v1/budgets/{id}
+
 **説明**: 特定予算の詳細取得
 
 ```typescript
@@ -728,6 +764,7 @@
 ```
 
 #### POST /api/v1/budgets
+
 **説明**: 予算作成
 
 ```typescript
@@ -755,6 +792,7 @@
 ```
 
 #### PATCH /api/v1/budgets/{id}
+
 **説明**: 予算更新
 
 ```typescript
@@ -773,6 +811,7 @@
 ```
 
 #### DELETE /api/v1/budgets/{id}
+
 **説明**: 予算削除
 
 ```typescript
@@ -783,6 +822,7 @@
 ### 7.2 予算追跡
 
 #### POST /api/v1/budgets/{budgetId}/tracking
+
 **説明**: 実績記録
 
 ```typescript
@@ -803,6 +843,7 @@
 ```
 
 #### GET /api/v1/budgets/{budgetId}/tracking
+
 **説明**: 実績履歴取得
 
 ```typescript
@@ -827,6 +868,7 @@
 ### 8.1 統合ダッシュボード
 
 #### GET /api/v1/dashboard
+
 **説明**: ダッシュボードデータ取得
 
 ```typescript
@@ -863,6 +905,7 @@
 ### 8.2 ダッシュボード設定
 
 #### GET /api/v1/dashboard/preferences
+
 **説明**: ダッシュボード設定取得
 
 ```typescript
@@ -874,6 +917,7 @@
 ```
 
 #### PUT /api/v1/dashboard/preferences
+
 **説明**: ダッシュボード設定更新
 
 ```typescript
@@ -904,6 +948,7 @@
 ### 9.1 エクスポート機能
 
 #### POST /api/v1/export/salary-slips
+
 **説明**: 給料明細データエクスポート
 
 ```typescript
@@ -926,6 +971,7 @@
 ```
 
 #### POST /api/v1/export/portfolio
+
 **説明**: ポートフォリオデータエクスポート
 
 ```typescript
@@ -947,6 +993,7 @@
 ```
 
 #### POST /api/v1/export/report
+
 **説明**: 統合レポート生成
 
 ```typescript
@@ -975,6 +1022,7 @@
 ### 10.1 監査ログ
 
 #### GET /api/v1/audit-logs
+
 **説明**: 監査ログ取得
 
 ```typescript
@@ -999,6 +1047,7 @@
 ### 10.2 ヘルスチェック
 
 #### GET /api/v1/health
+
 **説明**: システムヘルスチェック
 
 ```typescript
@@ -1044,17 +1093,17 @@
 
 ### 11.2 HTTPステータスコード
 
-| ステータスコード | 説明 | エラーコード |
-|----------------|------|-------------|
-| **400** | Bad Request | VALIDATION_ERROR |
-| **401** | Unauthorized | AUTHENTICATION_ERROR |
-| **403** | Forbidden | AUTHORIZATION_ERROR |
-| **404** | Not Found | NOT_FOUND |
-| **409** | Conflict | CONFLICT |
-| **422** | Unprocessable Entity | PARSE_ERROR |
-| **429** | Too Many Requests | RATE_LIMIT_EXCEEDED |
-| **500** | Internal Server Error | INTERNAL_SERVER_ERROR |
-| **503** | Service Unavailable | SERVICE_UNAVAILABLE |
+| ステータスコード | 説明                  | エラーコード          |
+| ---------------- | --------------------- | --------------------- |
+| **400**          | Bad Request           | VALIDATION_ERROR      |
+| **401**          | Unauthorized          | AUTHENTICATION_ERROR  |
+| **403**          | Forbidden             | AUTHORIZATION_ERROR   |
+| **404**          | Not Found             | NOT_FOUND             |
+| **409**          | Conflict              | CONFLICT              |
+| **422**          | Unprocessable Entity  | PARSE_ERROR           |
+| **429**          | Too Many Requests     | RATE_LIMIT_EXCEEDED   |
+| **500**          | Internal Server Error | INTERNAL_SERVER_ERROR |
+| **503**          | Service Unavailable   | SERVICE_UNAVAILABLE   |
 
 ### 11.3 エラー例
 
@@ -1192,14 +1241,14 @@ GET /api/v1/resource?sort=+name,-createdAt
 
 ### 13.1 制限値
 
-| エンドポイント | 制限 | ウィンドウ |
-|--------------|------|-----------|
-| **認証API** | 5回 | 15分 |
-| **読み取りAPI** | 100回 | 15分 |
-| **書き込みAPI** | 50回 | 15分 |
-| **ファイルアップロード** | 10回 | 60分 |
-| **エクスポート** | 5回 | 60分 |
-| **外部API連携** | 30回 | 60分 |
+| エンドポイント           | 制限  | ウィンドウ |
+| ------------------------ | ----- | ---------- |
+| **認証API**              | 5回   | 15分       |
+| **読み取りAPI**          | 100回 | 15分       |
+| **書き込みAPI**          | 50回  | 15分       |
+| **ファイルアップロード** | 10回  | 60分       |
+| **エクスポート**         | 5回   | 60分       |
+| **外部API連携**          | 30回  | 60分       |
 
 ### 13.2 レート制限超過時の対応
 
@@ -1291,16 +1340,16 @@ URL形式:
 
 ## 承認
 
-| 役割 | 名前 | 日付 | 署名 |
-|------|------|------|------|
-| APIアーキテクト | APIアーキテクト | 2025-08-10 | ✅ |
-| レビュアー | - | - | [ ] |
-| 承認者 | - | - | [ ] |
+| 役割            | 名前            | 日付       | 署名 |
+| --------------- | --------------- | ---------- | ---- |
+| APIアーキテクト | APIアーキテクト | 2025-08-10 | ✅   |
+| レビュアー      | -               | -          | [ ]  |
+| 承認者          | -               | -          | [ ]  |
 
 ---
 
 **改訂履歴**
 
-| バージョン | 日付 | 変更内容 | 作成者 |
-|-----------|------|----------|---------|
-| 1.0.0 | 2025-08-10 | 初版作成 | APIアーキテクト |
+| バージョン | 日付       | 変更内容 | 作成者          |
+| ---------- | ---------- | -------- | --------------- |
+| 1.0.0      | 2025-08-10 | 初版作成 | APIアーキテクト |
