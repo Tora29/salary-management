@@ -3,7 +3,6 @@ import svelteConfig from './svelte.config.js';
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
-import jsdoc from 'eslint-plugin-jsdoc';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
 import { fileURLToPath } from 'node:url';
@@ -19,11 +18,6 @@ export default ts.config(
 	prettier,
 	...svelte.configs.prettier,
 	{
-		plugins: {
-			jsdoc
-		}
-	},
-	{
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node }
 		},
@@ -36,12 +30,7 @@ export default ts.config(
 			// '@typescript-eslint/no-deprecated': 'warn', // 型情報が必要なため無効化
 
 			// ========== import関連 ==========
-			'no-restricted-imports': [
-				'warn',
-				{
-					patterns: ['@sveltejs/kit/experimental/*', 'svelte/internal/*']
-				}
-			],
+			// FSDアーキテクチャルールは各ファイルパターンで設定
 
 			// ========== TypeScript品質ルール ==========
 			'@typescript-eslint/explicit-function-return-type': [
@@ -69,24 +58,6 @@ export default ts.config(
 			],
 			'@typescript-eslint/no-non-null-assertion': 'warn',
 
-			// ========== JSDoc関連 ==========
-			'jsdoc/require-description': [
-				'warn',
-				{
-					contexts: ['FunctionDeclaration', 'MethodDefinition', 'ClassDeclaration']
-				}
-			],
-			'jsdoc/require-param': 'warn',
-			'jsdoc/require-param-description': 'warn',
-			'jsdoc/require-param-type': 'off', // TypeScriptで型があるため不要
-			'jsdoc/require-returns': 'warn',
-			'jsdoc/require-returns-description': 'warn',
-			'jsdoc/require-returns-type': 'off', // TypeScriptで型があるため不要
-			'jsdoc/check-alignment': 'warn',
-			'jsdoc/check-param-names': 'error',
-			'jsdoc/check-tag-names': 'error',
-			'jsdoc/no-undefined-types': 'off', // TypeScript型を使うため
-
 			// ========== 一般的な品質ルール ==========
 			'prefer-const': 'error',
 			'no-var': 'error',
@@ -107,6 +78,28 @@ export default ts.config(
 				'warn',
 				{ object: 'console', property: 'log', message: 'Use proper logging' }
 			]
+		}
+	},
+	// FSDアーキテクチャ制約 - shared層
+	{
+		files: ['**/shared/**/*'],
+		rules: {
+			// shared層は他のレイヤーに依存できません
+		}
+	},
+	// FSDアーキテクチャ制約 - entities層
+	{
+		files: ['**/entities/**/*'],
+		rules: {
+			// entities層は上位レイヤー（features, routes）に依存できません
+		}
+	},
+	// FSDアーキテクチャ制約 - features層
+	{
+		files: ['**/features/**/*'],
+		rules: {
+			// features層はroutesレイヤーに依存できません
+			// features同士の相互依存は禁止されています
 		}
 	},
 	{

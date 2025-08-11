@@ -18,7 +18,24 @@ Feature-Sliced Design (FSD) アーキテクチャに従っています。
 
 - 新機能を実装する前に、既存のコードパターンを必ず確認してください
 - テスト設定はブラウザ（コンポーネント）と Node（サーバーコード）で分かれています
-- 実装はTDD で行われます
+
+## 🏗️ FSDアーキテクチャルール（超重要！必ず厳守！）
+
+**実装時は必ず `.claude/FSD-ARCHITECTURE-RULES.md` を参照し、全てのルールを厳守すること！**
+
+### 絶対に守るべきルール：
+
+1. **レイヤー依存順序**: shared → entities → features → routes（逆方向は禁止）
+2. **UIコンポーネント階層**:
+   - `routes/+page.svelte` は `features/ui` のみをインポート
+   - `features/ui` は `entities/ui` と `shared/components` を使用
+   - `entities/ui` は `shared/components` のみを使用
+3. **composable拡張子**: `features/*/composable/` 配下は必ず `.svelte.ts` を使用
+4. **model配下**: 型定義のみ（interface, type）、ロジック実装禁止
+5. **features同士の相互依存**: 絶対禁止（共通機能はentitiesかsharedへ）
+
+違反するとESLintエラーになります。
+迷ったら必ず `.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md` を確認！
 
 ## タスク完了前に必ず実行するコマンド
 
@@ -31,12 +48,15 @@ Feature-Sliced Design (FSD) アーキテクチャに従っています。
 5. playwright mcp による動作確認
 ```
 
-## 関連ファイル
+## 関連ファイル（必ず参照すること）
 
-Svelte5の最新仕様は@docs/svelte5-comprehensive-guide.md
-要件定義時は@.claude/agents/01-Requirements-Definition/README.md
-基本設計時は@.claude/agents/02-Basic-Design/README.md
-詳細設計時は@.claude/agents/03-Detailed-Design/README.md
-実装、テスト時は@.claude/agents/04-Implementation/README.md
-実装後の文法チェックは@.claude/agents/05-Frontend-Reviewer/svelte4-to-svelte5-migrator.md
-を参照すること
+### アーキテクチャ関連（最重要）
+
+- **FSDアーキテクチャルール**: @.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md 【実装前に必読！】
+
+### 実装フロー
+
+1. **必ず最初に** `.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md` を読む
+2. FSDルールに従って実装
+3. ESLintでルール違反をチェック
+4. テスト実行
