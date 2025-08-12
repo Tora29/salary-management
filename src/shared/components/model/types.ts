@@ -1,3 +1,5 @@
+import type { Component } from 'svelte';
+
 export interface ButtonProps {
 	variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
 	size?: 'sm' | 'md' | 'lg';
@@ -6,8 +8,6 @@ export interface ButtonProps {
 	type?: 'button' | 'submit' | 'reset';
 	class?: string;
 }
-
-import type { Component } from 'svelte';
 
 export interface InputProps {
 	type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
