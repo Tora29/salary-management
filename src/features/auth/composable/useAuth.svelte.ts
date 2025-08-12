@@ -18,27 +18,27 @@ class AuthStore {
 	isAuthenticated = $derived(!!this._user && !!this._session);
 	displayName = $derived(this._user?.profile?.name || this._user?.email?.split('@')[0] || 'ゲスト');
 
-	get user() {
+	get user(): User | null {
 		return this._user;
 	}
 
-	get session() {
+	get session(): Session | null {
 		return this._session;
 	}
 
-	get loading() {
+	get loading(): boolean {
 		return this._loading;
 	}
 
-	get error() {
+	get error(): string | null {
 		return this._error;
 	}
 
-	get initialized() {
+	get initialized(): boolean {
 		return this._initialized;
 	}
 
-	async initialize() {
+	async initialize(): Promise<void> {
 		if (this._initialized) {
 			return;
 		}
@@ -58,7 +58,7 @@ class AuthStore {
 		}
 	}
 
-	async login(data: LoginFormData) {
+	async login(data: LoginFormData): Promise<boolean> {
 		this._loading = true;
 		this._error = null;
 
@@ -87,7 +87,7 @@ class AuthStore {
 		}
 	}
 
-	async logout() {
+	async logout(): Promise<boolean> {
 		this._loading = true;
 		this._error = null;
 
@@ -116,13 +116,13 @@ class AuthStore {
 		}
 	}
 
-	clearError() {
+	clearError(): void {
 		this._error = null;
 	}
 }
 
 export const authStore = new AuthStore();
 
-export function useAuth() {
+export function useAuth(): AuthStore {
 	return authStore;
 }

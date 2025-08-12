@@ -26,8 +26,8 @@ class SessionManager {
 		});
 	}
 
-	private setupActivityListeners() {
-		const updateActivity = () => {
+	private setupActivityListeners(): (() => void) | undefined {
+		const updateActivity = (): void => {
 			this.lastActivity = Date.now();
 			this.resetInactivityTimer();
 		};
@@ -46,14 +46,14 @@ class SessionManager {
 		};
 	}
 
-	private startSessionRefresh() {
+	private startSessionRefresh(): void {
 		// 定期的にセッションを更新
 		this.refreshTimer = setInterval(() => {
 			this.refreshSession();
 		}, AUTH_CONSTANTS.SESSION_REFRESH_INTERVAL);
 	}
 
-	private resetInactivityTimer() {
+	private resetInactivityTimer(): void {
 		if (this.inactivityTimer) {
 			clearTimeout(this.inactivityTimer);
 		}
@@ -63,7 +63,7 @@ class SessionManager {
 		}, AUTH_CONSTANTS.INACTIVITY_TIMEOUT);
 	}
 
-	private async refreshSession() {
+	private async refreshSession(): Promise<void> {
 		// TODO: セッションリフレッシュAPIの実装
 		try {
 			const response = await fetch('/api/auth/refresh', {
@@ -79,12 +79,12 @@ class SessionManager {
 		}
 	}
 
-	private handleInactivity() {
+	private handleInactivity(): void {
 		// 非アクティブによるログアウト処理
 		// TODO: ログアウト処理の実装
 	}
 
-	cleanup() {
+	cleanup(): void {
 		if (this.refreshTimer) {
 			clearInterval(this.refreshTimer);
 			this.refreshTimer = null;
@@ -98,6 +98,6 @@ class SessionManager {
 
 export const sessionManager = new SessionManager();
 
-export function useSession() {
+export function useSession(): SessionManager {
 	return sessionManager;
 }

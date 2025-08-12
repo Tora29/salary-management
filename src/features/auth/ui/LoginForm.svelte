@@ -4,32 +4,37 @@
 	import Alert from '$shared/components/ui/Alert.svelte';
 	import AuthCard from '$entities/auth/ui/AuthCard.svelte';
 	import RememberMeCheckbox from '$entities/auth/ui/RememberMeCheckbox.svelte';
+	import FormLayout from '$entities/form/ui/FormLayout.svelte';
+	import FormSection from '$entities/form/ui/FormSection.svelte';
+	import FormFieldGroup from '$entities/form/ui/FormFieldGroup.svelte';
+	import FormLink from '$entities/form/ui/FormLink.svelte';
+	import FormText from '$entities/form/ui/FormText.svelte';
 	import { useLoginForm } from '../composable/useLoginForm.svelte';
 	import { Mail, Lock } from '@lucide/svelte';
 
 	const loginForm = useLoginForm();
 	const { formData, errors, isSubmitting, authError } = loginForm;
 
-	async function handleSubmit(e: Event) {
+	async function handleSubmit(e: Event): Promise<void> {
 		e.preventDefault();
 		await loginForm.submit();
 	}
 
-	function handleFieldBlur(field: 'email' | 'password') {
+	function handleFieldBlur(field: 'email' | 'password'): void {
 		loginForm.validateField(field);
 	}
 </script>
 
-<AuthCard>
-	<form onsubmit={handleSubmit} class="space-y-6">
+<AuthCard title="給料・資産管理システム" subtitle="アカウントにログインしてください">
+	<FormLayout onsubmit={handleSubmit}>
 		{#if authError}
 			<Alert variant="error" dismissible>
 				{authError}
 			</Alert>
 		{/if}
 
-		<div class="space-y-4">
-			<div>
+		<FormSection>
+			<FormFieldGroup>
 				<Input
 					type="email"
 					label="メールアドレス"
@@ -41,9 +46,9 @@
 					icon={Mail}
 					onblur={() => handleFieldBlur('email')}
 				/>
-			</div>
+			</FormFieldGroup>
 
-			<div>
+			<FormFieldGroup>
 				<Input
 					type="password"
 					label="パスワード"
@@ -55,14 +60,16 @@
 					icon={Lock}
 					onblur={() => handleFieldBlur('password')}
 				/>
-			</div>
-		</div>
+			</FormFieldGroup>
+		</FormSection>
 
-		<div class="flex items-center justify-between">
+		<div class="flex flex-col gap-3">
 			<RememberMeCheckbox bind:checked={formData.rememberMe} disabled={isSubmitting} />
-			<a href="/forgot-password" class="text-sm text-blue-600 hover:text-blue-500">
-				パスワードをお忘れですか？
-			</a>
+			<div class="flex items-center justify-center gap-4 text-sm">
+				<FormLink href="/forgot-password" size="sm">パスワードをお忘れですか？</FormLink>
+				<span class="text-gray-300">|</span>
+				<FormLink href="/auth/resend-confirmation" size="sm">メールが届かない場合</FormLink>
+			</div>
 		</div>
 
 		<Button
@@ -76,9 +83,13 @@
 			ログイン
 		</Button>
 
-		<div class="text-center text-sm">
-			<span class="text-gray-600">アカウントをお持ちでない方は</span>
-			<a href="/signup" class="text-blue-600 hover:text-blue-500 font-medium"> 新規登録 </a>
-		</div>
-	</form>
+		<FormText align="center">
+			<FormText variant="muted" align="center">
+				アカウントをお持ちでない方は
+				<FormLink href="/signup">
+					<span class="font-medium">新規登録</span>
+				</FormLink>
+			</FormText>
+		</FormText>
+	</FormLayout>
 </AuthCard>

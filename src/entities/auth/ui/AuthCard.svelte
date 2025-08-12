@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Card from '$shared/components/ui/Card.svelte';
-
 	import type { Snippet } from 'svelte';
 
 	const {

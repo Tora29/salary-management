@@ -3,7 +3,16 @@ import type { LoginFormData } from '../model/types';
 import { useAuth } from './useAuth.svelte';
 import { z } from 'zod';
 
-export function useLoginForm() {
+export function useLoginForm(): {
+	get formData(): LoginFormData;
+	get errors(): Partial<Record<keyof LoginFormData, string>>;
+	get isSubmitting(): boolean;
+	get authError(): string | null;
+	validateField: (field: keyof LoginFormData) => boolean;
+	validateForm: () => boolean;
+	submit: () => Promise<boolean>;
+	reset: () => void;
+} {
 	const auth = useAuth();
 
 	let formData = $state<LoginFormData>({
@@ -50,7 +59,7 @@ export function useLoginForm() {
 		}
 	}
 
-	async function submit() {
+	async function submit(): Promise<boolean> {
 		if (!validateForm()) {
 			return false;
 		}
@@ -73,7 +82,7 @@ export function useLoginForm() {
 		}
 	}
 
-	function reset() {
+	function reset(): void {
 		formData = {
 			email: '',
 			password: '',

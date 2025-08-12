@@ -4,8 +4,13 @@ import * as dotenv from 'dotenv';
 // .envファイルを読み込み
 dotenv.config();
 
-const supabaseUrl = process.env.PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY!;
+const supabaseUrl = process.env.PUBLIC_SUPABASE_URL ?? '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY ?? '';
+
+if (!supabaseUrl || !supabaseServiceKey) {
+	console.error('❌ 環境変数が設定されていません');
+	process.exit(1);
+}
 
 // Service Roleキーを使用してSupabaseクライアントを作成
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
@@ -15,8 +20,8 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 	}
 });
 
-async function createTestUsers() {
-	console.log('🚀 テストユーザーの作成を開始します...');
+async function createTestUsers(): Promise<void> {
+	// 🚀 テストユーザーの作成を開始します...
 
 	const testUsers = [
 		{
@@ -40,7 +45,7 @@ async function createTestUsers() {
 	for (const user of testUsers) {
 		try {
 			// ユーザーを作成（Service Roleキーを使用）
-			const { data, error } = await supabase.auth.admin.createUser({
+			const { data: _data, error } = await supabase.auth.admin.createUser({
 				email: user.email,
 				password: user.password,
 				email_confirm: true, // メール確認をスキップ
@@ -49,34 +54,34 @@ async function createTestUsers() {
 
 			if (error) {
 				if (error.message.includes('already exists')) {
-					console.log(`⚠️  ${user.email} は既に存在します`);
+					// ⚠️ ユーザーは既に存在します
 				} else {
 					console.error(`❌ ${user.email} の作成に失敗:`, error.message);
 				}
 			} else {
-				console.log(`✅ ${user.email} を作成しました`);
-				console.log(`   ID: ${data.user?.id}`);
+				// ✅ ユーザーを作成しました
+				// ID: data.user?.id
 			}
 		} catch (err) {
 			console.error(`❌ エラーが発生しました:`, err);
 		}
 	}
 
-	console.log('\n📋 テストユーザー情報:');
-	console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-	console.log('Email: test1@example.com');
-	console.log('Password: password123');
-	console.log('名前: 田中 太郎');
-	console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-	console.log('Email: test2@example.com');
-	console.log('Password: password123');
-	console.log('名前: 佐藤 花子');
-	console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+	// 📋 テストユーザー情報:
+	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+	// Email: test1@example.com
+	// Password: password123
+	// 名前: 田中 太郎
+	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+	// Email: test2@example.com
+	// Password: password123
+	// 名前: 佐藤 花子
+	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 }
 
 createTestUsers()
 	.then(() => {
-		console.log('\n✨ 処理が完了しました！');
+		// ✨ 処理が完了しました！
 		process.exit(0);
 	})
 	.catch((error) => {

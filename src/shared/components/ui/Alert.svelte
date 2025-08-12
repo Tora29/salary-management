@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
 	import type { AlertProps } from '../model/types';
 	import { AlertCircle, CheckCircle, Info, XCircle, X } from '@lucide/svelte';
 	import type { Snippet } from 'svelte';
@@ -32,13 +31,13 @@
 	const Icon = icons[variant];
 	const alertClasses = `${baseClasses} ${variantClasses[variant]} ${className}`;
 
-	function dismiss() {
+	function dismiss(): void {
 		dismissed = true;
 	}
 </script>
 
 {#if !dismissed}
-	<div class={alertClasses} role="alert" transition:fade={{ duration: 200 }}>
+	<div class={alertClasses} role="alert">
 		<div class="flex">
 			<div class="flex-shrink-0">
 				<Icon class="h-5 w-5" aria-hidden="true" />

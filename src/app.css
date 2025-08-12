@@ -1,1 +1,6 @@
 @import 'tailwindcss';
+
+/* フォーム送信時のレイアウトシフト防止 */
+body {
+	overflow-x: hidden;
+}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
 	import type { CardProps } from '../model/types';
 	import type { Snippet } from 'svelte';
 
@@ -28,6 +27,6 @@
 	const cardClasses = `${baseClasses} ${variantClasses[variant]} ${paddingClasses[padding]} ${className}`;
 </script>
 
-<div class={cardClasses} transition:fade={{ duration: 200 }} role="region">
+<div class={cardClasses} role="region">
 	{@render children?.()}
 </div>

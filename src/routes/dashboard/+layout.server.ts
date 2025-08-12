@@ -18,7 +18,7 @@ export const load: LayoutServerLoad = async (event) => {
 	return {
 		user: {
 			id: user.id,
-			email: user.email!,
+			email: user.email ?? '',
 			createdAt: user.created_at
 		}
 	};

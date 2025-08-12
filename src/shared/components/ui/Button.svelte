@@ -31,9 +31,9 @@
 	};
 
 	const sizeClasses = {
-		sm: 'h-8 px-3 text-sm rounded-md',
-		md: 'h-10 px-4 text-base rounded-md',
-		lg: 'h-12 px-6 text-lg rounded-md'
+		sm: 'h-8 px-3 text-sm rounded-md min-w-[64px]',
+		md: 'h-10 px-4 text-base rounded-md min-w-[80px]',
+		lg: 'h-12 px-6 text-lg rounded-md min-w-[96px]'
 	};
 
 	const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;

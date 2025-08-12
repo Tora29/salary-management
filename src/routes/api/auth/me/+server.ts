@@ -29,7 +29,7 @@ export const GET: RequestHandler = async (event) => {
 			success: true,
 			user: {
 				id: user.id,
-				email: user.email!,
+				email: user.email ?? '',
 				createdAt: user.created_at,
 				profile
 			}

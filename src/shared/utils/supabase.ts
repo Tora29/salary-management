@@ -1,8 +1,9 @@
 import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 import type { RequestEvent } from '@sveltejs/kit';
 
-export function createSupabaseBrowserClient() {
+export function createSupabaseBrowserClient(): SupabaseClient {
 	return createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
 		auth: {
 			flowType: 'pkce',
@@ -13,7 +14,7 @@ export function createSupabaseBrowserClient() {
 	});
 }
 
-export function createSupabaseServerClient(event: RequestEvent) {
+export function createSupabaseServerClient(event: RequestEvent): SupabaseClient {
 	return createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
 		cookies: {
 			getAll: () => {
@@ -31,7 +32,7 @@ export function createSupabaseServerClient(event: RequestEvent) {
 	});
 }
 
-export function getSupabaseClient(event?: RequestEvent) {
+export function getSupabaseClient(event?: RequestEvent): SupabaseClient {
 	if (isBrowser() || !event) {
 		return createSupabaseBrowserClient();
 	}

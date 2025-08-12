@@ -70,7 +70,7 @@ export const POST: RequestHandler = async (event) => {
 			success: true,
 			user: {
 				id: data.user.id,
-				email: data.user.email!,
+				email: data.user.email ?? '',
 				createdAt: data.user.created_at,
 				profile: null // TODO: プロフィール情報の取得
 			},

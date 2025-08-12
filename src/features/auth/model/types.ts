@@ -7,10 +7,24 @@ export interface LoginFormData {
 	rememberMe: boolean;
 }
 
+export interface SignupFormData {
+	name: string;
+	email: string;
+	password: string;
+}
+
 export interface LoginResponse {
 	success: boolean;
 	user?: User;
 	session?: Session;
+	error?: string;
+}
+
+export interface SignupResponse {
+	success: boolean;
+	user?: User;
+	message?: string;
+	requiresConfirmation?: boolean;
 	error?: string;
 }
 

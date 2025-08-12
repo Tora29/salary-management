@@ -8,11 +8,11 @@ interface Toast {
 class ToastStore {
 	private toasts = $state<Toast[]>([]);
 
-	get all() {
+	get all(): Toast[] {
 		return this.toasts;
 	}
 
-	show(message: string, variant: Toast['variant'] = 'info', duration = 5000) {
+	show(message: string, variant: Toast['variant'] = 'info', duration = 5000): string {
 		const id = Math.random().toString(36).substring(7);
 		const toast: Toast = { id, message, variant, duration };
 
@@ -27,27 +27,27 @@ class ToastStore {
 		return id;
 	}
 
-	success(message: string, duration?: number) {
+	success(message: string, duration?: number): string {
 		return this.show(message, 'success', duration);
 	}
 
-	error(message: string, duration?: number) {
+	error(message: string, duration?: number): string {
 		return this.show(message, 'error', duration);
 	}
 
-	warning(message: string, duration?: number) {
+	warning(message: string, duration?: number): string {
 		return this.show(message, 'warning', duration);
 	}
 
-	info(message: string, duration?: number) {
+	info(message: string, duration?: number): string {
 		return this.show(message, 'info', duration);
 	}
 
-	dismiss(id: string) {
+	dismiss(id: string): void {
 		this.toasts = this.toasts.filter((t) => t.id !== id);
 	}
 
-	clear() {
+	clear(): void {
 		this.toasts = [];
 	}
 }

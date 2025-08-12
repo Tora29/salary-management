@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Loader2 } from '@lucide/svelte';
-	import { fade } from 'svelte/transition';
 
 	const {
 		size = 'md',
@@ -21,7 +20,7 @@
 	const spinnerClasses = `animate-spin ${sizeClasses[size]} ${className}`;
 </script>
 
-<div class="inline-flex items-center justify-center" transition:fade={{ duration: 150 }}>
+<div class="inline-flex items-center justify-center">
 	<Loader2 class={spinnerClasses} aria-hidden="true" />
 	<span class="sr-only">{label}</span>
 </div>

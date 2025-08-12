@@ -11,7 +11,7 @@
 		auth.initialize();
 	});
 
-	async function handleLogout() {
+	async function handleLogout(): Promise<void> {
 		await auth.logout();
 	}
 </script>

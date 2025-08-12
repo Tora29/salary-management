@@ -1,4 +1,11 @@
-import type { LoginFormData, LoginResponse, LogoutResponse } from '../model/types';
+import type {
+	LoginFormData,
+	LoginResponse,
+	LogoutResponse,
+	SignupFormData,
+	SignupResponse
+} from '../model/types';
+import type { User } from '$entities/user/model/types';
 import { ERROR_MESSAGES } from '$shared/consts/error-messages';
 
 const API_BASE = '/api/auth';
@@ -37,6 +44,41 @@ export async function login(data: LoginFormData): Promise<LoginResponse> {
 	}
 }
 
+export async function signup(data: SignupFormData): Promise<SignupResponse> {
+	try {
+		const response = await fetch(`${API_BASE}/signup`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data),
+			credentials: 'include'
+		});
+
+		const result = await response.json();
+
+		if (!response.ok) {
+			return {
+				success: false,
+				error: result.error || ERROR_MESSAGES.COMMON.OPERATION_FAILED
+			};
+		}
+
+		return {
+			success: true,
+			user: result.user,
+			message: result.message,
+			requiresConfirmation: result.requiresConfirmation
+		};
+	} catch (error) {
+		console.error('Signup error:', error);
+		return {
+			success: false,
+			error: ERROR_MESSAGES.API.NETWORK_ERROR
+		};
+	}
+}
+
 export async function logout(): Promise<LogoutResponse> {
 	try {
 		const response = await fetch(`${API_BASE}/logout`, {
@@ -62,7 +104,7 @@ export async function logout(): Promise<LogoutResponse> {
 	}
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<User | null> {
 	try {
 		const response = await fetch(`${API_BASE}/me`, {
 			credentials: 'include'
