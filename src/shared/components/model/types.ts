@@ -7,6 +7,8 @@ export interface ButtonProps {
 	class?: string;
 }
 
+import type { Component } from 'svelte';
+
 export interface InputProps {
 	type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
 	placeholder?: string;
@@ -19,6 +21,8 @@ export interface InputProps {
 	name?: string;
 	value?: string;
 	class?: string;
+	icon?: Component<{ class?: string }>;
+	onblur?: () => void;
 }
 
 export interface CardProps {

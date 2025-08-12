@@ -21,13 +21,7 @@
 	const spinnerClasses = `animate-spin ${sizeClasses[size]} ${className}`;
 </script>
 
-<div 
-	class="inline-flex items-center justify-center"
-	transition:fade={{ duration: 150 }}
->
-	<Loader2 
-		class={spinnerClasses} 
-		aria-hidden="true"
-	/>
+<div class="inline-flex items-center justify-center" transition:fade={{ duration: 150 }}>
+	<Loader2 class={spinnerClasses} aria-hidden="true" />
 	<span class="sr-only">{label}</span>
 </div>

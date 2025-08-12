@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createLabel, melt } from '@melt-ui/svelte';
 	import type { InputProps } from '../model/types';
-	import type { ComponentType } from 'svelte';
 
 	let {
 		type = 'text',
@@ -17,7 +16,7 @@
 		class: className = '',
 		icon = undefined,
 		onblur
-	}: InputProps & { onblur?: () => void; icon?: ComponentType } = $props();
+	}: InputProps = $props();
 
 	const {
 		elements: { root: labelElement }
@@ -36,11 +35,7 @@
 
 <div class="space-y-2">
 	{#if label}
-		<label 
-			use:melt={$labelElement}
-			for={id} 
-			class="text-sm font-medium text-gray-700"
-		>
+		<label use:melt={$labelElement} for={id} class="text-sm font-medium text-gray-700">
 			{label}
 			{#if required}
 				<span class="text-red-500">*</span>
@@ -50,8 +45,9 @@
 
 	<div class="relative">
 		{#if icon}
+			{@const Icon = icon}
 			<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-				<svelte:component this={icon} class="h-5 w-5 text-gray-400" />
+				<Icon class="h-5 w-5 text-gray-400" />
 			</div>
 		{/if}
 		<input

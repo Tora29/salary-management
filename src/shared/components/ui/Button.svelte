@@ -39,13 +39,7 @@
 	const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 </script>
 
-<button 
-	{type} 
-	class={buttonClasses}
-	disabled={isDisabled}
-	{onclick}
-	aria-busy={loading}
->
+<button {type} class={buttonClasses} disabled={isDisabled} {onclick} aria-busy={loading}>
 	{#if loading}
 		<Loader2 class="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
 	{/if}

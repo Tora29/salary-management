@@ -19,11 +19,7 @@
 
 <div class={`space-y-2 ${className}`}>
 	{#if label}
-		<label 
-			use:melt={$labelElement}
-			for={id} 
-			class="text-sm font-medium text-gray-700 block"
-		>
+		<label use:melt={$labelElement} for={id} class="text-sm font-medium text-gray-700 block">
 			{label}
 			{#if required}
 				<span class="text-red-500" aria-label="required">*</span>
@@ -34,11 +30,7 @@
 	{@render children?.()}
 
 	{#if error}
-		<p 
-			class="text-sm text-red-600 mt-1" 
-			role="alert"
-			id={`${id}-error`}
-		>
+		<p class="text-sm text-red-600 mt-1" role="alert" id={`${id}-error`}>
 			{error}
 		</p>
 	{/if}

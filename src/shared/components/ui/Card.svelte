@@ -28,10 +28,6 @@
 	const cardClasses = `${baseClasses} ${variantClasses[variant]} ${paddingClasses[padding]} ${className}`;
 </script>
 
-<div 
-	class={cardClasses}
-	transition:fade={{ duration: 200 }}
-	role="region"
->
+<div class={cardClasses} transition:fade={{ duration: 200 }} role="region">
 	{@render children?.()}
 </div>

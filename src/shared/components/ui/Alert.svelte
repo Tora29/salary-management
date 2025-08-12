@@ -38,11 +38,7 @@
 </script>
 
 {#if !dismissed}
-	<div 
-		class={alertClasses}
-		role="alert"
-		transition:fade={{ duration: 200 }}
-	>
+	<div class={alertClasses} role="alert" transition:fade={{ duration: 200 }}>
 		<div class="flex">
 			<div class="flex-shrink-0">
 				<Icon class="h-5 w-5" aria-hidden="true" />
