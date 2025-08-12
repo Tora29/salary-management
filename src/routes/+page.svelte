@@ -1,5 +1,13 @@
-<svelte:head>
-	<title>Salary Management System</title>
-</svelte:head>
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
-<h1>Welcome to the Salary Management System</h1>
+	onMount(() => {
+		// ルートにアクセスした場合はログインページへリダイレクト
+		goto('/login');
+	});
+</script>
+
+<svelte:head>
+	<title>給料・資産管理システム</title>
+</svelte:head>

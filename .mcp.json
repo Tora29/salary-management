@@ -1,28 +1,33 @@
 {
-	"mcpServers": {
-		"context7": {
-			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@upstash/context7-mcp"],
-			"env": {}
-		},
-		"supabase": {
-			"command": "npx",
-			"args": [
-				"-y",
-				"@supabase/mcp-server-supabase@latest",
-				"--read-only",
-				"--project-ref=your-project-ref-here"
-			],
-			"env": {
-				"SUPABASE_ACCESS_TOKEN": "your-personal-access-token"
-			}
-		},
-		"github": {
-			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@modelcontextprotocol/server-github"],
-			"env": {}
-		}
-	}
+  "mcpServers": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {}
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=audmlwmanbwacwxgttgc"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_f071c198249899f84f67c80c5156f2b3335ffa4a"
+      }
+    },
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {}
+    }
+  }
 }
