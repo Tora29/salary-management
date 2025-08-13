@@ -17,7 +17,7 @@
 			? {
 					totalValue: portfolio.totalValue,
 					dailyChange: portfolio.dailyChange,
-					topHoldings: portfolio.topHoldings.map((h: any, index: number) => ({
+					topHoldings: portfolio.topHoldings.map((h, index) => ({
 						id: `holding-${index}`,
 						symbol: h.symbol,
 						name: h.name,
@@ -34,22 +34,22 @@
 
 	function generateColors(count: number): string[] {
 		const colors: string[] = [];
-		
+
 		for (let i = 0; i < count; i++) {
 			// 色相を均等に分割（0-360度）
 			const hue = (i * 360) / count;
 			// 彩度と明度を調整して見やすい色に
 			colors.push(`hsl(${hue}, 70%, 55%)`);
 		}
-		
+
 		return colors;
 	}
 
 	const pieChartData = $derived<PieChartData | null>(
 		portfolio && portfolio.topHoldings.length > 0
 			? {
-					labels: portfolio.topHoldings.map((h: any) => h.symbol),
-					data: portfolio.topHoldings.map((h: any) => h.value),
+					labels: portfolio.topHoldings.map((h) => h.symbol),
+					data: portfolio.topHoldings.map((h) => h.value),
 					colors: generateColors(portfolio.topHoldings.length)
 				}
 			: null

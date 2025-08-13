@@ -76,7 +76,7 @@
 	});
 </script>
 
-<div class="dashboard-layout">
+<div class="w-full">
 	<ErrorBoundary>
 		{#if dashboardData.error}
 			<div
@@ -103,9 +103,9 @@
 		{/if}
 
 		<!-- 指定レイアウトに合わせた構造 -->
-		<div class="dashboard-grid">
+		<div class="grid grid-rows-[auto_auto_auto] gap-8 w-full">
 			<!-- サマリーカードセクション（フル幅） -->
-			<section class="summary-cards">
+			<section class="w-full">
 				{#if dashboardData.loading && !dashboardData.summary}
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
 						{#each Array(4) as _, i (i)}
@@ -123,7 +123,7 @@
 			</section>
 
 			<!-- 年間収入推移グラフ（フル幅） -->
-			<section class="yearly-trend-chart">
+			<section class="w-full">
 				{#if dashboardData.loading && !dashboardData.summary}
 					<Skeleton height="400px" />
 				{:else if dashboardData.summary?.yearlyTrend}
@@ -135,9 +135,9 @@
 			</section>
 
 			<!-- 3カラムレイアウトセクション -->
-			<section class="four-column-section">
+			<section class="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full">
 				<!-- ポートフォリオサマリー -->
-				<div class="portfolio-summary">
+				<div class="w-full min-h-[500px] flex flex-col">
 					<PortfolioCard
 						title="ポートフォリオサマリー"
 						portfolio={portfolioData?.portfolioForCard || null}
@@ -148,7 +148,7 @@
 				</div>
 
 				<!-- 資産配分 -->
-				<div class="asset-allocation-section">
+				<div class="w-full min-h-[500px] flex flex-col">
 					<DashboardCard
 						title="資産配分"
 						loading={dashboardData.loading}
@@ -221,7 +221,7 @@
 				</div>
 
 				<!-- 最近のアクティビティ -->
-				<div class="recent-activities-section">
+				<div class="w-full min-h-[500px] flex flex-col">
 					{#if dashboardData.loading && !dashboardData.activities}
 						<Skeleton height="320px" />
 					{:else}
@@ -236,66 +236,3 @@
 		</div>
 	</ErrorBoundary>
 </div>
-
-<style>
-	.dashboard-layout {
-		width: 100%;
-	}
-
-	.dashboard-grid {
-		display: grid;
-		grid-template-rows: auto auto auto;
-		gap: 2rem;
-		width: 100%;
-	}
-
-	/* サマリーカードセクション */
-	.summary-cards {
-		width: 100%;
-	}
-
-	/* 年間収入推移グラフ（フル幅） */
-	.yearly-trend-chart {
-		width: 100%;
-	}
-
-	/* 3カラム均等レイアウト */
-	.four-column-section {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1.5rem;
-		width: 100%;
-	}
-
-	/* 各セクションの配置とサイズ */
-	.portfolio-summary,
-	.asset-allocation-section,
-	.recent-activities-section {
-		width: 100%;
-		min-height: 500px; /* 統一された最小高さ */
-		display: flex;
-		flex-direction: column;
-	}
-
-	/* 各カード内のコンテンツを最大高さまで拡張 */
-	.portfolio-summary :global(.card),
-	.asset-allocation-section :global(.card),
-	.recent-activities-section :global(.card) {
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-	}
-
-	/* レスポンシブ対応 */
-	@media (max-width: 1280px) {
-		.four-column-section {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	@media (max-width: 768px) {
-		.four-column-section {
-			grid-template-columns: 1fr;
-		}
-	}
-</style>

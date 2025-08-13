@@ -13,14 +13,14 @@
 	} = $props();
 </script>
 
-<div class="auth-card-container">
+<div class="w-full max-w-md">
 	{#if title || subtitle}
-		<div class="auth-card-header">
+		<div class="text-center mb-8">
 			{#if title}
-				<h2 class="auth-card-title">{title}</h2>
+				<h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h2>
 			{/if}
 			{#if subtitle}
-				<p class="auth-card-subtitle">{subtitle}</p>
+				<p class="text-sm text-gray-600 dark:text-gray-400">{subtitle}</p>
 			{/if}
 		</div>
 	{/if}
@@ -29,27 +29,3 @@
 		{@render children()}
 	</Card>
 </div>
-
-<style>
-	.auth-card-container {
-		width: 100%;
-		max-width: 28rem;
-	}
-
-	.auth-card-header {
-		text-align: center;
-		margin-bottom: 2rem;
-	}
-
-	.auth-card-title {
-		font-size: 1.5rem;
-		font-weight: 600;
-		color: #111827;
-		margin-bottom: 0.5rem;
-	}
-
-	.auth-card-subtitle {
-		font-size: 0.875rem;
-		color: #6b7280;
-	}
-</style>

@@ -7,7 +7,7 @@
 	const { activities, loading = false, error = null }: RecentActivitiesProps = $props();
 
 	const recentActivities = $derived<RecentActivity[]>(
-		activities?.activities.map((activity: any) => ({
+		activities?.activities.map((activity) => ({
 			id: activity.id,
 			type: activity.type as 'salary' | 'stock',
 			description: activity.description,
