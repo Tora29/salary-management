@@ -9,9 +9,9 @@
 </svelte:head>
 
 <div
-	class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
+	class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
 >
-	<div class="max-w-md w-full space-y-8">
+	<div class="max-w-md w-full space-y-8 relative">
 		<div class="text-center">
 			<Building2 class="h-12 w-12 text-blue-600 mx-auto" />
 		</div>
@@ -20,12 +20,14 @@
 			<SignupForm />
 		</div>
 
-		<div class="text-center text-xs text-gray-500">
+		<div class="text-center text-xs text-gray-500 dark:text-gray-400">
 			<p>© 2025 Salary Management System</p>
 			<p class="mt-1">
-				<a href="/terms" class="hover:text-gray-700">利用規約</a>
+				<a href="/terms" class="hover:text-gray-700 dark:hover:text-gray-300">利用規約</a>
 				<span class="mx-2">|</span>
-				<a href="/privacy" class="hover:text-gray-700">プライバシーポリシー</a>
+				<a href="/privacy" class="hover:text-gray-700 dark:hover:text-gray-300"
+					>プライバシーポリシー</a
+				>
 			</p>
 		</div>
 	</div>

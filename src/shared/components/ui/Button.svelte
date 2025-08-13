@@ -10,6 +10,7 @@
 		loading = false,
 		type = 'button',
 		class: className = '',
+		fullWidth = false,
 		children,
 		onclick
 	}: ButtonProps & {
@@ -36,7 +37,8 @@
 		lg: 'h-12 px-6 text-lg rounded-md min-w-[96px]'
 	};
 
-	const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+	const widthClass = fullWidth ? 'w-full' : '';
+	const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${className}`;
 </script>
 
 <button {type} class={buttonClasses} disabled={isDisabled} {onclick} aria-busy={loading}>

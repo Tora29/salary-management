@@ -7,6 +7,7 @@ export interface ButtonProps {
 	loading?: boolean;
 	type?: 'button' | 'submit' | 'reset';
 	class?: string;
+	fullWidth?: boolean;
 }
 
 export interface InputProps {

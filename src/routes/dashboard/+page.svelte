@@ -1,62 +1,55 @@
 <script lang="ts">
-	import { useAuth } from '$features/auth/composable/useAuth.svelte';
-	import Card from '$shared/components/ui/Card.svelte';
-	import Button from '$shared/components/ui/Button.svelte';
-	import UserBadge from '$entities/user/ui/UserBadge.svelte';
-	import { onMount } from 'svelte';
-
-	const auth = useAuth();
-
-	onMount(() => {
-		auth.initialize();
-	});
-
-	async function handleLogout(): Promise<void> {
-		await auth.logout();
-	}
+	import DashboardLayout from '$features/dashboard/ui/DashboardLayout.svelte';
 </script>
 
 <svelte:head>
 	<title>ダッシュボード - 給料・資産管理システム</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gray-50">
-	<header class="bg-white shadow">
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-			<div class="flex justify-between items-center py-6">
-				<h1 class="text-3xl font-bold text-gray-900">ダッシュボード</h1>
-				<div class="flex items-center space-x-4">
-					{#if auth.user}
-						<UserBadge user={auth.user} />
-					{/if}
-					<Button variant="secondary" onclick={handleLogout}>ログアウト</Button>
-				</div>
+<div class="dashboard-container">
+	<div class="dashboard-header">
+		<div class="dashboard-header-content">
+			<div>
+				<h1 class="dashboard-title">ダッシュボード</h1>
+				<p class="dashboard-subtitle">給料と資産の統合管理</p>
 			</div>
 		</div>
-	</header>
+	</div>
 
-	<main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-		<div class="px-4 py-6 sm:px-0">
-			<Card variant="bordered" padding="lg">
-				<h2 class="text-2xl font-bold mb-4">ようこそ、{auth.displayName}さん</h2>
-				<p class="text-gray-600">
-					給料・資産管理システムへようこそ。ここから給料明細のインポートや資産の管理ができます。
-				</p>
-			</Card>
-
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-				<Card variant="elevated" padding="lg">
-					<h3 class="text-xl font-semibold mb-2">給料管理</h3>
-					<p class="text-gray-600 mb-4">PDFから給料明細をインポートして管理</p>
-					<Button variant="primary">給料明細をインポート</Button>
-				</Card>
-
-				<Card variant="elevated" padding="lg">
-					<h3 class="text-xl font-semibold mb-2">資産管理</h3>
-					<p class="text-gray-600 mb-4">株式ポートフォリオの時価評価と管理</p>
-					<Button variant="primary">ポートフォリオを確認</Button>
-				</Card>
-			</div>
-		</div>
+	<main class="dashboard-main">
+		<DashboardLayout />
 	</main>
 </div>
+
+<style>
+	.dashboard-container {
+		width: 100%;
+	}
+
+	.dashboard-header {
+		margin-bottom: 2rem;
+	}
+
+	.dashboard-header-content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.dashboard-title {
+		font-size: 1.875rem;
+		font-weight: 700;
+		color: var(--color-text-primary);
+		margin: 0;
+	}
+
+	.dashboard-subtitle {
+		margin-top: 0.25rem;
+		font-size: 0.875rem;
+		color: var(--color-text-tertiary);
+	}
+
+	.dashboard-main {
+		width: 100%;
+	}
+</style>

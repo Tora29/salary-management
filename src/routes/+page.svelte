@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
 	onMount(() => {
-		// ルートにアクセスした場合はログインページへリダイレクト
-		goto('/login');
+		// セッションが存在する場合はダッシュボードへ、そうでなければログインページへリダイレクト
+		if ($page.data.session) {
+			goto('/dashboard');
+		} else {
+			goto('/login');
+		}
 	});
 </script>
 

@@ -67,7 +67,7 @@
 			<RememberMeCheckbox bind:checked={formData.rememberMe} disabled={isSubmitting} />
 			<div class="flex items-center justify-center gap-4 text-sm">
 				<FormLink href="/forgot-password" size="sm">パスワードをお忘れですか？</FormLink>
-				<span class="text-gray-300">|</span>
+				<span class="text-gray-300 dark:text-gray-600">|</span>
 				<FormLink href="/auth/resend-confirmation" size="sm">メールが届かない場合</FormLink>
 			</div>
 		</div>

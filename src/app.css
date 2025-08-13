@@ -1,6 +1,99 @@
 @import 'tailwindcss';
 
-/* フォーム送信時のレイアウトシフト防止 */
+/* CSS変数を使ったテーマシステム */
+:root {
+	/* ライトモードの色 */
+	--color-bg-primary: theme('colors.white');
+	--color-bg-secondary: theme('colors.gray.50');
+	--color-bg-tertiary: theme('colors.gray.100');
+
+	--color-text-primary: theme('colors.gray.900');
+	--color-text-secondary: theme('colors.gray.700');
+	--color-text-tertiary: theme('colors.gray.500');
+
+	--color-border: theme('colors.gray.200');
+	--color-border-dark: theme('colors.gray.300');
+
+	/* シャドウ */
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+	/* ダークモードの色 */
+	--color-bg-primary: theme('colors.gray.900');
+	--color-bg-secondary: theme('colors.gray.800');
+	--color-bg-tertiary: theme('colors.gray.700');
+
+	--color-text-primary: theme('colors.white');
+	--color-text-secondary: theme('colors.gray.200');
+	--color-text-tertiary: theme('colors.gray.400');
+
+	--color-border: theme('colors.gray.700');
+	--color-border-dark: theme('colors.gray.600');
+
+	/* シャドウ */
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+}
+
+/* ユーティリティクラス */
+.bg-primary {
+	background-color: var(--color-bg-primary);
+}
+.bg-secondary {
+	background-color: var(--color-bg-secondary);
+}
+.bg-tertiary {
+	background-color: var(--color-bg-tertiary);
+}
+
+.text-primary {
+	color: var(--color-text-primary);
+}
+.text-secondary {
+	color: var(--color-text-secondary);
+}
+.text-tertiary {
+	color: var(--color-text-tertiary);
+}
+
+.border-default {
+	border-color: var(--color-border);
+}
+.border-dark {
+	border-color: var(--color-border-dark);
+}
+
+.shadow-custom-sm {
+	box-shadow: var(--shadow-sm);
+}
+.shadow-custom-md {
+	box-shadow: var(--shadow-md);
+}
+
+/* グローバルなトランジション設定 */
+* {
+	transition-property: background-color, border-color, color, fill, stroke;
+	transition-duration: 200ms;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* アニメーション無効化対応 */
+@media (prefers-reduced-motion: reduce) {
+	* {
+		transition: none !important;
+		animation: none !important;
+	}
+}
+
+/* ベースのbodyスタイル */
 body {
-	overflow-x: hidden;
+	background-color: var(--color-bg-secondary);
+	color: var(--color-text-primary);
+}
+
+/* ダークモード時のbody */
+.dark body {
+	background-color: var(--color-bg-primary);
 }

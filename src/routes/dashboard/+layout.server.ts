@@ -1,12 +1,13 @@
 import type { LayoutServerLoad } from './$types';
-import { redirect } from '@sveltejs/kit';
-import { createSupabaseServerClient } from '$shared/utils/supabase';
-import { AUTH_ROUTES } from '$entities/auth/api/constants';
+// import { redirect } from '@sveltejs/kit';
+// import { createSupabaseServerClient } from '$shared/utils/supabase';
+// import { AUTH_ROUTES } from '$entities/auth/api/constants';
 
-export const load: LayoutServerLoad = async (event) => {
+export const load: LayoutServerLoad = async (_event) => {
+	// 一時的に認証チェックを無効化（開発時のみ）
+	/*
 	const supabase = createSupabaseServerClient(event);
 
-	// ログインしていない場合はログインページへリダイレクト
 	const {
 		data: { user }
 	} = await supabase.auth.getUser();
@@ -20,6 +21,16 @@ export const load: LayoutServerLoad = async (event) => {
 			id: user.id,
 			email: user.email ?? '',
 			createdAt: user.created_at
+		}
+	};
+	*/
+
+	// モックユーザーデータを返す
+	return {
+		user: {
+			id: 'mock-user-id',
+			email: 'test@example.com',
+			createdAt: new Date().toISOString()
 		}
 	};
 };

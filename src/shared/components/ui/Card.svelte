@@ -9,12 +9,13 @@
 		children
 	}: CardProps & { children?: Snippet } = $props();
 
-	const baseClasses = 'rounded-lg bg-white transition-all duration-200';
+	const baseClasses =
+		'rounded-lg bg-primary shadow-custom-sm border border-default transition-all duration-200';
 
 	const variantClasses = {
 		default: '',
-		bordered: 'border border-gray-200',
-		elevated: 'shadow-lg hover:shadow-xl'
+		bordered: 'border-2',
+		elevated: 'shadow-custom-md hover:shadow-xl'
 	};
 
 	const paddingClasses = {
