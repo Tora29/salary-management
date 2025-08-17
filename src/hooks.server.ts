@@ -12,6 +12,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	event.locals.session = session;
 
+	// auth関数をlocalsに追加
+	event.locals.auth = async () => {
+		const {
+			data: { session }
+		} = await event.locals.supabase.auth.getSession();
+		return session;
+	};
+
 	// レスポンスを返す
 	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
