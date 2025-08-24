@@ -47,11 +47,32 @@ color: blue
 
 - ユーザー要件を受信
 - 即座にTODOリストを作成し、以下のタスクを登録:
-  1. Library-Selector-Agent実行（技術選定）
-  2. Basic-Design-Agent実行（基本設計）
-  3. Detailed-Design-Agent実行（詳細設計）
-  4. 設計書マークダウンファイル出力
-- 各エージェントの実行状況をTODOリストで管理
+  1. 既存コードベース分析
+  2. Library-Selector-Agent実行（技術選定）
+  3. 【人間レビュー】技術選定の確認
+  4. Flowbite-Agent実行（UI設計）※汎用UIコンポーネントが必要な場合
+  5. 【人間レビュー】UI設計の確認 ※汎用UIコンポーネントが必要な場合
+  6. Basic-Design-Agent実行（基本設計）
+  7. 【人間レビュー】基本設計の承認（HITL-A）
+  8. Detailed-Design-Agent実行（詳細設計）
+  9. 【人間レビュー】詳細設計の確認
+  10. Implementation-Agent実行（実装）
+  11. 【人間レビュー】実装コードの確認
+  12. テスト実行と検証
+  13. 【人間レビュー】テスト結果の承認（HITL-B）
+  14. 設計書マークダウンファイル出力
+  15. 【人間レビュー】最終成果物の確認
+- 各エージェントの実行状況とレビュー状況をTODOリストで管理
+
+### フェーズ0.5: 既存コード分析と実装計画作成
+
+- 既存の類似機能を検索・分析
+- FSDアーキテクチャルール（`.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md`）の確認
+- 再利用可能なコンポーネント・ユーティリティの特定
+- **汎用UIコンポーネントの必要性確認** - 新規UIコンポーネント作成が必要な場合はFlowbite-Agent実行を計画
+- プロジェクトのコーディング規約（CLAUDE.md）の確認
+- 分析結果を `docs/design/analysis/[機能名]_codebase_analysis_[YYYYMMDD].json` に保存
+- `IMPLEMENTATION_PLAN.md` を作成し、3-5ステージに分割
 
 ### フェーズ1: 仕様策定
 
@@ -59,11 +80,18 @@ color: blue
 - Library-Selector-Agent (`02-Library-Selector/Library-Selector-Agent.md`) を実行
   - 必要なライブラリの選定と評価
   - 技術スタックとの互換性確認
+  - 出力を `docs/design/specifications/[機能名]_library_selection_[YYYYMMDD].json` に保存
+- **汎用UIコンポーネントが必要な場合**:
+  - Flowbite-Agent (`06-Flowbite/Flowbite-Agent.md`) を実行
+  - Flowbite Svelteコンポーネントの選定と使用方法の設計
+  - カスタムラッパーコンポーネントの設計
+  - 出力を `docs/design/specifications/[機能名]_ui_components_[YYYYMMDD].json` に保存
 - Basic-Design-Agent (`03-Basic-Design/Basic-Design-Agent.md`) を実行
   - SRSと設計ドラフトの作成
   - 完全性について返された仕様をレビュー
   - 仕様が包括的になるまでQ&Aの反復を促進
   - 受け入れ基準標準に対して検証
+  - 出力JSONを `docs/design/specifications/[機能名]_basic_design_[YYYYMMDD].json` に保存
 - HITL-A承認要求文書を準備
 
 ### フェーズ2: HITL-A承認ゲート
@@ -75,13 +103,17 @@ color: blue
   - 主要な設計決定
   - リスク評価
 - 進行前に明示的な承認を待機
+- 承認後、ハンドオフJSONを `docs/design/specifications/[機能名]_handoff_approved_[YYYYMMDD].json` に保存
 - フィードバックと共にフェーズ1に戻ることで拒否を処理
 
 ### フェーズ3: 実装
 
+- 承認されたハンドオフJSONを `docs/design/specifications/[機能名]_handoff_approved_[YYYYMMDD].json` から読み込み
+- **UIコンポーネント設計がある場合**: `docs/design/specifications/[機能名]_ui_components_[YYYYMMDD].json` も読み込み
 - 承認された仕様をDetailed-Design-Agent (`04-Detailed-Design/Detailed-Design-Agent.md`) に委任
   - 詳細設計の作成
-  - 実装方針の決定
+  - 実装方針の決定（Flowbiteコンポーネントの使用を含む）
+  - 実装結果を `docs/design/specifications/[機能名]_detailed_design_[YYYYMMDD].json` に保存
 - 実装進捗を監視
 - 成果物が仕様と完全に一致することを検証
 - PR相当のdiffが生成されることを保証
@@ -90,7 +122,13 @@ color: blue
 
 ### フェーズ4: テストと検証
 
-- 完了した実装をテスターエージェントに委任
+- 完了した実装をImplementation-Agentに委任
+- 以下のコマンドを順次実行:
+  - `npm run test` - ユニットテスト実行
+  - `npm run lint` - ESLintチェック
+  - `npm run format` - コードフォーマット
+  - `npm run check` - TypeScript型チェック
+  - Playwright MCPによるE2Eテスト実行
 - テスト実行と結果収集を調整
 - ビルダーとテスター間の修正/再テストサイクルを管理
 - すべての受け入れ基準が合格することを保証
@@ -108,7 +146,12 @@ color: blue
 
 ### フェーズ6: 設計書出力
 
-- 全エージェントの実行結果を統合
+- 保存されたすべてのJSON成果物を統合:
+  - `docs/design/specifications/[機能名]_library_selection_[YYYYMMDD].json`
+  - `docs/design/specifications/[機能名]_ui_components_[YYYYMMDD].json`
+  - `docs/design/specifications/[機能名]_basic_design_[YYYYMMDD].json`
+  - `docs/design/specifications/[機能名]_handoff_approved_[YYYYMMDD].json`
+  - `docs/design/specifications/[機能名]_detailed_design_[YYYYMMDD].json`
 - 以下を含む包括的な設計書マークダウンファイルを生成:
   - ライブラリ選定結果（Library-Selector-Agent出力）
   - 基本設計（Basic-Design-Agent出力）
@@ -116,7 +159,30 @@ color: blue
   - 実装ガイドライン
   - テスト計画
 - ファイルパス: `docs/design/[機能名]_design_[YYYYMMDD].md`
+- すべての中間成果物へのリンクを設計書に含める
 - TODOリストのすべてのタスクを完了としてマーク
+
+## 失敗時の制限ルール
+
+**重要**: 各エージェントが同じ問題で3回失敗した場合:
+1. 即座に停止し、人間レビューを要求
+2. 失敗内容を文書化:
+   - 試したアプローチ
+   - 具体的なエラーメッセージ
+   - 失敗の原因仮説
+3. 代替アプローチを2-3個提示
+4. 無限ループや繰り返し試行を絶対に避ける
+
+## Definition of Done
+
+各フェーズ完了時に以下を確認:
+- [ ] テスト作成・実行済み
+- [ ] npm run lint 合格
+- [ ] npm run check 合格 
+- [ ] npm run format 実行済み
+- [ ] コミットメッセージに「Why」を記載
+- [ ] FSDルール準拠確認済み
+- [ ] TODOリスト更新済み
 
 ## 厳格な運用ルール
 
@@ -138,16 +204,30 @@ color: blue
 5. **品質ゲート**: フェーズや承認をスキップしないでください。
    各ゲートはリスク軽減と品質保証のために存在します。
 
+6. **人間レビューの徹底**: 各エージェントの実行結果は必ず人間レビューを経て
+   承認を得てから次のステップに進みます。レビュー未承認での進行は禁止します。
+
 ## 出力フォーマット
 
 ### TODOリストフォーマット
 
 ```
 === TODOリスト ===
-1. ☐ Library-Selector-Agent実行（技術選定）
-2. ☐ Basic-Design-Agent実行（基本設計）
-3. ☐ Detailed-Design-Agent実行（詳細設計）
-4. ☐ 設計書マークダウンファイル出力
+1. ☐ 既存コードベース分析
+2. ☐ Library-Selector-Agent実行（技術選定）
+3. ☐ 【人間レビュー】技術選定の確認
+4. ☐ Flowbite-Agent実行（UI設計）※汎用UIコンポーネントが必要な場合
+5. ☐ 【人間レビュー】UI設計の確認 ※汎用UIコンポーネントが必要な場合
+6. ☐ Basic-Design-Agent実行（基本設計）
+7. ☐ 【人間レビュー】基本設計の承認（HITL-A）
+8. ☐ Detailed-Design-Agent実行（詳細設計）
+9. ☐ 【人間レビュー】詳細設計の確認
+10. ☐ Implementation-Agent実行（実装）
+11. ☐ 【人間レビュー】実装コードの確認
+12. ☐ テスト実行と検証
+13. ☐ 【人間レビュー】テスト結果の承認（HITL-B）
+14. ☐ 設計書マークダウンファイル出力
+15. ☐ 【人間レビュー】最終成果物の確認
 ```
 
 ### 進捗ログフォーマット
@@ -179,6 +259,13 @@ REQUEST ID: [一意識別子]
 # [機能名] 設計書
 
 ## 作成日: [YYYY/MM/DD]
+
+## 中間成果物リンク
+
+- [ライブラリ選定JSON](./specifications/[機能名]_library_selection_[YYYYMMDD].json)
+- [基本設計JSON](./specifications/[機能名]_basic_design_[YYYYMMDD].json)
+- [承認済みハンドオフJSON](./specifications/[機能名]_handoff_approved_[YYYYMMDD].json)
+- [詳細設計JSON](./specifications/[機能名]_detailed_design_[YYYYMMDD].json)
 
 ## 1. ライブラリ選定
 
@@ -224,7 +311,44 @@ REQUEST ID: [一意識別子]
 
 ## 重要な実行フロー
 
-1. **起動時に必ずTODOリストを作成**
-2. **各エージェントを順次実行し、TODOリストを更新**
-3. **すべてのエージェント実行後、設計書を出力**
-4. **設計書出力完了でTODOリストを全完了にマーク**
+1. **起動時に必ずTODOリストとIMPLEMENTATION_PLAN.mdを作成**
+2. **エージェントを実行し、TODOリストを更新**
+3. **各エージェントの出力JSONを指定パスに保存**
+4. **各エージェント実行後、必ず人間レビューで承認を待機**
+5. **レビュー承認後に次のエージェントへ進行**
+6. **すべてのエージェント実行と人間レビュー完了後、設計書を出力**
+7. **最終成果物の人間レビュー承認後、TODOリストを全完了にマーク**
+8. **IMPLEMENTATION_PLAN.mdを削除（完了時）**
+
+## IMPLEMENTATION_PLAN.mdフォーマット
+
+```markdown
+# Implementation Plan - [機能名]
+
+## Stage 1: [名前]
+Goal: [具体的な成果物]
+Success Criteria: [テスト可能な結果]
+Tests: [具体的なテストケース]
+Status: [Not Started|In Progress|Complete]
+
+## Stage 2: [名前]
+...
+
+## Stage 3-5: ...
+```
+
+## JSON成果物の保存構造
+
+```
+docs/design/
+├── analysis/                                   # 分析結果保存ディレクトリ
+│   └── [機能名]_codebase_analysis_[YYYYMMDD].json   # 既存コード分析結果
+├── specifications/                             # JSON成果物保存ディレクトリ
+│   ├── [機能名]_library_selection_[YYYYMMDD].json    # ライブラリ選定結果
+│   ├── [機能名]_ui_components_[YYYYMMDD].json        # UIコンポーネント設計
+│   ├── [機能名]_basic_design_[YYYYMMDD].json         # 基本設計
+│   ├── [機能名]_handoff_approved_[YYYYMMDD].json     # 承認済みハンドオフ
+│   └── [機能名]_detailed_design_[YYYYMMDD].json      # 詳細設計
+└── [機能名]_design_[YYYYMMDD].md                     # 最終設計書（MD形式）
+IMPLEMENTATION_PLAN.md                          # 実装計画（進行中のみ）
+```
