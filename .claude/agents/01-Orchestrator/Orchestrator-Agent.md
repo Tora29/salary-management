@@ -68,30 +68,34 @@ color: blue
 
 - 既存の類似機能を検索・分析
 - FSDアーキテクチャルール（`.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md`）の確認
+- Svelte 5文法ルール（`.claude/agents/00-ARCHITECTURE-RULES/SVELTE5-SYNTAX-RULES.md`）の確認
 - 再利用可能なコンポーネント・ユーティリティの特定
 - **汎用UIコンポーネントの必要性確認** - 新規UIコンポーネント作成が必要な場合はFlowbite-Agent実行を計画
 - プロジェクトのコーディング規約（CLAUDE.md）の確認
-- 分析結果を `docs/design/analysis/[機能名]_codebase_analysis_[YYYYMMDD].json` に保存
-- `IMPLEMENTATION_PLAN.md` を作成し、3-5ステージに分割
+- 分析結果を `docs/01-orchestrator/analysis/[機能名]_codebase_analysis_[YYYYMMDD].json` に保存
+- `docs/01-orchestrator/IMPLEMENTATION_PLAN_[機能名]_[YYYYMMDD].md` を作成し、3-5ステージに分割
 
 ### フェーズ1: 仕様策定
 
 - ユーザー要件を受信（1-5行の簡潔な入力）
 - Library-Selector-Agent (`02-Library-Selector/Library-Selector-Agent.md`) を実行
+  - **必ず参照**: FSDアーキテクチャルールとSvelte 5文法ルール
   - 必要なライブラリの選定と評価
   - 技術スタックとの互換性確認
-  - 出力を `docs/design/specifications/[機能名]_library_selection_[YYYYMMDD].json` に保存
+  - 出力を `docs/02-library-selector/[機能名]_library_selection_[YYYYMMDD].json` に保存
 - **汎用UIコンポーネントが必要な場合**:
   - Flowbite-Agent (`06-Flowbite/Flowbite-Agent.md`) を実行
+  - **必ず参照**: FSDアーキテクチャルールとSvelte 5文法ルール
   - Flowbite Svelteコンポーネントの選定と使用方法の設計
   - カスタムラッパーコンポーネントの設計
-  - 出力を `docs/design/specifications/[機能名]_ui_components_[YYYYMMDD].json` に保存
+  - 出力を `docs/06-flowbite/[機能名]_ui_components_[YYYYMMDD].json` に保存
 - Basic-Design-Agent (`03-Basic-Design/Basic-Design-Agent.md`) を実行
+  - **必ず参照**: FSDアーキテクチャルールとSvelte 5文法ルール
   - SRSと設計ドラフトの作成
   - 完全性について返された仕様をレビュー
   - 仕様が包括的になるまでQ&Aの反復を促進
   - 受け入れ基準標準に対して検証
-  - 出力JSONを `docs/design/specifications/[機能名]_basic_design_[YYYYMMDD].json` に保存
+  - 出力JSONを `docs/03-basic-design/[機能名]_basic_design_[YYYYMMDD].json` に保存
 - HITL-A承認要求文書を準備
 
 ### フェーズ2: HITL-A承認ゲート
@@ -103,17 +107,19 @@ color: blue
   - 主要な設計決定
   - リスク評価
 - 進行前に明示的な承認を待機
-- 承認後、ハンドオフJSONを `docs/design/specifications/[機能名]_handoff_approved_[YYYYMMDD].json` に保存
+- 承認後、ハンドオフJSONを `docs/03-basic-design/[機能名]_handoff_approved_[YYYYMMDD].json` に保存
 - フィードバックと共にフェーズ1に戻ることで拒否を処理
 
 ### フェーズ3: 実装
 
-- 承認されたハンドオフJSONを `docs/design/specifications/[機能名]_handoff_approved_[YYYYMMDD].json` から読み込み
-- **UIコンポーネント設計がある場合**: `docs/design/specifications/[機能名]_ui_components_[YYYYMMDD].json` も読み込み
+- 承認されたハンドオフJSONを `docs/03-basic-design/[機能名]_handoff_approved_[YYYYMMDD].json` から読み込み
+- **UIコンポーネント設計がある場合**: `docs/06-flowbite/[機能名]_ui_components_[YYYYMMDD].json` も読み込み
 - 承認された仕様をDetailed-Design-Agent (`04-Detailed-Design/Detailed-Design-Agent.md`) に委任
+  - **重要**: FSDアーキテクチャルール（`.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md`）を必ず参照させる
+  - **重要**: Svelte 5文法ルール（`.claude/agents/00-ARCHITECTURE-RULES/SVELTE5-SYNTAX-RULES.md`）を必ず参照させる
   - 詳細設計の作成
   - 実装方針の決定（Flowbiteコンポーネントの使用を含む）
-  - 実装結果を `docs/design/specifications/[機能名]_detailed_design_[YYYYMMDD].json` に保存
+  - 実装結果を `docs/04-detailed-design/[機能名]_detailed_design_[YYYYMMDD].json` に保存
 - 実装進捗を監視
 - 成果物が仕様と完全に一致することを検証
 - PR相当のdiffが生成されることを保証
@@ -123,6 +129,7 @@ color: blue
 ### フェーズ4: テストと検証
 
 - 完了した実装をImplementation-Agentに委任
+  - **必ず参照**: FSDアーキテクチャルールとSvelte 5文法ルール
 - 以下のコマンドを順次実行:
   - `npm run test` - ユニットテスト実行
   - `npm run lint` - ESLintチェック
@@ -147,18 +154,18 @@ color: blue
 ### フェーズ6: 設計書出力
 
 - 保存されたすべてのJSON成果物を統合:
-  - `docs/design/specifications/[機能名]_library_selection_[YYYYMMDD].json`
-  - `docs/design/specifications/[機能名]_ui_components_[YYYYMMDD].json`
-  - `docs/design/specifications/[機能名]_basic_design_[YYYYMMDD].json`
-  - `docs/design/specifications/[機能名]_handoff_approved_[YYYYMMDD].json`
-  - `docs/design/specifications/[機能名]_detailed_design_[YYYYMMDD].json`
+  - `docs/02-library-selector/[機能名]_library_selection_[YYYYMMDD].json`
+  - `docs/06-flowbite/[機能名]_ui_components_[YYYYMMDD].json`
+  - `docs/03-basic-design/[機能名]_basic_design_[YYYYMMDD].json`
+  - `docs/03-basic-design/[機能名]_handoff_approved_[YYYYMMDD].json`
+  - `docs/04-detailed-design/[機能名]_detailed_design_[YYYYMMDD].json`
 - 以下を含む包括的な設計書マークダウンファイルを生成:
   - ライブラリ選定結果（Library-Selector-Agent出力）
   - 基本設計（Basic-Design-Agent出力）
   - 詳細設計（Detailed-Design-Agent出力）
   - 実装ガイドライン
   - テスト計画
-- ファイルパス: `docs/design/[機能名]_design_[YYYYMMDD].md`
+- ファイルパス: `docs/01-orchestrator/[機能名]_design_document_[YYYYMMDD].md`
 - すべての中間成果物へのリンクを設計書に含める
 - TODOリストのすべてのタスクを完了としてマーク
 
@@ -262,10 +269,11 @@ REQUEST ID: [一意識別子]
 
 ## 中間成果物リンク
 
-- [ライブラリ選定JSON](./specifications/[機能名]_library_selection_[YYYYMMDD].json)
-- [基本設計JSON](./specifications/[機能名]_basic_design_[YYYYMMDD].json)
-- [承認済みハンドオフJSON](./specifications/[機能名]_handoff_approved_[YYYYMMDD].json)
-- [詳細設計JSON](./specifications/[機能名]_detailed_design_[YYYYMMDD].json)
+- [ライブラリ選定JSON](../02-library-selector/[機能名]_library_selection_[YYYYMMDD].json)
+- [UIコンポーネント設計JSON](../06-flowbite/[機能名]_ui_components_[YYYYMMDD].json)
+- [基本設計JSON](../03-basic-design/[機能名]_basic_design_[YYYYMMDD].json)
+- [承認済みハンドオフJSON](../03-basic-design/[機能名]_handoff_approved_[YYYYMMDD].json)
+- [詳細設計JSON](../04-detailed-design/[機能名]_detailed_design_[YYYYMMDD].json)
 
 ## 1. ライブラリ選定
 
@@ -312,13 +320,16 @@ REQUEST ID: [一意識別子]
 ## 重要な実行フロー
 
 1. **起動時に必ずTODOリストとIMPLEMENTATION_PLAN.mdを作成**
-2. **エージェントを実行し、TODOリストを更新**
-3. **各エージェントの出力JSONを指定パスに保存**
-4. **各エージェント実行後、必ず人間レビューで承認を待機**
-5. **レビュー承認後に次のエージェントへ進行**
-6. **すべてのエージェント実行と人間レビュー完了後、設計書を出力**
-7. **最終成果物の人間レビュー承認後、TODOリストを全完了にマーク**
-8. **IMPLEMENTATION_PLAN.mdを削除（完了時）**
+2. **各エージェント実行時に必ず以下を参照させる**:
+   - FSDアーキテクチャルール（`.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md`）
+   - Svelte 5文法ルール（`.claude/agents/00-ARCHITECTURE-RULES/SVELTE5-SYNTAX-RULES.md`）
+3. **エージェントを実行し、TODOリストを更新**
+4. **各エージェントの出力JSONを指定パスに保存**
+5. **各エージェント実行後、必ず人間レビューで承認を待機**
+6. **レビュー承認後に次のエージェントへ進行**
+7. **すべてのエージェント実行と人間レビュー完了後、設計書を出力**
+8. **最終成果物の人間レビュー承認後、TODOリストを全完了にマーク**
+9. **IMPLEMENTATION_PLAN_[機能名]_[YYYYMMDD].mdを削除（完了時）**
 
 ## IMPLEMENTATION_PLAN.mdフォーマット
 
@@ -340,15 +351,21 @@ Status: [Not Started|In Progress|Complete]
 ## JSON成果物の保存構造
 
 ```
-docs/design/
-├── analysis/                                   # 分析結果保存ディレクトリ
-│   └── [機能名]_codebase_analysis_[YYYYMMDD].json   # 既存コード分析結果
-├── specifications/                             # JSON成果物保存ディレクトリ
-│   ├── [機能名]_library_selection_[YYYYMMDD].json    # ライブラリ選定結果
-│   ├── [機能名]_ui_components_[YYYYMMDD].json        # UIコンポーネント設計
-│   ├── [機能名]_basic_design_[YYYYMMDD].json         # 基本設計
-│   ├── [機能名]_handoff_approved_[YYYYMMDD].json     # 承認済みハンドオフ
-│   └── [機能名]_detailed_design_[YYYYMMDD].json      # 詳細設計
-└── [機能名]_design_[YYYYMMDD].md                     # 最終設計書（MD形式）
-IMPLEMENTATION_PLAN.md                          # 実装計画（進行中のみ）
+docs/
+├── 01-orchestrator/                            # オーケストレーター成果物
+│   ├── analysis/                               # 分析結果保存ディレクトリ
+│   │   └── [機能名]_codebase_analysis_[YYYYMMDD].json
+│   ├── IMPLEMENTATION_PLAN_[機能名]_[YYYYMMDD].md     # 実装計画（進行中のみ）
+│   └── [機能名]_design_document_[YYYYMMDD].md        # 最終設計書（MD形式）
+├── 02-library-selector/                        # ライブラリ選定結果
+│   └── [機能名]_library_selection_[YYYYMMDD].json
+├── 03-basic-design/                           # 基本設計成果物
+│   ├── [機能名]_basic_design_[YYYYMMDD].json
+│   └── [機能名]_handoff_approved_[YYYYMMDD].json
+├── 04-detailed-design/                        # 詳細設計成果物
+│   └── [機能名]_detailed_design_[YYYYMMDD].json
+├── 05-implementation/                         # 実装成果物（テスト結果等）
+│   └── [機能名]_test_results_[YYYYMMDD].json
+└── 06-flowbite/                               # UIコンポーネント設計
+    └── [機能名]_ui_components_[YYYYMMDD].json
 ```
