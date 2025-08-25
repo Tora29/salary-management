@@ -63,7 +63,7 @@ routes/salary/import/+page.svelte（SalaryImportFormをインポート）
 
 ### `/shared` - 共有レイヤー
 
-- **許可**: 純粋な関数、型定義、定数、UIプリミティブ
+- **許可**: 純粋な関数、型定義、定数、UIプリミティブ、グリッドシステム
 - **禁止**: ビジネスロジック、外部API呼び出し、stateの保持
 - **構造**:
   ```
@@ -71,10 +71,18 @@ routes/salary/import/+page.svelte（SalaryImportFormをインポート）
   ├── components/  # 基本UIコンポーネント（Button, Input等）
   |   ├── model/   # 型定義のみ（interface, type）
   |   └── ui/      # UIコンポーネント実装
+  |       └── styles/  # スタイルユーティリティ
+  |           ├── foundation.css  # デザイントークン
+  |           ├── grid.css        # 12グリッドシステム
+  |           └── utilities.ts    # スタイルヘルパー
   ├── utils/       # ユーティリティ関数
   ├── consts/      # 定数ファイル
   └── config/      # 設定定数
   ```
+- **12グリッドシステムルール**:
+  - グリッドシステムは `shared/components/ui/styles/` に配置
+  - 全レイヤー（entities、features、routes）から利用可能
+  - ビジネスロジックを含まない純粋なレイアウトユーティリティとして実装
 
 ### `/entities` - エンティティレイヤー
 

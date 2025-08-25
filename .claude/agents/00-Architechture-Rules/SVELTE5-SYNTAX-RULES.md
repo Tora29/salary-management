@@ -8,71 +8,73 @@
 ### 1. リアクティビティはRunes APIのみを使用
 
 #### ❌ 禁止 (Svelte 4の記法)
+
 ```svelte
 <script>
-  // 絶対禁止：export letを使った古いprops定義
-  export let prop = 'default';
-  
-  // 絶対禁止：$:を使った反応性宣言
-  $: doubled = count * 2;
-  
-  // 絶対禁止：$:を使った副作用
-  $: if (count > 5) {
-    alert('Count is too high!');
-  }
-  
-  // 絶対禁止：$$propsや$$restPropsの使用
-  const rest = $$restProps;
+	// 絶対禁止：export letを使った古いprops定義
+	export let prop = 'default';
+
+	// 絶対禁止：$:を使った反応性宣言
+	$: doubled = count * 2;
+
+	// 絶対禁止：$:を使った副作用
+	$: if (count > 5) {
+		alert('Count is too high!');
+	}
+
+	// 絶対禁止：$$propsや$$restPropsの使用
+	const rest = $$restProps;
 </script>
 ```
 
 #### ✅ 必須 (Svelte 5の記法)
+
 ```svelte
 <script>
-  // 必須：$props()を使ったprops定義
-  let { prop = 'default', ...rest } = $props();
-  
-  // 必須：$derivedを使った派生ステート
-  let doubled = $derived(count * 2);
-  
-  // 必須：$effectを使った副作用
-  $effect(() => {
-    if (count > 5) {
-      alert('Count is too high!');
-    }
-  });
+	// 必須：$props()を使ったprops定義
+	let { prop = 'default', ...rest } = $props();
+
+	// 必須：$derivedを使った派生ステート
+	let doubled = $derived(count * 2);
+
+	// 必須：$effectを使った副作用
+	$effect(() => {
+		if (count > 5) {
+			alert('Count is too high!');
+		}
+	});
 </script>
 ```
 
 ### 2. State管理はRunesを使用
 
 #### ❌ 禁止
+
 ```svelte
 <script>
-  // 禁止：通常のlet宣言（リアクティブではない）
-  let count = 0;
-  
-  // 禁止：writable/readableストアの使用（レガシー）
-  import { writable } from 'svelte/store';
-  const store = writable(0);
+	// 禁止：通常のlet宣言（リアクティブではない）
+	let count = 0;
+
+	// 禁止：writable/readableストアの使用（レガシー）
+	import { writable } from 'svelte/store';
+	const store = writable(0);
 </script>
 ```
 
 #### ✅ 必須
+
 ```svelte
 <script>
-  // 必須：$stateを使ったリアクティブな状態管理
-  let count = $state(0);
-  
-  // 必須：深くリアクティブなオブジェクト/配列
-  let todos = $state([
-    { done: false, text: 'Learn Svelte 5' }
-  ]);
-  
-  // 必須：非リアクティブな大規模データは$state.raw
-  let largeData = $state.raw({
-    // 大量のimmutableデータ
-  });
+	// 必須：$stateを使ったリアクティブな状態管理
+	let count = $state(0);
+
+	// 必須：深くリアクティブなオブジェクト/配列
+	let todos = $state([{ done: false, text: 'Learn Svelte 5' }]);
+
+	// 必須：非リアクティブな大規模データは$state.raw
+	let largeData = $state.raw({
+		// 大量のimmutableデータ
+	});
 </script>
 ```
 
@@ -82,32 +84,32 @@
 
 ```svelte
 <script>
-  // 基本的な使用
-  let count = $state(0);
-  
-  // オブジェクト・配列は深くリアクティブ
-  let user = $state({
-    name: 'John',
-    address: {
-      city: 'Tokyo'
-    }
-  });
-  
-  // クラスでの使用
-  class Todo {
-    done = $state(false);
-    text = $state('');
-    
-    constructor(text) {
-      this.text = text;
-    }
-  }
-  
-  // $state.raw - 浅いリアクティビティ（パフォーマンス向上）
-  let data = $state.raw({ large: 'dataset' });
-  
-  // $state.snapshot - プロキシから静的な値を取得
-  let snapshot = $state.snapshot(user);
+	// 基本的な使用
+	let count = $state(0);
+
+	// オブジェクト・配列は深くリアクティブ
+	let user = $state({
+		name: 'John',
+		address: {
+			city: 'Tokyo'
+		}
+	});
+
+	// クラスでの使用
+	class Todo {
+		done = $state(false);
+		text = $state('');
+
+		constructor(text) {
+			this.text = text;
+		}
+	}
+
+	// $state.raw - 浅いリアクティビティ（パフォーマンス向上）
+	let data = $state.raw({ large: 'dataset' });
+
+	// $state.snapshot - プロキシから静的な値を取得
+	let snapshot = $state.snapshot(user);
 </script>
 ```
 
@@ -115,22 +117,22 @@
 
 ```svelte
 <script>
-  let count = $state(0);
-  
-  // シンプルな派生
-  let doubled = $derived(count * 2);
-  
-  // 複雑な派生は$derived.by
-  let total = $derived.by(() => {
-    let sum = 0;
-    for (const item of items) {
-      sum += item.value;
-    }
-    return sum;
-  });
-  
-  // 派生ステートの分割代入
-  let { x, y } = $derived(getCoordinates());
+	let count = $state(0);
+
+	// シンプルな派生
+	let doubled = $derived(count * 2);
+
+	// 複雑な派生は$derived.by
+	let total = $derived.by(() => {
+		let sum = 0;
+		for (const item of items) {
+			sum += item.value;
+		}
+		return sum;
+	});
+
+	// 派生ステートの分割代入
+	let { x, y } = $derived(getCoordinates());
 </script>
 ```
 
@@ -138,33 +140,33 @@
 
 ```svelte
 <script>
-  // DOM操作や外部APIとの連携
-  $effect(() => {
-    const context = canvas.getContext('2d');
-    context.fillStyle = color;
-    context.fillRect(0, 0, size, size);
-  });
-  
-  // クリーンアップ関数
-  $effect(() => {
-    const interval = setInterval(() => {
-      count += 1;
-    }, 1000);
-    
-    return () => {
-      clearInterval(interval);
-    };
-  });
-  
-  // DOM更新前に実行
-  $effect.pre(() => {
-    // スクロール位置の調整など
-  });
-  
-  // 独立したエフェクトルート
-  const cleanup = $effect.root(() => {
-    // ネストされたエフェクト
-  });
+	// DOM操作や外部APIとの連携
+	$effect(() => {
+		const context = canvas.getContext('2d');
+		context.fillStyle = color;
+		context.fillRect(0, 0, size, size);
+	});
+
+	// クリーンアップ関数
+	$effect(() => {
+		const interval = setInterval(() => {
+			count += 1;
+		}, 1000);
+
+		return () => {
+			clearInterval(interval);
+		};
+	});
+
+	// DOM更新前に実行
+	$effect.pre(() => {
+		// スクロール位置の調整など
+	});
+
+	// 独立したエフェクトルート
+	const cleanup = $effect.root(() => {
+		// ネストされたエフェクト
+	});
 </script>
 ```
 
@@ -172,14 +174,14 @@
 
 ```svelte
 <script>
-  // 基本的な使用
-  let { name, age = 18 } = $props();
-  
-  // rest propsの取得
-  let { title, ...rest } = $props();
-  
-  // 全props取得
-  let props = $props();
+	// 基本的な使用
+	let { name, age = 18 } = $props();
+
+	// rest propsの取得
+	let { title, ...rest } = $props();
+
+	// 全props取得
+	let props = $props();
 </script>
 ```
 
@@ -188,7 +190,7 @@
 ```svelte
 <!-- Child.svelte -->
 <script>
-  let { value = $bindable() } = $props();
+	let { value = $bindable() } = $props();
 </script>
 
 <!-- Parent.svelte -->
@@ -199,27 +201,28 @@
 
 ```svelte
 <script>
-  let state = $state({ count: 0 });
-  
-  // 値の変更を監視
-  $inspect(state);
-  
-  // カスタムログ関数
-  $inspect(state).with((type, value) => {
-    console.log(type, value);
-  });
-  
-  // 関数のトレース
-  $effect(() => {
-    $inspect.trace();
-    // この関数を再実行させた状態変更を追跡
-  });
+	let state = $state({ count: 0 });
+
+	// 値の変更を監視
+	$inspect(state);
+
+	// カスタムログ関数
+	$inspect(state).with((type, value) => {
+		console.log(type, value);
+	});
+
+	// 関数のトレース
+	$effect(() => {
+		$inspect.trace();
+		// この関数を再実行させた状態変更を追跡
+	});
 </script>
 ```
 
 ## 🔄 共有ステート管理パターン
 
 ### ❌ 禁止パターン
+
 ```javascript
 // state.svelte.js
 // 禁止：直接エクスポート（importで正しく動作しない）
@@ -229,34 +232,37 @@ export let count = $state(0);
 ### ✅ 推奨パターン
 
 #### パターン1: オブジェクトでラップ
+
 ```javascript
 // state.svelte.js
 export const counter = $state({
-  count: 0
+	count: 0
 });
 
 export function increment() {
-  counter.count += 1;
+	counter.count += 1;
 }
 ```
 
 #### パターン2: ゲッター関数を提供
+
 ```javascript
 // state.svelte.js
 let count = $state(0);
 
 export function getCount() {
-  return count;
+	return count;
 }
 
 export function increment() {
-  count += 1;
+	count += 1;
 }
 ```
 
 ## 🚫 よくある間違いと対処法
 
 ### 1. 派生ステート内での状態変更
+
 ```svelte
 <!-- ❌ 間違い -->
 <script>
@@ -275,6 +281,7 @@ export function increment() {
 ```
 
 ### 2. エフェクトの同期化アンチパターン
+
 ```svelte
 <!-- ❌ 間違い：$effectで状態同期 -->
 <script>
@@ -291,15 +298,16 @@ export function increment() {
 ```
 
 ### 3. eachブロック引数の再代入
+
 ```svelte
 <!-- ❌ Svelte 5では禁止 -->
 {#each items as item}
-  <button onclick={() => item = newValue}>変更</button>
+	<button onclick={() => (item = newValue)}>変更</button>
 {/each}
 
 <!-- ✅ インデックスを使用 -->
 {#each items as item, i}
-  <button onclick={() => items[i] = newValue}>変更</button>
+	<button onclick={() => (items[i] = newValue)}>変更</button>
 {/each}
 ```
 
@@ -322,20 +330,20 @@ export function increment() {
 ```javascript
 // .eslintrc.js
 module.exports = {
-  rules: {
-    // Svelte 4の記法を検出して警告
-    'no-restricted-syntax': [
-      'error',
-      {
-        selector: 'ExportNamedDeclaration > VariableDeclaration[kind="let"]',
-        message: 'Use $props() instead of export let in Svelte 5'
-      },
-      {
-        selector: 'LabeledStatement[label.name="$"]',
-        message: 'Use $derived() or $effect() instead of $: in Svelte 5'
-      }
-    ]
-  }
+	rules: {
+		// Svelte 4の記法を検出して警告
+		'no-restricted-syntax': [
+			'error',
+			{
+				selector: 'ExportNamedDeclaration > VariableDeclaration[kind="let"]',
+				message: 'Use $props() instead of export let in Svelte 5'
+			},
+			{
+				selector: 'LabeledStatement[label.name="$"]',
+				message: 'Use $derived() or $effect() instead of $: in Svelte 5'
+			}
+		]
+	}
 };
 ```
 

@@ -72,7 +72,7 @@ color: green
 - **フロントエンド**: Feature-Sliced Design（features/entities/shared/app/pages）を使用したSvelteKit
 - **テスト**: E2E用Playwright、ユニットテスト用Vitest
 - **アーキテクチャ**: 厳格なFSD層分け - 層間インポートなし
-  - **重要**: `.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md` のルールを厳守すること
+  - **重要**: `.claude/agents/00-Architechture-Rules/FSD-ARCHITECTURE-RULES.md` のルールを厳守すること
   - **プロジェクト規約**: `CLAUDE.md` のコーディングルールを遵守
 
 **出力フォーマット**:
@@ -125,6 +125,7 @@ color: green
 ## 失敗時の制限ルール
 
 **重要**: 同じ仕様作成で3回失敗した場合:
+
 1. 即座に停止し、人間レビューを要求
 2. 失敗内容を文書化:
    - 曖昧な要件部分

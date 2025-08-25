@@ -74,7 +74,7 @@ color: red
 
 4. **コード品質標準**:
    - Feature-Sliced Design（FSD）アーキテクチャに従う
-     - **重要**: `.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md` のルールを厳守すること
+     - **重要**: `.claude/agents/00-Architechture-Rules/FSD-ARCHITECTURE-RULES.md` のルールを厳守すること
      - レイヤー依存順序: shared → entities → features → routes
      - composableは必ず `.svelte.ts` 拡張子を使用
    - TypeScriptとSvelte 5のベストプラクティスに準拠
@@ -85,10 +85,11 @@ color: red
 ## 失敗時の制限ルール
 
 **重要**: 同じ実装で3回失敗した場合:
+
 1. 即座に停止し、人間レビューを要求
 2. 失敗内容を文書化:
    - 試したアプローチ
-   - 具体的なエラーメッセージ  
+   - 具体的なエラーメッセージ
    - 失敗の原因仮説
 3. 代替アプローチを2-3個提示:
    - 異なるライブラリ/フレームワーク機能の使用

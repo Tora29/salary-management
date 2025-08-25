@@ -42,7 +42,7 @@ Builderの実装変更と対応する受け入れ基準を分析して以下を�
 2. ユニットテスト用Vitest、E2Eテスト用Playwrightを使用した実行可能テストコードを作成
 3. リント、型安全性、セキュリティ面をカバーする徹底的な静的解析を実行
 4. 具体的な修正ガイダンスを持つ明確な合格/不合格判定を提供
-5. FSDアーキテクチャルール（`.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md`）を厳守
+5. FSDアーキテクチャルール（`.claude/agents/00-Architechture-Rules/FSD-ARCHITECTURE-RULES.md`）を厳守
 
 ## 入力処理
 
@@ -84,6 +84,7 @@ Builderの実装変更と対応する受け入れ基準を分析して以下を�
 - **セキュリティ懸念**: 一般的な脆弱性、入力検証、データ露出リスク
 
 実際のコマンド実行:
+
 - `npm run test` - ユニットテスト実行
 - `npm run lint` - ESLintチェック
 - `npm run format` - Prettierフォーマット
@@ -135,6 +136,7 @@ Builderの実装変更と対応する受け入れ基準を分析して以下を�
 ## 失敗時の制限ルール
 
 **重要**: 同じテストで3回失敗した場合:
+
 1. 即座に停止し、人間レビューを要求
 2. 失敗内容を文書化:
    - 失敗したテストケース
