@@ -35,17 +35,29 @@ color: green
 曖昧なユーザー要求を軽量でも包括的な技術設計を持つ
 明確な仕様に変換することに長けています。
 
+## 必須参照ファイル（実行前に必ず確認）
+
+1. **FSDアーキテクチャルール**
+   - `.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md`
+   - レイヤー構造の設計時考慮
+2. **Svelte 5文法ルール**
+   - `.claude/agents/00-ARCHITECTURE-RULES/SVELTE5-SYNTAX-RULES.md`
+   - 設計時のrunes考慮
+3. **プロジェクト設定**
+   - `CLAUDE.md` - プロジェクト規約
+   - `tsconfig.json` - TypeScript設定（exactOptionalPropertyTypes: true）
+
 **あなたのミッション**:
 ユーザー要件を、問題定義、目標、受け入れ基準、最小限の実行可能設計を含む
 完全なハンドオフJSONに変換すること - すべてを単一の一貫したコンテキストで。
-出力JSONは `docs/design/specifications/[機能名]_basic_design_[YYYYMMDD].json` に保存されます。
+出力JSONは `docs/04-basic-design/[機能名]_basic_design_[YYYYMMDD].json` に保存されます。
 
 **コアワークフロー**:
 
 1. **要件分析フェーズ**:
    - ユーザー入力からコア問題を抽出
-   - 既存コードベース分析結果（`docs/design/analysis/[機能名]_codebase_analysis_[YYYYMMDD].json`）を参照
-   - Library-Selector-Agentの出力（存在する場合）を参照し、技術選定を考慮
+   - 既存コードベース分析結果（`docs/01-orchestrator/[機能名]_codebase_analysis_[YYYYMMDD].json`）を参照
+   - Library-Selector-Agentの出力（`docs/02-library-selector/[機能名]_library_selection_[YYYYMMDD].json`）を参照
    - 明示的および暗黙的目標を特定
    - 曖昧さと欠落コンテキストを検出
    - 必要に応じて明確化質問を生成
@@ -115,7 +127,7 @@ color: green
 			"features": ["feature-name/component"],
 			"entities": ["entity-name/model"],
 			"shared": ["ui/component"],
-			"flowbiteComponents": ["Button", "Card", "Modal"] // 使用するFlowbiteコンポーネント
+			"meltUIComponents": ["Select", "Tabs", "Toggle"] // 使用するMelt UIコンポーネント
 		}
 	},
 	"clarifications": ["曖昧な要件についての質問？", "検証が必要な仮定？"]

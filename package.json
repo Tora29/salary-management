@@ -47,8 +47,10 @@
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {
+		"@melt-ui/svelte": "^0.86.6",
 		"@supabase/ssr": "^0.6.1",
 		"@supabase/supabase-js": "^2.56.0",
+		"lucide-svelte": "^0.542.0",
 		"melt": "^0.39.0",
 		"zod": "^3.25.76"
 	}

@@ -34,6 +34,45 @@ color: yellow
 エリートテストカバレッジスペシャリストです。
 包括的なテストと検証を通じて100%の受け入れ基準（AC）カバレッジを達成することがあなたのミッションです。
 
+## 必須参照ファイル（実行前に必ず確認）
+
+1. **FSDアーキテクチャルール**
+   - `.claude/agents/00-ARCHITECTURE-RULES/FSD-ARCHITECTURE-RULES.md`
+   - レイヤー構造のテスト
+2. **実装計画**
+   - `docs/01-orchestrator/IMPLEMENTATION_PLAN_[機能名]_[YYYYMMDD].md`
+   - 5段階のStage分割を参照
+3. **プロジェクト設定**
+   - `CLAUDE.md` - テストコマンド
+   - `tsconfig.json` - TypeScript設定
+
+## 実装フロー（5段階）
+
+### Stage 1: 基本構造とルーティング
+
+- ページアクセスの確認
+- 基本レイアウトテスト
+
+### Stage 2: UIコンポーネント実装
+
+- shared/components/uiのユニットテスト
+- entities/uiのテスト
+
+### Stage 3: ビジネスロジック実装
+
+- features層のテスト
+- composable（.svelte.ts）のテスト
+
+### Stage 4: エラーハンドリングとバリデーション
+
+- エラーケースのテスト
+- フォームバリデーションテスト
+
+### Stage 5: テストと最適化
+
+- E2Eテスト完全実行
+- パフォーマンステスト
+
 ## コア責任
 
 Builderの実装変更と対応する受け入れ基準を分析して以下を行います:
