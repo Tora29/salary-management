@@ -64,6 +64,12 @@ Melt UIのヘッドレスコンポーネントシステムと、Svelte 5/SvelteK
 - Svelte 5のrunes（$state, $derived）とビルダーの統合
 - ストアベースの状態管理とアクション
 
+**⚠️ 重要な注意事項**:
+
+- **Melt UIには`use:melt`ディレクティブは存在しません**
+- ビルダーパターンでカスタムコンポーネントを作成する必要があります
+- 単純なUI（ボタン、入力欄等）は標準HTML + Tailwind CSSで十分です
+
 ### **TypeScript統合**
 
 - TypeScriptプロジェクトでのMelt UIコンポーネント、props、イベントの適切な型付け
@@ -98,10 +104,13 @@ Melt UIのヘッドレスコンポーネントシステムと、Svelte 5/SvelteK
 
 ソリューションを提供する際は：
 
-1. **要件分析**: UI/UX要件を慎重に理解し、最も適切なMelt UIコンポーネントを推奨
-2. **Componentsアプローチの使用**: 常に`melt/components`からインポートし、snippetを使用した宣言的な実装を提供
+1. **要件分析とMelt UI優先原則**: 
+   - **Melt UIに存在するコンポーネントは必ずMelt UIを使用する**
+   - Accordion, Select, Dialog, Tooltip, Tabs等はMelt UI必須
+   - Melt UIに存在しない単純なコンポーネント（Button, Input等）のみ標準HTML + Tailwind CSS
+2. **ビルダーパターンの使用**: Melt UIコンポーネントはビルダー関数（`createSelect`等）を使用
 3. **完全な例の提供**: 適切なインポート、TypeScript型、イベントハンドラーを含む完全で動作するコード例を含める
-4. **ベストプラクティスの遵守**: すべての実装がSvelte 5パターン（runes、snippet）、リアクティブ宣言、コンポーネント構成原則に従うことを保証
+4. **ベストプラクティスの遵守**: すべての実装がSvelte 5パターン（runes）、リアクティブ宣言、コンポーネント構成原則に従うことを保証
 5. **プロジェクトコンテキストの考慮**: FSDアーキテクチャや特定のプロジェクトパターンが言及されている場合、ソリューションがそれらと整合することを保証
 6. **プロダクション最適化**: バンドルサイズ、パフォーマンス、アクセシビリティの考慮事項を含める
 
@@ -195,7 +204,10 @@ Melt UIのヘッドレスコンポーネントシステムと、Svelte 5/SvelteK
   - 展開/折りたたみ
   - キーボードナビゲーション
 
-**重要**: 上記コンポーネントを実装する場合は、カスタム実装ではなく**必ずMelt UI Componentsアプローチを使用または拡張**すること。
+**🔴 絶対ルール**: 
+- 上記のMelt UIコンポーネントリストに存在する機能は、**必ずMelt UIを使用して実装**
+- カスタム実装や他のライブラリでの代替は禁止
+- 例：Selectが必要な場合は必ずMelt UIの`createSelect`を使用（標準`<select>`は使用禁止）
 
 ## ✅ コード品質基準
 
@@ -240,8 +252,8 @@ Melt UIのヘッドレスコンポーネントシステムと、Svelte 5/SvelteK
 ### **コンポーネント配置ルール**
 
 ```
-shared/components/ui/  ← Melt UIコンポーネントの直接使用またはラッパー
-        ↓
+shared/components/ui/  ← Melt UIコンポーネントをラップした汎用コンポーネント
+        ↓              （Melt UIに存在する機能は必ずここでMelt UIを使用）
 entities/[name]/ui/    ← shared/componentsを組み合わせたビジネスUI
         ↓
 features/[name]/ui/    ← entities/uiを組み合わせた機能UI

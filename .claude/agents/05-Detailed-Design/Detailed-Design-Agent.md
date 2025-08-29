@@ -109,11 +109,17 @@ const props: Props = { error: errorMessage ?? undefined };
    - Feature-Sliced Design（FSD）アーキテクチャに従う
      - **重要**: `.claude/agents/00-Architechture-Rules/FSD-ARCHITECTURE-RULES.md` のルールを厳守すること
      - レイヤー依存順序: shared → entities → features → routes
+     - **entities/ui層を必ず経由**（features → entities → sharedの順）
      - composableは必ず `.svelte.ts` 拡張子を使用
    - TypeScriptとSvelte 5のベストプラクティスに準拠
    - TDD/BDDアプローチを実装 - テストファースト
    - すべてのコードがリンティングとフォーマットチェックに合格することを保証
    - プロジェクト規約（CLAUDE.md）を遵守
+
+5. **実装範囲の制限**:
+   - **重要**: このエージェントは詳細設計までで停止
+   - 実際のコード実装は行わない
+   - 設計書の作成のみを行う
 
 ## 失敗時の制限ルール
 

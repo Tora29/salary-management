@@ -43,11 +43,19 @@ shared → entities → features → routes
 ```
 shared/components/ui/  ← 基本UIコンポーネント（Button, Input, Card等）
         ↓
-entities/[name]/ui/    ← shared/componentsを組み合わせたビジネスUI
+entities/[name]/ui/    ← shared/components/uiの集合体でビジネスUIを構成【重要：必須層】
         ↓
-features/[name]/ui/    ← entities/uiを組み合わせた機能UI
+features/[name]/ui/    ← entities/uiの集合体で機能UIを構成
         ↓
 routes/+page.svelte    ← features/uiをインポートして配置
+
+⚠️ 重要な原則:
+- entities/ui = shared/components/uiの集合体
+- features/ui = entities/uiの集合体（＋必要最小限のshared/components/ui）
+- entities/ui層を必ず経由すること！
+
+❌ 禁止: features/ui → shared/components/ui（直接参照は最小限に）
+✅ 正解: features/ui → entities/ui → shared/components/ui
 
 【例】
 shared/components/ui/Button.svelte, Card.svelte, Text.svelte, Icon.svelte
@@ -88,7 +96,10 @@ routes/salary/import/+page.svelte（SalaryImportFormをインポート）
 
 - **許可**: ビジネスエンティティの型、モデル、基本操作
 - **禁止**: ビジネスロジック、フィーチャー固有の処理
-- **UIコンポーネントルール**: `shared/components`を組み合わせてビジネス単位の共通UIを構築
+- **UIコンポーネントルール**: 
+  - `entities/ui`は`shared/components/ui`の集合体として実装
+  - 複数の`shared/components/ui`を組み合わせてビジネス単位の共通UIを構築
+  - 単一の`shared/components/ui`をそのまま使うのではなく、必ず組み合わせて価値を追加
   ```
   entities/
   └── [entity-name]/
@@ -121,7 +132,10 @@ routes/salary/import/+page.svelte（SalaryImportFormをインポート）
 
 - **許可**: ユーザーアクション、ビジネスロジック
 - **禁止**: ページレイアウト、ルーティング、他フィーチャーへの依存
-- **UIコンポーネントルール**: `entities/ui`と`shared/components`を組み合わせて機能単位のUIを構築
+- **UIコンポーネントルール**: 
+  - `features/ui`は`entities/ui`の集合体として実装
+  - 複数の`entities/ui`を組み合わせて機能単位のUIを構築
+  - `shared/components/ui`の直接使用は最小限に留める（基本は`entities/ui`経由）
 - **構造**:
   ```
   features/
