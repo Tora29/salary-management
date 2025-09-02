@@ -1,0 +1,45 @@
+{
+	"analysis_date": "2025-09-02",
+	"feature_name": "login-card-design",
+	"existing_structure": {
+		"routes": ["/src/routes/+page.svelte", "/src/routes/+layout.svelte"],
+		"features": [],
+		"entities": [],
+		"shared": ["/src/shared/utils/validation.ts"]
+	},
+	"reusable_components": {
+		"validation": {
+			"path": "/src/shared/utils/validation.ts",
+			"functions": ["isValidEmail", "formatZodError"],
+			"description": "既存のバリデーション関数（メールバリデーション、Zodエラーフォーマット）"
+		}
+	},
+	"architecture_rules": {
+		"fsd_rules": "/.claude/agents/00-Architechture-Rules/FSD-ARCHITECTURE-RULES.md",
+		"svelte5_rules": "/.claude/agents/00-Architechture-Rules/SVELTE5-SYNTAX-RULES.md",
+		"key_rules": [
+			"レイヤー依存順序: shared → entities → features → routes",
+			"UIコンポーネント階層の厳守",
+			"composable拡張子は必ず .svelte.ts",
+			"Svelte 5 Runes APIの使用必須"
+		]
+	},
+	"project_config": {
+		"typescript": {
+			"exactOptionalPropertyTypes": true,
+			"strict": true,
+			"noUncheckedIndexedAccess": true
+		},
+		"framework": "SvelteKit with Svelte 5",
+		"architecture": "Feature-Sliced Design (FSD)"
+	},
+	"new_components_needed": {
+		"shared_ui": ["Card", "Input", "Button", "Form", "Alert"],
+		"entities_ui": ["UserCredentialsCard"],
+		"features": ["auth-login"]
+	},
+	"supabase_integration": {
+		"status": "required",
+		"notes": "Supabaseクライアントの初期化と認証ロジックの実装が必要"
+	}
+}

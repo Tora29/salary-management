@@ -96,7 +96,7 @@ routes/salary/import/+page.svelte（SalaryImportFormをインポート）
 
 - **許可**: ビジネスエンティティの型、モデル、基本操作
 - **禁止**: ビジネスロジック、フィーチャー固有の処理
-- **UIコンポーネントルール**: 
+- **UIコンポーネントルール**:
   - `entities/ui`は`shared/components/ui`の集合体として実装
   - 複数の`shared/components/ui`を組み合わせてビジネス単位の共通UIを構築
   - 単一の`shared/components/ui`をそのまま使うのではなく、必ず組み合わせて価値を追加
@@ -132,7 +132,7 @@ routes/salary/import/+page.svelte（SalaryImportFormをインポート）
 
 - **許可**: ユーザーアクション、ビジネスロジック
 - **禁止**: ページレイアウト、ルーティング、他フィーチャーへの依存
-- **UIコンポーネントルール**: 
+- **UIコンポーネントルール**:
   - `features/ui`は`entities/ui`の集合体として実装
   - 複数の`entities/ui`を組み合わせて機能単位のUIを構築
   - `shared/components/ui`の直接使用は最小限に留める（基本は`entities/ui`経由）

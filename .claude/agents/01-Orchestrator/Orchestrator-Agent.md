@@ -70,11 +70,11 @@ color: blue
   1. 既存コードベース分析
   2. Library-Selector-Agent実行（技術選定）
   3. 【人間レビュー】技術選定の確認
-  4. Melt-UI-Agent実行（UI設計）※汎用UIコンポーネントが必要な場合
-  5. 【人間レビュー】UI設計の確認 ※汎用UIコンポーネントが必要な場合
-  6. Basic-Design-Agent実行（基本設計）
-  7. 【人間レビュー】基本設計の承認（HITL-A）
-  8. Detailed-Design-Agent実行（詳細設計）
+  4. Basic-Design-Agent実行（基本設計）
+  5. 【人間レビュー】基本設計の承認（HITL-A）
+  6. Melt-UI-Agent実行（shared/components/ui設計のガイダンスのみ）※Melt UIコンポーネントが必要な場合
+  7. 【人間レビュー】UIコンポーネント設計ガイダンスの確認 ※Melt UIコンポーネントが必要な場合
+  8. Detailed-Design-Agent実行（詳細設計・Melt-UI-Agentのガイダンスを基に具体化）
   9. 【人間レビュー】詳細設計の確認
   10. 実装用設計書マークダウンファイル出力
   11. 【人間レビュー】最終設計書の確認・承認
@@ -98,14 +98,9 @@ color: blue
 - Library-Selector-Agent (`02-Library-Selector/Library-Selector-Agent.md`) を実行
   - **必ず参照**: FSDアーキテクチャルールとSvelte 5文法ルール
   - 必要なライブラリの選定と評価
+  - **Melt UI使用判断を含む**（Select、Dialog等が必要な場合）
   - 技術スタックとの互換性確認
   - 出力を `docs/02-library-selector/[機能名]_library_selection_[YYYYMMDD].json` に保存
-- **汎用UIコンポーネントが必要な場合**:
-  - Melt-UI-Agent (`03-Melt-UI/Melt-UI-Agent.md`) を実行
-  - **必ず参照**: FSDアーキテクチャルールとSvelte 5文法ルール
-  - Melt UI Componentsアプローチの選定と使用方法の設計
-  - カスタムラッパーコンポーネントの設計
-  - 出力を `docs/03-melt-ui/[機能名]_ui_components_[YYYYMMDD].json` に保存
 - Basic-Design-Agent (`04-Basic-Design/Basic-Design-Agent.md`) を実行
   - **必ず参照**: FSDアーキテクチャルールとSvelte 5文法ルール
   - SRSと設計ドラフトの作成
@@ -127,15 +122,27 @@ color: blue
 - 承認後、ハンドオフJSONを `docs/04-basic-design/[機能名]_handoff_approved_[YYYYMMDD].json` に保存
 - フィードバックと共にフェーズ1に戻ることで拒否を処理
 
+### フェーズ2.5: UIコンポーネント設計ガイダンス（Melt UI使用時のみ）
+
+- Library-Selector-AgentがMelt UI使用を推奨した場合のみ実行
+- Melt-UI-Agent (`03-Melt-UI/Melt-UI-Agent.md`) を実行
+  - **重要**: 設計ガイダンスのみ提供（実装はしない）
+  - shared/components/uiの設計方針を提示
+  - Melt UIビルダーパターンの使用方法を説明
+  - 必要なコンポーネント（Select、Dialog、Tooltip等）の設計案
+  - 出力を `docs/03-melt-ui/[機能名]_ui_guidance_[YYYYMMDD].json` に保存
+- 人間レビューでガイダンスを確認
+
 ### フェーズ3: 詳細設計
 
 - 承認されたハンドオフJSONを `docs/04-basic-design/[機能名]_handoff_approved_[YYYYMMDD].json` から読み込み
-- **UIコンポーネント設計がある場合**: `docs/03-melt-ui/[機能名]_ui_components_[YYYYMMDD].json` も読み込み
+- **Melt UIガイダンスがある場合**: `docs/03-melt-ui/[機能名]_ui_guidance_[YYYYMMDD].json` も参照
 - 承認された仕様をDetailed-Design-Agent (`05-Detailed-Design/Detailed-Design-Agent.md`) に委任
   - **重要**: FSDアーキテクチャルール（`.claude/agents/00-Architechture-Rules/FSD-Architechture-Rules.md`）を必ず参照させる
   - **重要**: Svelte 5文法ルール（`.claude/agents/00-Architechture-Rules/SVELTE5-SYNTAX-RULES.md`）を必ず参照させる
+  - **Melt UIガイダンスを基にshared/components/uiの詳細設計**
   - 詳細設計の作成
-  - 実装方針の決定（Melt UIコンポーネントの使用を含む）
+  - 実装方針の決定（Melt UIコンポーネントの具体的な使用方法）
   - 詳細設計結果を `docs/05-detailed-design/[機能名]_detailed_design_[YYYYMMDD].json` に保存
 - 詳細設計の完了を確認
 - 成果物が仕様と完全に一致することを検証

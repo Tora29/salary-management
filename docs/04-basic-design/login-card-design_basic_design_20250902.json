@@ -1,0 +1,391 @@
+{
+	"problem": "安全で使いやすいユーザー認証システムがなく、不正アクセスのリスクがある",
+	"goals": [
+		"モダンで視覚的に魅力的なカードベースのログイン画面を実装する",
+		"Supabase認証を使用した安全なメール/パスワード認証を提供する",
+		"リアルタイムバリデーションとエラー処理により優れたUXを実現する",
+		"すべてのデバイスサイズで完璧に動作するレスポンシブデザインを実装する",
+		"WCAGレベルAAのアクセシビリティ基準を満たす"
+	],
+	"acceptanceCriteria": [
+		{
+			"id": "AC-001",
+			"given": "ユーザーがログインページにアクセスしている状態",
+			"when": "有効なメールアドレスとパスワードを入力してログインボタンをクリックする",
+			"then": "Supabase認証が成功し、ダッシュボード画面にリダイレクトされる"
+		},
+		{
+			"id": "AC-002",
+			"given": "ユーザーがログインフォームにメールアドレスを入力している状態",
+			"when": "無効な形式のメールアドレスを入力してフォーカスを外す",
+			"then": "メールアドレスフィールドの下に検証エラーメッセージが即座に表示される"
+		},
+		{
+			"id": "AC-003",
+			"given": "ユーザーがログインフォームを送信した状態",
+			"when": "認証情報が正しくない（存在しないメールまたは間違ったパスワード）",
+			"then": "カード上部にエラーアラートが表示され、具体的なエラー理由が示される"
+		},
+		{
+			"id": "AC-004",
+			"given": "ユーザーがログインボタンをクリックした状態",
+			"when": "認証処理が実行中",
+			"then": "ボタンがローディング状態になり、フォームが無効化され、二重送信が防止される"
+		},
+		{
+			"id": "AC-005",
+			"given": "モバイルデバイス（幅375px）でログインページを表示している状態",
+			"when": "画面をスクロールせずに閲覧する",
+			"then": "ログインカード全体が画面内に収まり、すべての要素が適切にレイアウトされる"
+		},
+		{
+			"id": "AC-006",
+			"given": "パスワード入力フィールドが表示されている状態",
+			"when": "パスワード表示切り替えアイコンをクリックする",
+			"then": "パスワードの表示/非表示が切り替わり、アイコンも対応する状態に変更される"
+		},
+		{
+			"id": "AC-007",
+			"given": "ユーザーがキーボードのみを使用している状態",
+			"when": "Tabキーを使用してフォーム要素間を移動する",
+			"then": "論理的な順序でフォーカスが移動し、すべての対話可能な要素にアクセスできる"
+		},
+		{
+			"id": "AC-008",
+			"given": "フォームに必須フィールドが空の状態",
+			"when": "ログインボタンをクリックする",
+			"then": "クライアント側でバリデーションが実行され、適切なエラーメッセージが表示される"
+		},
+		{
+			"id": "AC-009",
+			"given": "ネットワークエラーが発生した状態",
+			"when": "ログイン試行が失敗する",
+			"then": "ユーザーフレンドリーなエラーメッセージが表示され、再試行オプションが提供される"
+		},
+		{
+			"id": "AC-010",
+			"given": "スクリーンリーダーを使用している状態",
+			"when": "フォームフィールドにフォーカスする",
+			"then": "適切なARIAラベルとロールが読み上げられ、入力の目的が明確に伝わる"
+		}
+	],
+	"outOfScope": [
+		"ソーシャルログイン（Google、GitHub等）の実装",
+		"パスワードリセット機能の実装",
+		"二要素認証（2FA）の実装",
+		"ユーザー登録画面の実装",
+		"Remember Me（ログイン状態保持）機能",
+		"多言語対応（i18n）",
+		"ダークモード切り替え機能"
+	],
+	"design": {
+		"api": {
+			"endpoints": [
+				{
+					"method": "POST",
+					"path": "/api/auth/login",
+					"request": {
+						"email": "string",
+						"password": "string"
+					},
+					"response": {
+						"user": {
+							"id": "string",
+							"email": "string",
+							"created_at": "string"
+						},
+						"session": {
+							"access_token": "string",
+							"refresh_token": "string",
+							"expires_at": "number"
+						}
+					},
+					"errorResponses": {
+						"400": {
+							"error": "ValidationError",
+							"message": "Invalid email format or password requirements not met",
+							"details": {
+								"field": "string",
+								"reason": "string"
+							}
+						},
+						"401": {
+							"error": "AuthenticationError",
+							"message": "Invalid credentials",
+							"details": {
+								"reason": "invalid_email_or_password"
+							}
+						},
+						"429": {
+							"error": "RateLimitError",
+							"message": "Too many login attempts",
+							"details": {
+								"retry_after": "number"
+							}
+						},
+						"500": {
+							"error": "InternalServerError",
+							"message": "An unexpected error occurred",
+							"details": {
+								"request_id": "string"
+							}
+						}
+					}
+				}
+			]
+		},
+		"dataModel": {
+			"prismaSchema": "// Supabase Authを使用するため、カスタムユーザーテーブルは不要\n// Supabase auth.users テーブルを利用\n\n// ユーザープロファイル（将来の拡張用）\nmodel UserProfile {\n  id        String   @id @default(uuid())\n  user_id   String   @unique // Supabase auth.users.id への参照\n  full_name String?\n  avatar_url String?\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  @@map(\"user_profiles\")\n}"
+		},
+		"components": {
+			"features": [
+				"auth-login/ui/LoginForm.svelte",
+				"auth-login/composable/useLogin.svelte.ts",
+				"auth-login/api/supabaseAuth.ts",
+				"auth-login/model/loginSchema.ts"
+			],
+			"entities": ["user/ui/UserCredentialsCard.svelte", "user/model/types.ts"],
+			"shared": [
+				"components/ui/Card.svelte",
+				"components/ui/Button.svelte",
+				"components/ui/Input.svelte",
+				"components/ui/Alert.svelte",
+				"components/ui/Form.svelte",
+				"components/ui/Label.svelte",
+				"components/ui/styles/foundation.css",
+				"components/ui/styles/grid.css",
+				"api/supabase.ts",
+				"utils/validation.ts"
+			],
+			"meltUIComponents": ["createForm"]
+		},
+		"componentDetails": {
+			"shared": {
+				"Card": {
+					"props": {
+						"class": "string?",
+						"padding": "'sm' | 'md' | 'lg' | 'xl'?",
+						"shadow": "'none' | 'sm' | 'md' | 'lg' | 'xl'?",
+						"radius": "'none' | 'sm' | 'md' | 'lg' | 'full'?"
+					},
+					"styling": "Tailwind CSS classes with 10-theme system support"
+				},
+				"Button": {
+					"props": {
+						"variant": "'primary' | 'secondary' | 'ghost' | 'danger'",
+						"size": "'sm' | 'md' | 'lg'",
+						"disabled": "boolean?",
+						"loading": "boolean?",
+						"type": "'button' | 'submit' | 'reset'?",
+						"class": "string?"
+					},
+					"features": ["Loading spinner", "Disabled state", "Focus management"]
+				},
+				"Input": {
+					"props": {
+						"type": "'text' | 'email' | 'password' | 'number'",
+						"value": "$bindable<string>",
+						"placeholder": "string?",
+						"disabled": "boolean?",
+						"error": "boolean?",
+						"required": "boolean?",
+						"autocomplete": "string?",
+						"id": "string",
+						"name": "string"
+					},
+					"features": ["Error state styling", "Accessibility attributes"]
+				},
+				"Alert": {
+					"props": {
+						"type": "'error' | 'success' | 'warning' | 'info'",
+						"title": "string?",
+						"message": "string",
+						"dismissible": "boolean?",
+						"icon": "boolean?"
+					}
+				}
+			},
+			"entities": {
+				"UserCredentialsCard": {
+					"composition": ["Card", "Input", "Label", "Button"],
+					"props": {
+						"email": "$bindable<string>",
+						"password": "$bindable<string>",
+						"emailError": "string?",
+						"passwordError": "string?",
+						"onSubmit": "() => void",
+						"loading": "boolean?"
+					},
+					"features": ["Password visibility toggle", "Field validation display"]
+				}
+			},
+			"features": {
+				"LoginForm": {
+					"composition": ["UserCredentialsCard", "Alert", "Form"],
+					"state": {
+						"email": "$state<string>",
+						"password": "$state<string>",
+						"isLoading": "$state<boolean>",
+						"error": "$state<string | null>",
+						"validationErrors": "$state<Record<string, string>>"
+					},
+					"methods": ["handleSubmit", "validateForm", "clearErrors"]
+				},
+				"useLogin": {
+					"exports": {
+						"login": "(email: string, password: string) => Promise<LoginResult>",
+						"isLoading": "getter<boolean>",
+						"error": "getter<string | null>",
+						"clearError": "() => void"
+					},
+					"dependencies": ["supabaseAuth", "loginSchema"]
+				}
+			}
+		},
+		"styling": {
+			"designSystem": {
+				"colors": {
+					"primary": "Blue-600 for primary actions",
+					"secondary": "Gray-600 for secondary elements",
+					"error": "Red-600 for error states",
+					"success": "Green-600 for success states",
+					"background": "White for card, Gray-50 for page background"
+				},
+				"spacing": {
+					"card_padding": "24px (desktop), 16px (mobile)",
+					"form_gap": "16px between form elements",
+					"button_padding": "12px vertical, 24px horizontal"
+				},
+				"typography": {
+					"heading": "24px, font-semibold",
+					"label": "14px, font-medium",
+					"input": "16px, font-normal",
+					"error": "12px, font-normal"
+				},
+				"breakpoints": {
+					"mobile": "< 640px",
+					"tablet": "640px - 1024px",
+					"desktop": "> 1024px"
+				}
+			},
+			"gridSystem": "12-column grid with responsive breakpoints",
+			"animations": {
+				"button_hover": "scale(1.02) with transition",
+				"loading_spinner": "rotate animation",
+				"error_shake": "horizontal shake for validation errors"
+			}
+		},
+		"accessibility": {
+			"requirements": [
+				"WCAG 2.1 Level AA compliance",
+				"Keyboard navigation support",
+				"Screen reader compatible",
+				"Focus indicators on all interactive elements",
+				"Proper ARIA labels and roles",
+				"Color contrast ratio >= 4.5:1 for normal text",
+				"Error messages announced to screen readers"
+			],
+			"ariaAttributes": {
+				"form": "role='form', aria-label='Login form'",
+				"emailInput": "aria-label='Email address', aria-required='true', aria-invalid={hasError}",
+				"passwordInput": "aria-label='Password', aria-required='true', aria-invalid={hasError}",
+				"submitButton": "aria-label='Sign in to your account'",
+				"errorAlert": "role='alert', aria-live='assertive'"
+			}
+		},
+		"security": {
+			"measures": [
+				"Password field with type='password' to mask input",
+				"HTTPS-only transmission of credentials",
+				"Rate limiting on login attempts (handled by Supabase)",
+				"Input sanitization before submission",
+				"CSRF protection via SvelteKit",
+				"Secure session management with httpOnly cookies",
+				"No sensitive data in localStorage"
+			]
+		},
+		"performance": {
+			"targets": [
+				"Initial load: < 2 seconds on 3G",
+				"Time to Interactive: < 3 seconds",
+				"Form submission response: < 1 second on good connection",
+				"Bundle size for login feature: < 50KB gzipped"
+			],
+			"optimizations": [
+				"Code splitting for auth feature",
+				"Lazy loading of error components",
+				"Debounced validation on input",
+				"Optimistic UI updates"
+			]
+		}
+	},
+	"testScenarios": [
+		{
+			"id": "TS-001",
+			"type": "unit",
+			"description": "Validate email format validation function",
+			"file": "shared/utils/validation.test.ts"
+		},
+		{
+			"id": "TS-002",
+			"type": "unit",
+			"description": "Test login schema validation with Zod",
+			"file": "features/auth-login/model/loginSchema.test.ts"
+		},
+		{
+			"id": "TS-003",
+			"type": "integration",
+			"description": "Test Supabase authentication flow",
+			"file": "features/auth-login/api/supabaseAuth.test.ts"
+		},
+		{
+			"id": "TS-004",
+			"type": "e2e",
+			"description": "Complete login flow from UI to dashboard redirect",
+			"file": "e2e/auth/login.spec.ts"
+		},
+		{
+			"id": "TS-005",
+			"type": "component",
+			"description": "Test UserCredentialsCard component interactions",
+			"file": "entities/user/ui/UserCredentialsCard.test.ts"
+		}
+	],
+	"clarifications": [
+		"ログイン成功後のリダイレクト先は '/dashboard' でよろしいですか？",
+		"セッションの有効期限はデフォルトのSupabase設定（1時間）を使用しますか？",
+		"パスワードの最小文字数要件は6文字でよろしいですか？",
+		"ログイン試行の失敗回数制限は5回/10分でよろしいですか？",
+		"エラーメッセージは日本語で表示しますか？"
+	],
+	"implementation_order": [
+		"1. shared/components/ui の基本コンポーネント実装（Card, Button, Input, Alert）",
+		"2. shared/api/supabase.ts のSupabaseクライアント初期化",
+		"3. entities/user のモデルとUIコンポーネント実装",
+		"4. features/auth-login/model のスキーマ定義",
+		"5. features/auth-login/api のSupabase認証ラッパー実装",
+		"6. features/auth-login/composable のビジネスロジック実装",
+		"7. features/auth-login/ui のLoginFormコンポーネント実装",
+		"8. routes/login/+page.svelte の実装",
+		"9. テストの実装",
+		"10. アクセシビリティとパフォーマンステスト"
+	],
+	"risks": [
+		{
+			"risk": "Melt UIのcreateFormビルダーの学習曲線",
+			"mitigation": "基本的なフォーム機能から始めて段階的に高度な機能を追加"
+		},
+		{
+			"risk": "Supabase認証エラーのハンドリング複雑性",
+			"mitigation": "包括的なエラーハンドリングロジックとフォールバック処理の実装"
+		},
+		{
+			"risk": "レスポンシブデザインの複雑性",
+			"mitigation": "モバイルファーストアプローチと継続的なデバイステスト"
+		}
+	],
+	"status": "confirmed",
+	"version": "1.0.0",
+	"created_at": "2025-09-02",
+	"created_by": "Basic-Design-Agent"
+}

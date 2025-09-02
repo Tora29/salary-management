@@ -5,6 +5,15 @@
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>給料管理アプリ</title>
+		<script>
+			// テーマの初期化（フラッシュ防止のため同期的に実行）
+			(function () {
+				const savedTheme = localStorage.getItem('theme');
+				if (savedTheme && savedTheme !== 'light') {
+					document.documentElement.setAttribute('data-theme', savedTheme);
+				}
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
