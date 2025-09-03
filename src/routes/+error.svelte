@@ -59,7 +59,7 @@
 		}
 
 		// ログイン画面に遷移
-		await goto('/auth/login', { replaceState: true });
+		await goto('/', { replaceState: true });
 	}
 </script>
 
