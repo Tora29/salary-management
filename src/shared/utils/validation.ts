@@ -6,6 +6,9 @@ export function validateEmail(email: string): boolean {
 	return emailRegex.test(email);
 }
 
+import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
+import { LENGTH_LIMITS } from '$shared/consts/validationRules';
+
 /**
  * パスワードの強度を検証
  */
@@ -15,8 +18,8 @@ export function validatePassword(password: string): {
 } {
 	const errors: string[] = [];
 
-	if (password.length < 6) {
-		errors.push('パスワードは6文字以上である必要があります');
+	if (password.length < LENGTH_LIMITS.PASSWORD_MIN) {
+		errors.push(ERROR_MESSAGES.PASSWORD_TOO_SHORT);
 	}
 
 	return {
@@ -28,9 +31,9 @@ export function validatePassword(password: string): {
 /**
  * 必須フィールドの検証
  */
-export function validateRequired(value: string, fieldName: string): string | null {
+export function validateRequired(value: string): string | null {
 	if (!value || value.trim() === '') {
-		return `${fieldName}は必須項目です`;
+		return ERROR_MESSAGES.REQUIRED_FIELDS;
 	}
 	return null;
 }

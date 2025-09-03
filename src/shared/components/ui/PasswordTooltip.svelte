@@ -3,19 +3,11 @@
 	 * パスワード要件説明ツールチップ
 	 * Melt UIのcreateTooltipビルダーを使用
 	 */
+	import { InfoIcon } from '@lucide/svelte';
 	import { createTooltip, melt } from '@melt-ui/svelte';
 	import { fade } from 'svelte/transition';
-	import type { Snippet } from 'svelte';
-	import { InfoIcon } from '@lucide/svelte';
 
-	interface Props {
-		content?: Snippet;
-		placement?: 'top' | 'bottom' | 'left' | 'right';
-		openDelay?: number;
-		closeDelay?: number;
-		class?: string;
-		children?: Snippet;
-	}
+	import type { TooltipProps } from '$shared/components/model/types';
 
 	const {
 		content,
@@ -24,7 +16,7 @@
 		closeDelay = 100,
 		class: className = '',
 		children
-	}: Props = $props();
+	}: TooltipProps = $props();
 
 	// Melt UI Tooltipビルダー
 	const {

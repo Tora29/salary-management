@@ -1,6 +1,9 @@
 import type { Snippet } from 'svelte';
 import type { HTMLButtonAttributes, HTMLInputAttributes } from 'svelte/elements';
 
+/**
+ * カードコンポーネントのプロパティ
+ */
 export interface CardProps {
 	class?: string;
 	padding?: 'sm' | 'md' | 'lg' | 'xl';
@@ -9,6 +12,9 @@ export interface CardProps {
 	children?: Snippet;
 }
 
+/**
+ * ボタンコンポーネントのプロパティ
+ */
 export interface ButtonProps extends HTMLButtonAttributes {
 	variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
 	size?: 'sm' | 'md' | 'lg';
@@ -20,6 +26,9 @@ export interface ButtonProps extends HTMLButtonAttributes {
 	children?: Snippet;
 }
 
+/**
+ * インプットコンポーネントのプロパティ
+ */
 export interface InputProps extends Omit<HTMLInputAttributes, 'autocomplete' | 'value'> {
 	type?: string;
 	value?: string;
@@ -33,6 +42,9 @@ export interface InputProps extends Omit<HTMLInputAttributes, 'autocomplete' | '
 	class?: string;
 }
 
+/**
+ * アラートコンポーネントのプロパティ
+ */
 export interface AlertProps {
 	type?: 'error' | 'success' | 'warning' | 'info';
 	title?: string;
@@ -42,6 +54,9 @@ export interface AlertProps {
 	onDismiss?: () => void;
 }
 
+/**
+ * ラベルコンポーネントのプロパティ
+ */
 export interface LabelProps {
 	for?: string;
 	required?: boolean;
@@ -49,8 +64,63 @@ export interface LabelProps {
 	children?: Snippet;
 }
 
+/**
+ * アイコンコンポーネントのプロパティ
+ */
 export interface IconProps {
 	name: string;
 	size?: 'sm' | 'md' | 'lg';
 	class?: string;
+}
+
+/**
+ * リンクコンポーネントのプロパティ
+ */
+export interface LinkProps {
+	href: string;
+	class?: string;
+	children: Snippet;
+	target?: string;
+	'aria-label'?: string;
+}
+
+/**
+ * パスワード強度レベル
+ */
+export type PasswordStrengthLevel = 'weak' | 'medium' | 'strong';
+
+/**
+ * パスワード強度チェック結果
+ */
+export interface PasswordStrengthResult {
+	level: PasswordStrengthLevel;
+	score: number;
+	checks: {
+		hasMinLength: boolean;
+		hasUpperCase: boolean;
+		hasLowerCase: boolean;
+		hasNumber: boolean;
+		hasSpecialChar: boolean;
+	};
+}
+
+/**
+ * パスワード強度コンポーネントのプロパティ
+ */
+export interface PasswordStrengthProps {
+	password: string;
+	class?: string;
+	showDetails?: boolean;
+}
+
+/**
+ * ツールチップコンポーネントのプロパティ
+ */
+export interface TooltipProps {
+	content?: Snippet;
+	placement?: 'top' | 'bottom' | 'left' | 'right';
+	openDelay?: number;
+	closeDelay?: number;
+	class?: string;
+	children?: Snippet;
 }

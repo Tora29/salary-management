@@ -4,16 +4,8 @@
 	 * シンプルなネイティブ実装
 	 */
 	import { Check } from '@lucide/svelte';
-	import type { Snippet } from 'svelte';
 
-	interface Props {
-		checked?: boolean;
-		disabled?: boolean;
-		label?: Snippet;
-		class?: string;
-		onCheckedChange?: (checked: boolean) => void;
-		ariaLabel?: string;
-	}
+	import type { MeltCheckboxProps } from '$shared/components/model/melt-ui-common';
 
 	let {
 		checked = $bindable(false),
@@ -22,7 +14,7 @@
 		class: className = '',
 		onCheckedChange,
 		ariaLabel = 'チェックボックス'
-	}: Props = $props();
+	}: MeltCheckboxProps = $props();
 
 	function handleClick(): void {
 		if (!disabled) {

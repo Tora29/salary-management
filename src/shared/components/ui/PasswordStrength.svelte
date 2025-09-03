@@ -3,15 +3,13 @@
 	 * パスワード強度インジケーターコンポーネント
 	 * Svelte 5 $derivedを使用した効率的な強度計算
 	 */
-	import type { PasswordStrengthLevel, PasswordStrengthResult } from '../model/melt-ui-common';
+	import type {
+		PasswordStrengthLevel,
+		PasswordStrengthResult,
+		PasswordStrengthProps
+	} from '$shared/components/model/types';
 
-	interface Props {
-		password: string;
-		class?: string;
-		showDetails?: boolean;
-	}
-
-	const { password, class: className = '', showDetails = true }: Props = $props();
+	const { password, class: className = '', showDetails = true }: PasswordStrengthProps = $props();
 
 	/**
 	 * パスワード強度を計算

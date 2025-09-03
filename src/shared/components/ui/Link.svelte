@@ -3,17 +3,9 @@
 	 * 内部リンクコンポーネント
 	 * SvelteKitのナビゲーションを使用したリンク
 	 */
-	import type { Snippet } from 'svelte';
+	import type { LinkProps } from '$shared/components/model/types';
 
-	interface Props {
-		href: string;
-		class?: string;
-		children: Snippet;
-		target?: string;
-		'aria-label'?: string;
-	}
-
-	const { href, class: className = '', children, ...rest }: Props = $props();
+	const { href, class: className = '', children, ...rest }: LinkProps = $props();
 </script>
 
 <a

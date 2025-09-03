@@ -1,9 +1,12 @@
 <script lang="ts">
-	import RegisterForm from '$features/auth-register/ui/RegisterForm.svelte';
-	import ThemeSelector from '$shared/components/ui/ThemeSelector.svelte';
 	import { onMount } from 'svelte';
-	import { getCurrentSession } from '$features/auth-login/api/supabaseAuth';
+
 	import { goto } from '$app/navigation';
+
+	import ThemeSelector from '$shared/components/ui/ThemeSelector.svelte';
+
+	import { getCurrentSession } from '$features/auth/login/api/supabaseAuth';
+	import RegisterForm from '$features/auth/register/ui/RegisterForm.svelte';
 
 	// 既にログインしている場合はダッシュボードへリダイレクト
 	onMount(async () => {

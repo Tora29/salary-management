@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { themes, type Theme, getTheme, setTheme, getThemeDisplayName } from '$shared/utils/theme';
 	import { Palette, ChevronDown, Check } from '@lucide/svelte';
+	import { onMount } from 'svelte';
+
+	import { themes, type Theme, getTheme, setTheme, getThemeDisplayName } from '$shared/utils/theme';
 
 	let currentTheme = $state<Theme>('light');
 	let isOpen = $state(false);
@@ -23,7 +24,7 @@
 	// クリック外でドロップダウンを閉じる
 	function handleClickOutside(event: MouseEvent): void {
 		const target = event.target as HTMLElement;
-		if (!target.closest('.theme-selector')) {
+		if (!target.closest('[data-theme-selector]')) {
 			isOpen = false;
 		}
 	}
@@ -57,7 +58,7 @@
 	}
 </script>
 
-<div class="theme-selector">
+<div class="relative" data-theme-selector>
 	<button
 		class="btn btn-ghost btn-sm"
 		onclick={toggleDropdown}
@@ -66,42 +67,44 @@
 		aria-haspopup="true"
 	>
 		<Palette size={20} class="flex-shrink-0" />
-		<span class="theme-selector-label">{getThemeDisplayName(currentTheme)}</span>
+		<span class="mx-2 text-sm max-sm:hidden">{getThemeDisplayName(currentTheme)}</span>
 		<ChevronDown
 			size={16}
-			class={`theme-selector-arrow flex-shrink-0 ${isOpen ? 'theme-selector-arrow-open' : ''}`}
+			class={`flex-shrink-0 transition-transform duration-200 ease-out ${isOpen ? 'rotate-180' : ''}`}
 		/>
 	</button>
 
 	{#if isOpen}
-		<div class="theme-selector-dropdown">
-			<div class="theme-selector-dropdown-inner">
+		<div
+			class="absolute top-full right-0 mt-2 bg-surface border border-border rounded-lg shadow-lg z-50 min-w-[240px] max-h-[400px] overflow-y-auto max-sm:left-0 max-sm:right-auto"
+		>
+			<div class="p-2">
 				{#each themes as theme (theme)}
 					{@const colors = getThemeColors(theme)}
 					<button
-						class={`theme-selector-option ${currentTheme === theme ? 'theme-selector-option-active' : ''}`}
+						class={`flex items-center w-full px-3 py-2 bg-transparent border-none rounded cursor-pointer transition-colors duration-200 ease-out text-left gap-3 hover:bg-neutral ${currentTheme === theme ? 'bg-neutral font-medium' : ''}`}
 						onclick={() => handleThemeChange(theme)}
 					>
-						<div class="theme-selector-option-colors">
+						<div class="flex gap-0.5">
 							<span
-								class="theme-selector-color"
+								class="w-4 h-4 rounded-sm border border-black/10"
 								style:background-color={colors.primary}
 								aria-hidden="true"
 							></span>
 							<span
-								class="theme-selector-color"
+								class="w-4 h-4 rounded-sm border border-black/10"
 								style:background-color={colors.secondary}
 								aria-hidden="true"
 							></span>
 							<span
-								class="theme-selector-color"
+								class="w-4 h-4 rounded-sm border border-black/10"
 								style:background-color={colors.accent}
 								aria-hidden="true"
 							></span>
 						</div>
-						<span class="theme-selector-option-name">{getThemeDisplayName(theme)}</span>
+						<span class="flex-1 text-sm text-base">{getThemeDisplayName(theme)}</span>
 						{#if currentTheme === theme}
-							<Check size={16} class="theme-selector-check flex-shrink-0" />
+							<Check size={16} class="text-primary flex-shrink-0" />
 						{/if}
 					</button>
 				{/each}
@@ -109,99 +112,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.theme-selector {
-		position: relative;
-	}
-
-	.theme-selector-label {
-		margin: 0 0.5rem;
-		font-size: var(--font-size-sm);
-	}
-
-	.theme-selector-arrow {
-		transition: transform var(--transition-fast) var(--ease-out);
-	}
-
-	.theme-selector-arrow-open {
-		transform: rotate(180deg);
-	}
-
-	.theme-selector-dropdown {
-		position: absolute;
-		top: 100%;
-		right: 0;
-		margin-top: 0.5rem;
-		background: var(--bg-surface);
-		border: var(--border-width-1) solid var(--color-border);
-		border-radius: var(--border-radius-lg);
-		box-shadow: var(--shadow-lg);
-		z-index: 50;
-		min-width: 240px;
-		max-height: 400px;
-		overflow-y: auto;
-	}
-
-	.theme-selector-dropdown-inner {
-		padding: var(--spacing-2);
-	}
-
-	.theme-selector-option {
-		display: flex;
-		align-items: center;
-		width: 100%;
-		padding: var(--spacing-2) var(--spacing-3);
-		background: transparent;
-		border: none;
-		border-radius: var(--border-radius-base);
-		cursor: pointer;
-		transition: background-color var(--transition-fast) var(--ease-out);
-		text-align: left;
-		gap: var(--spacing-3);
-	}
-
-	.theme-selector-option:hover {
-		background: var(--color-neutral);
-	}
-
-	.theme-selector-option-active {
-		background: var(--color-neutral);
-		font-weight: var(--font-weight-medium);
-	}
-
-	.theme-selector-option-colors {
-		display: flex;
-		gap: 2px;
-	}
-
-	.theme-selector-color {
-		width: 16px;
-		height: 16px;
-		border-radius: var(--border-radius-sm);
-		border: 1px solid rgba(0, 0, 0, 0.1);
-	}
-
-	.theme-selector-option-name {
-		flex: 1;
-		font-size: var(--font-size-sm);
-		color: var(--text-base);
-	}
-
-	.theme-selector-check {
-		color: var(--color-primary);
-		flex-shrink: 0;
-	}
-
-	/* レスポンシブ対応 */
-	@media (max-width: 640px) {
-		.theme-selector-label {
-			display: none;
-		}
-
-		.theme-selector-dropdown {
-			right: auto;
-			left: 0;
-		}
-	}
-</style>

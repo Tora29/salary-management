@@ -10,7 +10,7 @@ export const SUCCESS_MESSAGES = {
 	LOGOUT_SUCCESS: 'ログアウトしました',
 	PASSWORD_RESET_EMAIL_SENT: 'パスワードリセット用のメールを送信しました',
 	PASSWORD_RESET_SUCCESS: 'パスワードがリセットされました',
-	EMAIL_VERIFIED: 'メールアドレスが確認されました',
+	EMAIL_VERIFIED: 'メールアドレスの確認が完了しました。ログインしてください。',
 
 	// データ操作
 	DATA_SAVED: 'データを保存しました',
@@ -33,4 +33,7 @@ export const SUCCESS_MESSAGES = {
 	PROFILE_UPDATED: 'プロフィールを更新しました'
 } as const;
 
+/**
+ * 成功メッセージの型
+ */
 export type SuccessMessage = (typeof SUCCESS_MESSAGES)[keyof typeof SUCCESS_MESSAGES];

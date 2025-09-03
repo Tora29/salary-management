@@ -1,7 +1,10 @@
 <script lang="ts">
-	import AuthCard from '$entities/auth-card/ui/AuthCard.svelte';
 	import Alert from '$shared/components/ui/Alert.svelte';
 	import ThemeSelector from '$shared/components/ui/ThemeSelector.svelte';
+	import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
+
+	import LoginCard from '$entities/auth/ui/LoginCard.svelte';
+
 	import { useLogin } from '../composable/useLogin.svelte';
 
 	// ログインコンポーザブルの使用
@@ -35,7 +38,7 @@
 		if (email && email.includes('@')) {
 			// メールアドレスのフォーマットチェック
 			if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-				loginHandler.validationErrors.email = '有効なメールアドレスを入力してください';
+				loginHandler.validationErrors.email = ERROR_MESSAGES.EMAIL_INVALID;
 			} else {
 				if (loginHandler.validationErrors.email) {
 					delete loginHandler.validationErrors.email;
@@ -66,7 +69,7 @@
 			</div>
 		{/if}
 
-		<AuthCard
+		<LoginCard
 			bind:email
 			bind:password
 			{emailError}

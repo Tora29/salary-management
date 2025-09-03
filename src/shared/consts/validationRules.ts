@@ -14,7 +14,6 @@ export const LENGTH_LIMITS = {
 	// パスワード
 	PASSWORD_MIN: 8,
 	PASSWORD_MAX: 128,
-	PASSWORD_LOGIN_MIN: 6, // ログイン時の最小文字数（既存ユーザー向け）
 
 	// 名前
 	NAME_MIN: 2,
@@ -131,9 +130,27 @@ export const ALLOWED_MIME_TYPES = {
 } as const;
 
 // 型定義
+/**
+ * 文字数制限の型
+ */
 export type LengthLimit = typeof LENGTH_LIMITS;
+/**
+ * 正規表現パターンの型
+ */
 export type RegexPattern = typeof REGEX_PATTERNS;
+/**
+ * 数値制限の型
+ */
 export type NumberLimit = typeof NUMBER_LIMITS;
+/**
+ * ファイルサイズ制限の型
+ */
 export type FileSizeLimit = typeof FILE_SIZE_LIMITS;
+/**
+ * 許可ファイルタイプの型
+ */
 export type AllowedFileType = typeof ALLOWED_FILE_TYPES;
+/**
+ * 許可MIMEタイプの型
+ */
 export type AllowedMimeType = typeof ALLOWED_MIME_TYPES;

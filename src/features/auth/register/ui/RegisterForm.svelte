@@ -3,8 +3,11 @@
 	 * 登録フォームコンポーネント
 	 * entities/uiとshared/components/uiを組み合わせて構成
 	 */
-	import RegistrationCard from '$entities/auth-card/ui/RegistrationCard.svelte';
 	import Alert from '$shared/components/ui/Alert.svelte';
+	import { SUCCESS_MESSAGES } from '$shared/consts/successMessages';
+
+	import RegisterCard from '$entities/auth/ui/RegisterCard.svelte';
+
 	import { useRegister } from '../composable/useRegister.svelte';
 
 	// 登録ロジックのコンポーザブル
@@ -48,11 +51,11 @@
 	<!-- 成功メッセージ -->
 	{#if register.isSuccess}
 		<div class="mb-4">
-			<Alert type="success" message="登録が完了しました。確認メールをご確認ください。" />
+			<Alert type="success" message={SUCCESS_MESSAGES.REGISTRATION_COMPLETE} />
 		</div>
 	{/if}
 
-	<RegistrationCard
+	<RegisterCard
 		bind:email={register.formData.email}
 		bind:password={register.formData.password}
 		bind:confirmPassword={register.formData.confirmPassword}

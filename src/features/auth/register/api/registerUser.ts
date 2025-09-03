@@ -3,12 +3,14 @@
  * Supabase Authとの連携を行う
  */
 
-import type { RegisterRequest, RegisterResponse, RegisterErrorResponse } from '../model/types';
 import { AUTH_ENDPOINTS } from '$shared/consts/apiEndpoints';
 import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
 
+import type { RegisterRequest, RegisterResponse, RegisterErrorResponse } from '../model/types';
+
 /**
  * ユーザー登録APIを呼び出す
+ *
  * @param data 登録データ
  * @returns 登録結果
  */
@@ -46,7 +48,8 @@ export async function registerUser(
 }
 
 /**
- * メールアドレスの重複チェック（将来的な実装用）
+ * メールアドレスの重複チェック
+ *
  * @param email チェックするメールアドレス
  * @returns 使用可能かどうか
  */

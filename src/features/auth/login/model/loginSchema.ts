@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { LENGTH_LIMITS } from '$shared/consts/validationRules';
+
 import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
+import { LENGTH_LIMITS } from '$shared/consts/validationRules';
 
 /**
  * ログインフォームのバリデーションスキーマ
@@ -10,15 +11,12 @@ export const loginSchema = z.object({
 		.string()
 		.min(LENGTH_LIMITS.EMAIL_MIN, ERROR_MESSAGES.EMAIL_REQUIRED)
 		.email(ERROR_MESSAGES.EMAIL_INVALID),
-	password: z
-		.string()
-		.min(LENGTH_LIMITS.EMAIL_MIN, ERROR_MESSAGES.PASSWORD_REQUIRED)
-		.min(
-			LENGTH_LIMITS.PASSWORD_LOGIN_MIN,
-			`パスワードは${LENGTH_LIMITS.PASSWORD_LOGIN_MIN}文字以上である必要があります`
-		)
+	password: z.string().min(LENGTH_LIMITS.PASSWORD_MIN, ERROR_MESSAGES.PASSWORD_TOO_SHORT)
 });
 
+/**
+ * ログインフォームのデータ型
+ */
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 /**

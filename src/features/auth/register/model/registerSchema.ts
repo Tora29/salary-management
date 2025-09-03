@@ -3,8 +3,9 @@
  */
 
 import { z } from 'zod';
-import { LENGTH_LIMITS, REGEX_PATTERNS } from '$shared/consts/validationRules';
+
 import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
+import { LENGTH_LIMITS, REGEX_PATTERNS } from '$shared/consts/validationRules';
 
 /**
  * メールアドレスのバリデーションスキーマ
@@ -56,4 +57,7 @@ export const registerRequestSchema = z.object({
  * バリデーションスキーマの型エクスポート
  */
 export type RegisterSchema = z.infer<typeof registerSchema>;
+/**
+ * サーバーサイド用登録データの型
+ */
 export type RegisterRequestSchema = z.infer<typeof registerRequestSchema>;

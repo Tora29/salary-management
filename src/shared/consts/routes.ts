@@ -98,7 +98,19 @@ export const REDIRECTS = {
 } as const;
 
 // 型定義
+/**
+ * ルートの型
+ */
 export type Route = (typeof ROUTES)[keyof typeof ROUTES];
+/**
+ * パラメータ付きルートの型
+ */
 export type RouteWithParams = typeof ROUTE_WITH_PARAMS;
+/**
+ * 外部URLの型
+ */
 export type ExternalUrl = (typeof EXTERNAL_URLS)[keyof typeof EXTERNAL_URLS];
+/**
+ * リダイレクトの型
+ */
 export type Redirect = (typeof REDIRECTS)[keyof typeof REDIRECTS];

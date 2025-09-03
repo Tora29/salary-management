@@ -1,20 +1,14 @@
 <script lang="ts">
+	import { Eye, EyeOff } from '@lucide/svelte';
+
+	import Button from '$shared/components/ui/Button.svelte';
 	import Card from '$shared/components/ui/Card.svelte';
 	import Input from '$shared/components/ui/Input.svelte';
 	import Label from '$shared/components/ui/Label.svelte';
-	import Button from '$shared/components/ui/Button.svelte';
 	import Link from '$shared/components/ui/Link.svelte';
-	import { Eye, EyeOff } from '@lucide/svelte';
 	import { ROUTES } from '$shared/consts/routes';
 
-	interface Props {
-		email: string;
-		password: string;
-		emailError?: string | undefined;
-		passwordError?: string | undefined;
-		onSubmit: () => void;
-		loading?: boolean;
-	}
+	import type { LoginCardProps } from '../model/login-card';
 
 	let {
 		email = $bindable(''),
@@ -23,7 +17,7 @@
 		passwordError,
 		onSubmit,
 		loading = false
-	}: Props = $props();
+	}: LoginCardProps = $props();
 
 	let showPassword = $state(false);
 

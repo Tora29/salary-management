@@ -1,4 +1,6 @@
+import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
 import { supabase } from '$shared/lib/supabase';
+
 import type { LoginFormData, LoginResult } from '../model/loginSchema';
 import type { AuthError } from '@supabase/supabase-js';
 
@@ -7,21 +9,19 @@ import type { AuthError } from '@supabase/supabase-js';
  */
 export async function signInWithEmail(credentials: LoginFormData): Promise<LoginResult> {
 	try {
-		console.log('Attempting login with email:', credentials.email);
 		const { data, error } = await supabase.auth.signInWithPassword({
 			email: credentials.email,
 			password: credentials.password
 		});
 
 		if (error) {
-			console.error('Login error details:', error);
 			return handleAuthError(error);
 		}
 
 		if (!data.user) {
 			return {
 				success: false,
-				error: '認証に失敗しました'
+				error: ERROR_MESSAGES.LOGIN_FAILED
 			};
 		}
 
@@ -32,11 +32,10 @@ export async function signInWithEmail(credentials: LoginFormData): Promise<Login
 				email: data.user.email || ''
 			}
 		};
-	} catch (error) {
-		console.error('Login error:', error);
+	} catch {
 		return {
 			success: false,
-			error: 'ログイン処理中にエラーが発生しました'
+			error: ERROR_MESSAGES.LOGIN_FAILED
 		};
 	}
 }
@@ -46,13 +45,13 @@ export async function signInWithEmail(credentials: LoginFormData): Promise<Login
  */
 function handleAuthError(error: AuthError): LoginResult {
 	const errorMessages: Record<string, string> = {
-		'Invalid login credentials': 'メールアドレスまたはパスワードが正しくありません',
-		'Email not confirmed': 'メールアドレスの確認が完了していません',
-		'User not found': 'ユーザーが見つかりません',
-		'Too many requests': 'ログイン試行回数が多すぎます。しばらくしてから再度お試しください'
+		'Invalid login credentials': ERROR_MESSAGES.INVALID_CREDENTIALS,
+		'Email not confirmed': ERROR_MESSAGES.EMAIL_NOT_VERIFIED,
+		'User not found': ERROR_MESSAGES.INVALID_CREDENTIALS,
+		'Too many requests': ERROR_MESSAGES.RATE_LIMIT_EXCEEDED
 	};
 
-	const message = errorMessages[error.message] || `認証エラー: ${error.message}`;
+	const message = errorMessages[error.message] || ERROR_MESSAGES.LOGIN_FAILED;
 
 	return {
 		success: false,
@@ -78,7 +77,6 @@ export async function getCurrentSession(): Promise<
 export async function signOut(): Promise<void> {
 	const { error } = await supabase.auth.signOut();
 	if (error) {
-		console.error('Logout error:', error);
-		throw new Error('ログアウトに失敗しました');
+		throw new Error(ERROR_MESSAGES.LOGOUT_FAILED);
 	}
 }

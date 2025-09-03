@@ -151,10 +151,31 @@ export const REQUEST_HEADERS = {
 } as const;
 
 // 型定義
+/**
+ * APIベースURLの型
+ */
 export type ApiBase = typeof API_BASE;
+/**
+ * 認証エンドポイントの型
+ */
 export type AuthEndpoint = (typeof AUTH_ENDPOINTS)[keyof typeof AUTH_ENDPOINTS];
+/**
+ * ユーザーエンドポイントの型
+ */
 export type UserEndpoint = (typeof USER_ENDPOINTS)[keyof typeof USER_ENDPOINTS];
+/**
+ * 給与エンドポイントの型
+ */
 export type SalaryEndpoint = typeof SALARY_ENDPOINTS;
+/**
+ * ポートフォリオエンドポイントの型
+ */
 export type PortfolioEndpoint = typeof PORTFOLIO_ENDPOINTS;
+/**
+ * 管理者エンドポイントの型
+ */
 export type AdminEndpoint = typeof ADMIN_ENDPOINTS;
+/**
+ * HTTPメソッドの型
+ */
 export type HttpMethod = (typeof HTTP_METHODS)[keyof typeof HTTP_METHODS];

@@ -1,29 +1,16 @@
 <script lang="ts">
+	import { Eye, EyeOff } from '@lucide/svelte';
+
+	import Button from '$shared/components/ui/Button.svelte';
 	import Card from '$shared/components/ui/Card.svelte';
+	import Checkbox from '$shared/components/ui/Checkbox.svelte';
 	import Input from '$shared/components/ui/Input.svelte';
 	import Label from '$shared/components/ui/Label.svelte';
-	import Button from '$shared/components/ui/Button.svelte';
 	import Link from '$shared/components/ui/Link.svelte';
-	import Checkbox from '$shared/components/ui/Checkbox.svelte';
 	import PasswordStrength from '$shared/components/ui/PasswordStrength.svelte';
-	import { Eye, EyeOff } from '@lucide/svelte';
 	import { ROUTES } from '$shared/consts/routes';
 
-	interface Props {
-		email: string;
-		password: string;
-		confirmPassword: string;
-		agreedToTerms: boolean;
-		emailError?: string | undefined;
-		passwordError?: string | undefined;
-		confirmPasswordError?: string | undefined;
-		agreedToTermsError?: string | undefined;
-		onSubmit: () => void;
-		onEmailBlur?: () => void;
-		onPasswordBlur?: () => void;
-		onConfirmPasswordBlur?: () => void;
-		loading?: boolean;
-	}
+	import type { RegistrationCardProps } from '../model/register-card';
 
 	let {
 		email = $bindable(''),
@@ -39,7 +26,7 @@
 		onPasswordBlur,
 		onConfirmPasswordBlur,
 		loading = false
-	}: Props = $props();
+	}: RegistrationCardProps = $props();
 
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);

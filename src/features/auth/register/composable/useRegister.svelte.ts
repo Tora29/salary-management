@@ -3,14 +3,18 @@
  * Svelte 5 Runesを使用した状態管理
  */
 
-import { goto } from '$app/navigation';
-import { registerSchema } from '../model/registerSchema';
-import { registerUser } from '../api/registerUser';
-import type { RegisterFormData, FormErrors } from '../model/types';
 import { z } from 'zod';
+
+import { goto } from '$app/navigation';
+
 import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
 import { ROUTE_WITH_PARAMS } from '$shared/consts/routes';
 import { LENGTH_LIMITS, REGEX_PATTERNS } from '$shared/consts/validationRules';
+
+import { registerUser } from '../api/registerUser';
+import { registerSchema } from '../model/registerSchema';
+
+import type { RegisterFormData, FormErrors } from '../model/types';
 
 /**
  * 登録フォームのコンポーザブル
@@ -27,7 +31,7 @@ export function useRegister(): {
 	clearErrors: () => void;
 } {
 	// リアクティブな状態管理
-	let formData = $state<RegisterFormData>({
+	const formData = $state<RegisterFormData>({
 		email: '',
 		password: '',
 		confirmPassword: '',
@@ -174,13 +178,10 @@ export function useRegister(): {
 			} else {
 				// 成功時
 				isSuccess = true;
-				// 3秒後にログイン画面へ遷移
-				setTimeout(() => {
-					goto(ROUTE_WITH_PARAMS.LOGIN_REGISTERED);
-				}, 3000);
+				// ログイン画面へ遷移
+				goto(ROUTE_WITH_PARAMS.LOGIN_REGISTERED);
 			}
-		} catch (error) {
-			console.error('Registration error:', error);
+		} catch {
 			serverError = ERROR_MESSAGES.RETRY;
 		} finally {
 			isSubmitting = false;

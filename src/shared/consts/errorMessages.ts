@@ -58,6 +58,8 @@ export const ERROR_MESSAGES = {
 	PASSWORD_NO_SPECIAL: '特殊文字を1文字以上含めてください',
 	PASSWORD_MISMATCH: 'パスワードが一致しません',
 	PASSWORD_SAME_AS_OLD: '新しいパスワードは現在のパスワードと異なるものにしてください',
+	PASSWORD_RESET_EMAIL_SENT: 'パスワードリセットメールを送信しました',
+	PASSWORD_RESET_EMAIL_FAILED: 'パスワードリセットメールの送信に失敗しました',
 
 	// 名前
 	NAME_REQUIRED: '名前を入力してください',
@@ -106,6 +108,7 @@ export const ERROR_MESSAGES = {
 	ACCOUNT_SUSPENDED: 'アカウントが停止されています',
 	FEATURE_DISABLED: 'この機能は現在利用できません',
 	OPERATION_NOT_ALLOWED: 'この操作は許可されていません',
+	RATE_LIMIT_EXCEEDED: 'リクエスト回数が多すぎます。しばらくしてから再度お試しください',
 
 	// 給与管理
 	SALARY_INVALID_AMOUNT: '給与額が正しくありません',
@@ -152,5 +155,11 @@ export const ERROR_CODES = {
 } as const;
 
 // 型定義
+/**
+ * エラーメッセージの型
+ */
 export type ErrorMessage = (typeof ERROR_MESSAGES)[keyof typeof ERROR_MESSAGES];
+/**
+ * エラーコードの型
+ */
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

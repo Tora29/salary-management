@@ -14,6 +14,8 @@ export interface MeltCheckboxProps {
 	required?: boolean;
 	label?: Snippet;
 	class?: string;
+	onCheckedChange?: (checked: boolean) => void;
+	ariaLabel?: string;
 }
 
 /**
@@ -25,24 +27,5 @@ export interface MeltTooltipProps {
 	openDelay?: number;
 	closeDelay?: number;
 	class?: string;
-}
-
-/**
- * パスワード強度レベル
- */
-export type PasswordStrengthLevel = 'weak' | 'medium' | 'strong';
-
-/**
- * パスワード強度チェック結果
- */
-export interface PasswordStrengthResult {
-	level: PasswordStrengthLevel;
-	score: number;
-	checks: {
-		hasMinLength: boolean;
-		hasUpperCase: boolean;
-		hasLowerCase: boolean;
-		hasNumber: boolean;
-		hasSpecialChar: boolean;
-	};
+	children?: Snippet;
 }

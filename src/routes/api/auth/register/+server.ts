@@ -3,15 +3,18 @@
  * POST /api/auth/register
  */
 
-import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
-import { registerRequestSchema } from '$features/auth-register/model/registerSchema';
-import { getServerSupabaseClient } from '$shared/lib/server-supabase';
-import { prisma } from '$shared/lib/prisma';
-import type { RegisterResponse, RegisterErrorResponse } from '$features/auth-register/model/types';
+
 import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
-import { SUCCESS_MESSAGES } from '$shared/consts/successMessages';
 import { ROUTE_WITH_PARAMS } from '$shared/consts/routes';
+import { SUCCESS_MESSAGES } from '$shared/consts/successMessages';
+import { prisma } from '$shared/lib/prisma';
+import { createSupabaseClient } from '$shared/lib/supabase';
+
+import { registerRequestSchema } from '$features/auth/register/model/registerSchema';
+
+import type { RegisterResponse, RegisterErrorResponse } from '$features/auth/register/model/types';
+import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -50,11 +53,11 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Supabase Authでユーザー作成
 		const origin = new URL(request.url).origin;
-		const supabase = getServerSupabaseClient();
-		
+		const supabase = createSupabaseClient({ isServer: true });
+
 		// 開発環境ではメール確認をスキップ
 		const isDevelopment = import.meta.env.MODE === 'development';
-		
+
 		const { data, error } = await supabase.auth.signUp({
 			email,
 			password,
@@ -121,20 +124,51 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Prismaでユーザーレコードを作成
 		try {
+			const userEmail = data.user.email;
+			if (!userEmail) {
+				return json(
+					{
+						error: ERROR_MESSAGES.REGISTRATION_FAILED,
+						code: 'SERVER_ERROR',
+						details: {
+							message: 'Failed to retrieve email address'
+						}
+					} as RegisterErrorResponse,
+					{ status: 500 }
+				);
+			}
+
 			await prisma.user.create({
 				data: {
 					authId: data.user.id,
-					email: data.user.email!,
+					email: userEmail,
 					name: null,
 					avatarUrl: null
 				}
 			});
-		} catch (dbError) {
-			console.error('Database error creating user:', dbError);
-			console.error('Error details:', JSON.stringify(dbError, null, 2));
-			// 注意: admin権限が必要なので、ここではユーザー削除をスキップ
-			// TODO: Service Role Keyを使用してロールバック処理を実装
-			
+		} catch {
+			// Supabase Authユーザーのロールバック処理
+			// Service Role Keyがある場合のみ実行
+			if (process.env.SUPABASE_SERVICE_KEY) {
+				try {
+					const { createClient } = await import('@supabase/supabase-js');
+					const supabaseUrl = process.env.PUBLIC_SUPABASE_URL;
+					if (!supabaseUrl) {
+						throw new Error('PUBLIC_SUPABASE_URL not set');
+					}
+					const serviceSupabase = createClient(supabaseUrl, process.env.SUPABASE_SERVICE_KEY, {
+						auth: {
+							persistSession: false,
+							autoRefreshToken: false
+						}
+					});
+					await serviceSupabase.auth.admin.deleteUser(data.user.id);
+					// ロールバック成功: Prisma失敗後のSupabase Authユーザーを削除
+				} catch {
+					// ロールバック失敗: エラーは無視して続行
+				}
+			}
+
 			return json(
 				{
 					error: ERROR_MESSAGES.REGISTRATION_FAILED,

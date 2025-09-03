@@ -17,10 +17,14 @@ export const themes = [
 	'navy-coral'
 ] as const;
 
+/**
+ * テーマの型定義
+ */
 export type Theme = (typeof themes)[number];
 
 /**
  * テーマを設定
+ *
  * @param theme - 適用するテーマ名
  */
 export function setTheme(theme: Theme): void {
@@ -35,6 +39,7 @@ export function setTheme(theme: Theme): void {
 
 /**
  * 現在のテーマを取得
+ *
  * @returns 現在のテーマ名
  */
 export function getTheme(): Theme {

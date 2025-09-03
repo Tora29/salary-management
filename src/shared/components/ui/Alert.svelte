@@ -1,6 +1,7 @@
 <script lang="ts">
-	import type { AlertProps } from '$shared/components/model/types';
 	import { CircleAlert, CircleCheck, TriangleAlert, Info, X } from '@lucide/svelte';
+
+	import type { AlertProps } from '$shared/components/model/types';
 
 	const {
 		type = 'info',
