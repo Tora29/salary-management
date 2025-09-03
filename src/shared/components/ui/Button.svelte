@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ButtonProps } from '$shared/components/model/types';
 
-	let {
+	const {
 		variant = 'primary',
 		size = 'md',
 		disabled = false,

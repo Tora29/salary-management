@@ -1,4 +1,4 @@
-import { supabase } from '$shared/api/supabase';
+import { supabase } from '$shared/lib/supabase';
 import type { LoginFormData, LoginResult } from '../model/loginSchema';
 import type { AuthError } from '@supabase/supabase-js';
 
@@ -7,12 +7,14 @@ import type { AuthError } from '@supabase/supabase-js';
  */
 export async function signInWithEmail(credentials: LoginFormData): Promise<LoginResult> {
 	try {
+		console.log('Attempting login with email:', credentials.email);
 		const { data, error } = await supabase.auth.signInWithPassword({
 			email: credentials.email,
 			password: credentials.password
 		});
 
 		if (error) {
+			console.error('Login error details:', error);
 			return handleAuthError(error);
 		}
 
@@ -61,7 +63,9 @@ function handleAuthError(error: AuthError): LoginResult {
 /**
  * 現在のセッションを取得
  */
-export async function getCurrentSession() {
+export async function getCurrentSession(): Promise<
+	Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session']
+> {
 	const {
 		data: { session }
 	} = await supabase.auth.getSession();
@@ -71,7 +75,7 @@ export async function getCurrentSession() {
 /**
  * ログアウト
  */
-export async function signOut() {
+export async function signOut(): Promise<void> {
 	const { error } = await supabase.auth.signOut();
 	if (error) {
 		console.error('Logout error:', error);

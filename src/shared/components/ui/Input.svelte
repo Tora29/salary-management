@@ -23,8 +23,7 @@
 	bind:value
 	{placeholder}
 	{disabled}
-	{required}
-	autocomplete={autocomplete as any}
+	{autocomplete}
 	{id}
 	{name}
 	class={classes}

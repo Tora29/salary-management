@@ -1,12 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import {
-		themes,
-		type Theme,
-		getTheme,
-		setTheme,
-		getThemeDisplayName
-	} from '$shared/utils/theme';
+	import { themes, type Theme, getTheme, setTheme, getThemeDisplayName } from '$shared/utils/theme';
 	import { Palette, ChevronDown, Check } from '@lucide/svelte';
 
 	let currentTheme = $state<Theme>('light');

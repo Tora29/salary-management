@@ -20,14 +20,14 @@ export interface ButtonProps extends HTMLButtonAttributes {
 	children?: Snippet;
 }
 
-export interface InputProps extends Omit<HTMLInputAttributes, 'autocomplete'> {
+export interface InputProps extends Omit<HTMLInputAttributes, 'autocomplete' | 'value'> {
 	type?: string;
 	value?: string;
 	placeholder?: string;
 	disabled?: boolean;
 	error?: boolean;
 	required?: boolean;
-	autocomplete?: string;
+	autocomplete?: HTMLInputAttributes['autocomplete'];
 	id?: string;
 	name?: string;
 	class?: string;

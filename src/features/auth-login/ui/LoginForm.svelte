@@ -1,5 +1,5 @@
 <script lang="ts">
-	import UserCredentialsCard from '$entities/auth-card/ui/AuthCard.svelte';
+	import AuthCard from '$entities/auth-card/ui/AuthCard.svelte';
 	import Alert from '$shared/components/ui/Alert.svelte';
 	import ThemeSelector from '$shared/components/ui/ThemeSelector.svelte';
 	import { useLogin } from '../composable/useLogin.svelte';
@@ -19,14 +19,14 @@
 	/**
 	 * フォーム送信ハンドラー
 	 */
-	async function handleSubmit() {
+	async function handleSubmit(): Promise<void> {
 		await loginHandler.login(email, password);
 	}
 
 	/**
 	 * エラーアラートを閉じる
 	 */
-	function handleDismissError() {
+	function handleDismissError(): void {
 		loginHandler.clearError();
 	}
 
@@ -47,7 +47,7 @@
 
 <div
 	class="min-h-screen flex items-center justify-center px-4 py-12 relative"
-	style="background-color: var(--bg-base);"
+	style:background-color="var(--bg-base)"
 >
 	<!-- テーマセレクターを右上に配置 -->
 	<div class="absolute top-4 right-4">
@@ -66,7 +66,7 @@
 			</div>
 		{/if}
 
-		<UserCredentialsCard
+		<AuthCard
 			bind:email
 			bind:password
 			{emailError}

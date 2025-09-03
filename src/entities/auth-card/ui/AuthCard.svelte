@@ -3,7 +3,9 @@
 	import Input from '$shared/components/ui/Input.svelte';
 	import Label from '$shared/components/ui/Label.svelte';
 	import Button from '$shared/components/ui/Button.svelte';
+	import Link from '$shared/components/ui/Link.svelte';
 	import { Eye, EyeOff } from '@lucide/svelte';
+	import { ROUTES } from '$shared/consts/routes';
 
 	interface Props {
 		email: string;
@@ -25,11 +27,11 @@
 
 	let showPassword = $state(false);
 
-	function togglePasswordVisibility() {
+	function togglePasswordVisibility(): void {
 		showPassword = !showPassword;
 	}
 
-	function handleSubmit(e: Event) {
+	function handleSubmit(e: Event): void {
 		e.preventDefault();
 		onSubmit();
 	}
@@ -108,5 +110,12 @@
 		>
 			{loading ? 'ログイン中...' : 'ログイン'}
 		</Button>
+
+		<div class="mt-6 text-center">
+			<p class="text-sm text-gray-600">
+				アカウントをお持ちでない方は
+				<Link href={ROUTES.REGISTER} class="font-medium">新規登録</Link>
+			</p>
+		</div>
 	</form>
 </Card>

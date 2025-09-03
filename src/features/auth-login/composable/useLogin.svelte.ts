@@ -3,11 +3,21 @@ import { z } from 'zod';
 import { signInWithEmail } from '../api/supabaseAuth';
 import { loginSchema } from '../model/loginSchema';
 import type { LoginFormData, LoginResult, ValidationErrors } from '../model/loginSchema';
+import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
+import { ROUTES } from '$shared/consts/routes';
 
 /**
  * ログイン機能のコンポーザブル
  */
-export function useLogin() {
+export function useLogin(): {
+	readonly isLoading: boolean;
+	readonly error: string | null;
+	readonly validationErrors: ValidationErrors;
+	login: (email: string, password: string) => Promise<LoginResult>;
+	clearError: () => void;
+	clearValidationErrors: () => void;
+	validateForm: (data: LoginFormData) => boolean;
+} {
 	// Svelte 5 Runesを使用したリアクティブな状態管理
 	let isLoading = $state(false);
 	let error = $state<string | null>(null);
@@ -47,7 +57,7 @@ export function useLogin() {
 		if (!validateForm(formData)) {
 			return {
 				success: false,
-				error: 'フォームにエラーがあります'
+				error: ERROR_MESSAGES.FORM_HAS_ERRORS
 			};
 		}
 
@@ -59,14 +69,14 @@ export function useLogin() {
 
 			if (result.success) {
 				// ログイン成功時はダッシュボードへリダイレクト
-				await goto('/dashboard');
+				await goto(ROUTES.DASHBOARD);
 			} else {
-				error = result.error || '認証に失敗しました';
+				error = result.error || ERROR_MESSAGES.LOGIN_FAILED;
 			}
 
 			return result;
 		} catch (e) {
-			const errorMessage = e instanceof Error ? e.message : '予期しないエラーが発生しました';
+			const errorMessage = e instanceof Error ? e.message : ERROR_MESSAGES.UNKNOWN;
 			error = errorMessage;
 			return {
 				success: false,
@@ -80,14 +90,14 @@ export function useLogin() {
 	/**
 	 * エラーをクリア
 	 */
-	function clearError() {
+	function clearError(): void {
 		error = null;
 	}
 
 	/**
 	 * バリデーションエラーをクリア
 	 */
-	function clearValidationErrors() {
+	function clearValidationErrors(): void {
 		validationErrors = {};
 	}
 

@@ -1,36 +1,24 @@
 /**
- * ユーザー認証情報
+ * 認証カード関連の型定義
+ * このファイルは型定義のみを含みます（FSDルール準拠）
  */
-export interface UserCredentials {
-	email: string;
-	password: string;
+
+import type { Snippet } from 'svelte';
+
+/**
+ * 認証カードの基本プロパティ
+ */
+export interface AuthCardProps {
+	title: string;
+	children: Snippet;
+	footer?: Snippet;
+	class?: string;
 }
 
 /**
- * ユーザー情報
+ * 登録カードのプロパティ
  */
-export interface User {
-	id: string;
-	email: string;
-	created_at: string;
-	updated_at?: string;
-}
-
-/**
- * ユーザーセッション
- */
-export interface UserSession {
-	access_token: string;
-	refresh_token: string;
-	expires_at: number;
-	user: User;
-}
-
-/**
- * 認証エラー
- */
-export interface AuthError {
-	code: string;
-	message: string;
-	details?: Record<string, unknown>;
+export interface RegistrationCardProps extends AuthCardProps {
+	submitButtonText?: string;
+	isSubmitting?: boolean;
 }

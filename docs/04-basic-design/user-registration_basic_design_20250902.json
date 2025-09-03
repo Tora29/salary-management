@@ -1,0 +1,179 @@
+{
+	"problem": "システムに新規ユーザーが登録する手段がなく、管理者が手動でユーザーを作成する必要がある",
+	"goals": [
+		"メール/パスワードによる新規ユーザー登録機能を実装し、セルフサービス化を実現する",
+		"パスワード強度検証とメール確認プロセスによる安全な登録フローを構築する",
+		"既存のログイン機能とシームレスに連携する登録画面を提供する",
+		"利用規約への同意を必須とし、法的要件を満たす"
+	],
+	"acceptanceCriteria": [
+		{
+			"id": "AC-001",
+			"given": "未登録ユーザーが登録画面にアクセスした時",
+			"when": "必要な情報（メール、パスワード、パスワード確認）を入力してフォーム送信する",
+			"then": "Supabase Authに新規ユーザーが作成され、確認メールが送信される"
+		},
+		{
+			"id": "AC-002",
+			"given": "ユーザーがパスワード入力フィールドに文字を入力している時",
+			"when": "パスワード強度が変化する",
+			"then": "リアルタイムでパスワード強度インジケーターが更新される（弱い/中/強い）"
+		},
+		{
+			"id": "AC-003",
+			"given": "ユーザーがメールアドレスを入力した時",
+			"when": "フィールドからフォーカスが外れる",
+			"then": "メールアドレスの形式が検証され、不正な形式の場合はエラーメッセージが表示される"
+		},
+		{
+			"id": "AC-004",
+			"given": "ユーザーがパスワードとパスワード確認を入力した時",
+			"when": "両フィールドに値が入力されている",
+			"then": "パスワードが一致しない場合、エラーメッセージが表示される"
+		},
+		{
+			"id": "AC-005",
+			"given": "利用規約のチェックボックスが未チェックの時",
+			"when": "ユーザーが登録ボタンをクリックする",
+			"then": "エラーメッセージが表示され、登録処理は実行されない"
+		},
+		{
+			"id": "AC-006",
+			"given": "既に登録済みのメールアドレスで登録を試みた時",
+			"when": "フォームを送信する",
+			"then": "「このメールアドレスは既に使用されています」というエラーメッセージが表示される"
+		},
+		{
+			"id": "AC-007",
+			"given": "登録処理が成功した時",
+			"when": "Supabase Authからの応答を受信する",
+			"then": "「確認メールを送信しました」というメッセージが表示され、ログイン画面へ遷移する"
+		},
+		{
+			"id": "AC-008",
+			"given": "登録画面が表示されている時",
+			"when": "「既にアカウントをお持ちの方」リンクをクリックする",
+			"then": "ログイン画面へ遷移する"
+		},
+		{
+			"id": "AC-009",
+			"given": "ネットワークエラーやサーバーエラーが発生した時",
+			"when": "登録処理中にエラーが発生する",
+			"then": "適切なエラーメッセージが表示され、ユーザーは再試行できる"
+		},
+		{
+			"id": "AC-010",
+			"given": "パスワード強度が弱い（8文字未満、または必要な文字種が不足）時",
+			"when": "登録ボタンをクリックする",
+			"then": "「パスワードは8文字以上で、大文字・小文字・数字を含める必要があります」というエラーが表示される"
+		}
+	],
+	"outOfScope": [
+		"ソーシャルログイン（Google、Facebook等）による登録",
+		"電話番号による登録とSMS認証",
+		"管理者によるユーザー招待機能",
+		"パスワードリセット機能（別チケットで実装）",
+		"二要素認証（2FA）の設定"
+	],
+	"design": {
+		"api": {
+			"endpoints": [
+				{
+					"method": "POST",
+					"path": "/api/auth/register",
+					"request": {
+						"email": "string",
+						"password": "string",
+						"agreedToTerms": "boolean"
+					},
+					"response": {
+						"success": "boolean",
+						"message": "string",
+						"userId": "string | undefined"
+					},
+					"errorResponses": {
+						"400": {
+							"error": "Bad Request",
+							"message": "Invalid input data or validation failed"
+						},
+						"409": {
+							"error": "Conflict",
+							"message": "Email already exists"
+						},
+						"422": {
+							"error": "Unprocessable Entity",
+							"message": "Password does not meet requirements"
+						},
+						"500": {
+							"error": "Internal Server Error",
+							"message": "Failed to create user account"
+						}
+					}
+				}
+			]
+		},
+		"dataModel": {
+			"prismaSchema": "// Supabase Auth標準テーブル（auth.users）を使用\n// カスタムプロファイルデータ用：\nmodel UserProfile {\n  id String @id @default(uuid())\n  userId String @unique // auth.users.id へのFK\n  agreedToTermsAt DateTime\n  emailVerifiedAt DateTime?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}"
+		},
+		"components": {
+			"features": [
+				"auth-register/ui/RegisterForm",
+				"auth-register/composable/useRegister",
+				"auth-register/api/registerUser",
+				"auth-register/model/registerSchema"
+			],
+			"entities": ["auth-card/ui/RegistrationCard（AuthCardを拡張）", "auth-card/model/authTypes"],
+			"shared": [
+				"components/ui/PasswordStrength",
+				"components/ui/TermsCheckbox",
+				"components/ui/Link"
+			],
+			"meltUIComponents": ["Checkbox（利用規約同意）", "Tooltip（パスワード要件の説明）"]
+		}
+	},
+	"clarifications": [
+		"パスワード強度の具体的な基準は？（最小8文字、大文字・小文字・数字必須を想定）",
+		"メール確認期限は設定するか？（デフォルトで24時間を想定）",
+		"利用規約のテキストは別途提供されるか？（プレースホルダーテキストで実装）",
+		"登録成功後の遷移先はログイン画面でよいか？（メール確認を促すページも選択肢）"
+	],
+	"testStrategy": {
+		"unitTests": [
+			"パスワード強度計算ロジックのテスト",
+			"バリデーションスキーマのテスト",
+			"エラーハンドリングのテスト"
+		],
+		"integrationTests": [
+			"Supabase Auth APIとの連携テスト",
+			"フォーム送信から登録完了までのフローテスト"
+		],
+		"e2eTests": [
+			"新規ユーザー登録の完全フロー",
+			"バリデーションエラー表示の確認",
+			"ログイン画面との遷移確認"
+		]
+	},
+	"implementationNotes": {
+		"passwordRequirements": {
+			"minLength": 8,
+			"requireUppercase": true,
+			"requireLowercase": true,
+			"requireNumbers": true,
+			"requireSpecialChars": false
+		},
+		"emailVerification": {
+			"provider": "Supabase Auth built-in",
+			"expirationHours": 24,
+			"redirectUrl": "/login?verified=true"
+		},
+		"errorHandling": {
+			"duplicateEmail": "サーバーサイドで検証",
+			"networkErrors": "リトライ機能付きエラー表示",
+			"validationErrors": "フィールドレベルでリアルタイム表示"
+		}
+	},
+	"status": "draft",
+	"version": "1.0.0",
+	"createdAt": "2025-09-02",
+	"author": "Basic-Design-Agent"
+}

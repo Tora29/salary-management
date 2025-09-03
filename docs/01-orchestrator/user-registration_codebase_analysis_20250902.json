@@ -1,0 +1,72 @@
+{
+	"analyzed_date": "2025-09-02",
+	"feature_name": "user-registration",
+	"existing_patterns": {
+		"authentication": {
+			"library": "Supabase Auth",
+			"client_location": "src/shared/api/supabase.ts",
+			"auth_features": ["signInWithPassword", "getSession", "signOut"]
+		},
+		"ui_structure": {
+			"page_level": "routes/login/+page.svelte",
+			"feature_ui": "features/auth-login/ui/LoginForm.svelte",
+			"entity_ui": "entities/auth-card/ui/AuthCard.svelte",
+			"shared_components": ["Card", "Input", "Label", "Button", "Alert", "ThemeSelector"]
+		},
+		"composable_pattern": {
+			"location": "features/auth-login/composable/useLogin.svelte.ts",
+			"state_management": "Svelte 5 Runes ($state, $derived, $effect)",
+			"error_handling": "validationErrors object with field-specific errors"
+		},
+		"routing": {
+			"public_routes": "/login",
+			"protected_routes": "/dashboard",
+			"redirect_logic": "onMount with session check"
+		}
+	},
+	"reusable_components": {
+		"entities": {
+			"auth-card": {
+				"path": "entities/auth-card/ui/AuthCard.svelte",
+				"description": "認証用カードコンポーネント（メール/パスワード入力）",
+				"can_extend": true
+			}
+		},
+		"shared": {
+			"ui_components": ["Card", "Input", "Label", "Button", "Alert", "ThemeSelector"],
+			"supabase_client": "shared/api/supabase.ts"
+		}
+	},
+	"new_requirements": {
+		"features_needed": [
+			"signUp API call to Supabase",
+			"Email confirmation handling",
+			"Registration form validation",
+			"Link to login page",
+			"Success message handling"
+		],
+		"ui_components_needed": [
+			"RegistrationCard (extend AuthCard)",
+			"PasswordStrengthIndicator",
+			"TermsCheckbox",
+			"Link component for navigation"
+		],
+		"melt_ui_requirements": ["Checkbox for terms agreement", "Tooltip for password requirements"]
+	},
+	"architecture_compliance": {
+		"fsd_layers": {
+			"routes": "新規登録ページ（/register または /signup）",
+			"features": "auth-register feature",
+			"entities": "既存のauth-cardを拡張または新規作成",
+			"shared": "既存コンポーネントを再利用"
+		},
+		"import_direction": "shared → entities → features → routes",
+		"ui_hierarchy": "shared/components → entities/ui → features/ui → routes"
+	},
+	"coding_standards": {
+		"svelte5_runes": true,
+		"typescript": true,
+		"composable_extension": ".svelte.ts",
+		"fsd_compliance": true
+	}
+}

@@ -1,0 +1,262 @@
+{
+	"creation_date": "2025-09-02",
+	"feature_name": "user-registration",
+	"ui_guidance_type": "design_guidance_only",
+	"note": "このドキュメントは設計ガイダンスのみを提供します。実装はImplementation-Agentが担当します。",
+
+	"melt_ui_components": {
+		"checkbox": {
+			"component_name": "TermsCheckbox",
+			"melt_ui_builder": "createCheckbox",
+			"location": "src/shared/components/ui/TermsCheckbox.svelte",
+			"design_approach": {
+				"builder_pattern": {
+					"description": "Melt UIのcreateCheckboxビルダーを使用して利用規約同意チェックボックスを実装",
+					"key_elements": [
+						"チェックボックスのトリガー",
+						"チェック状態の管理",
+						"ラベルとの関連付け",
+						"アクセシビリティ属性"
+					]
+				},
+				"props_interface": {
+					"checked": "$bindable<boolean>",
+					"disabled": "boolean",
+					"required": "boolean",
+					"label": "string | snippet",
+					"class": "string"
+				},
+				"state_management": {
+					"internal_state": "Melt UIビルダーが管理",
+					"external_binding": "$bindableによる双方向バインディング",
+					"validation_state": "親コンポーネントで管理"
+				}
+			},
+			"styling_guidelines": {
+				"base_classes": "inline-flex items-center space-x-2",
+				"checkbox_classes": {
+					"unchecked": "w-4 h-4 border-2 border-gray-300 rounded",
+					"checked": "w-4 h-4 bg-blue-500 border-blue-500 rounded",
+					"disabled": "opacity-50 cursor-not-allowed",
+					"focus": "ring-2 ring-blue-500 ring-offset-2"
+				},
+				"label_classes": "text-sm text-gray-700 select-none cursor-pointer"
+			},
+			"accessibility": {
+				"aria_attributes": [
+					"aria-checked: チェック状態を示す",
+					"aria-required: 必須フィールドを示す",
+					"aria-describedby: エラーメッセージへの関連付け",
+					"role='checkbox': 明示的なロール定義"
+				],
+				"keyboard_navigation": ["Space: チェック/アンチェックの切り替え", "Tab: フォーカス移動"],
+				"screen_reader": "利用規約への同意状態を正確に読み上げ"
+			},
+			"usage_example": {
+				"parent_component": "features/auth-register/ui/RegisterForm.svelte",
+				"implementation_snippet": "<!-- 親コンポーネントでの使用例 -->\n<script>\n  import TermsCheckbox from '$shared/components/ui/TermsCheckbox.svelte';\n  let agreedToTerms = $state(false);\n</script>\n\n<TermsCheckbox bind:checked={agreedToTerms} required>\n  {#snippet label()}\n    <span>利用規約に同意します</span>\n    <a href=\"/terms\" class=\"text-blue-500 underline\">利用規約を読む</a>\n  {/snippet}\n</TermsCheckbox>",
+				"validation_integration": "ZodスキーマでagreedToTermsがtrueであることを検証"
+			}
+		},
+
+		"tooltip": {
+			"component_name": "PasswordTooltip",
+			"melt_ui_builder": "createTooltip",
+			"location": "src/shared/components/ui/PasswordTooltip.svelte",
+			"design_approach": {
+				"builder_pattern": {
+					"description": "Melt UIのcreateTooltipビルダーを使用してパスワード要件の説明ツールチップを実装",
+					"key_elements": [
+						"トリガー要素（情報アイコン）",
+						"ツールチップコンテンツ",
+						"ポジショニング設定",
+						"表示/非表示のアニメーション"
+					]
+				},
+				"props_interface": {
+					"content": "string | snippet",
+					"placement": "'top' | 'bottom' | 'left' | 'right'",
+					"openDelay": "number",
+					"closeDelay": "number",
+					"class": "string"
+				},
+				"floating_ui_config": {
+					"placement": "top-start",
+					"offset": 8,
+					"flip": true,
+					"shift": true,
+					"arrow": true
+				}
+			},
+			"styling_guidelines": {
+				"trigger_classes": "inline-flex items-center justify-center w-4 h-4 text-gray-400 hover:text-gray-600",
+				"content_classes": {
+					"container": "px-3 py-2 text-sm bg-gray-800 text-white rounded-md shadow-lg",
+					"arrow": "fill-gray-800",
+					"animation": "transition-opacity duration-200"
+				},
+				"dark_mode": {
+					"container": "dark:bg-gray-100 dark:text-gray-800",
+					"arrow": "dark:fill-gray-100"
+				}
+			},
+			"accessibility": {
+				"aria_attributes": [
+					"aria-describedby: ツールチップコンテンツへの関連付け",
+					"role='tooltip': 明示的なロール定義"
+				],
+				"keyboard_support": ["Escape: ツールチップを閉じる", "フォーカス時に自動表示"],
+				"screen_reader": "補助的な情報として適切に読み上げ"
+			},
+			"content_structure": {
+				"password_requirements": [
+					"✓ 最小8文字以上",
+					"✓ 大文字を1文字以上含む",
+					"✓ 小文字を1文字以上含む",
+					"✓ 数字を1文字以上含む"
+				],
+				"visual_hierarchy": "チェックマーク付きリスト形式で表示"
+			},
+			"usage_example": {
+				"parent_component": "features/auth-register/ui/RegisterForm.svelte",
+				"implementation_snippet": "<!-- パスワードフィールドの横に配置 -->\n<div class=\"relative\">\n  <input type=\"password\" bind:value={password} />\n  <PasswordTooltip>\n    {#snippet content()}\n      <ul class=\"space-y-1\">\n        <li>✓ 8文字以上</li>\n        <li>✓ 大文字・小文字・数字を含む</li>\n      </ul>\n    {/snippet}\n  </PasswordTooltip>\n</div>",
+				"interaction_flow": "ホバーまたはフォーカス時に自動表示、1秒の遅延"
+			}
+		}
+	},
+
+	"shared_components_integration": {
+		"ui_hierarchy": {
+			"shared_layer": [
+				"TermsCheckbox.svelte（Melt UI Checkbox）",
+				"PasswordTooltip.svelte（Melt UI Tooltip）",
+				"PasswordStrength.svelte（カスタム実装）"
+			],
+			"entities_layer": ["auth-card/ui/RegistrationCard.svelte（共有UIの組み合わせ）"],
+			"features_layer": ["auth-register/ui/RegisterForm.svelte（entities UIの組み合わせ）"]
+		},
+		"composition_pattern": {
+			"principle": "小さく再利用可能なコンポーネントを組み合わせて複雑なUIを構築",
+			"example": "RegisterForm = RegistrationCard + TermsCheckbox + PasswordTooltip + PasswordStrength"
+		}
+	},
+
+	"common_props_types": {
+		"location": "src/shared/components/model/melt-ui-common.ts",
+		"interfaces": {
+			"MeltUICommonProps": {
+				"class": "string",
+				"style": "string",
+				"id": "string"
+			},
+			"MeltUIValueProps": {
+				"extends": "MeltUICommonProps",
+				"value": "T",
+				"onValueChange": "(value: T) => void"
+			},
+			"MeltUIToggleableProps": {
+				"extends": "MeltUICommonProps",
+				"open": "boolean",
+				"onOpenChange": "(open: boolean) => void"
+			},
+			"MeltUIFormProps": {
+				"extends": "MeltUICommonProps",
+				"disabled": "boolean",
+				"required": "boolean",
+				"readonly": "boolean",
+				"name": "string"
+			}
+		}
+	},
+
+	"implementation_priorities": {
+		"phase1": {
+			"components": ["TermsCheckbox"],
+			"reason": "利用規約同意は登録フローの必須要素"
+		},
+		"phase2": {
+			"components": ["PasswordTooltip"],
+			"reason": "パスワード要件の明示によるUX向上"
+		},
+		"integration": {
+			"approach": "各コンポーネントを独立して実装後、RegisterFormで統合",
+			"testing": "個別のコンポーネントテスト → 統合テスト"
+		}
+	},
+
+	"best_practices": {
+		"melt_ui_usage": [
+			"必ずmelt/componentsからインポート（Componentsアプローチ）",
+			"snippetパターンを活用して柔軟な構成を実現",
+			"bind:ディレクティブで双方向データバインディング",
+			"Buildersアプローチは使用しない"
+		],
+		"svelte5_compliance": [
+			"$stateと$bindableを使用したリアクティブな状態管理",
+			"$derivedで派生状態を定義",
+			"$effectの使用は最小限に抑える",
+			"export letは使用禁止"
+		],
+		"fsd_architecture": [
+			"shared/components/uiに汎用コンポーネントを配置",
+			"entities/uiでビジネス単位のUIを構築",
+			"features/uiで機能単位のUIを完成",
+			"レイヤー間の依存順序を厳守"
+		],
+		"accessibility": [
+			"WAI-ARIA準拠のマークアップ",
+			"キーボードナビゲーション完全対応",
+			"スクリーンリーダー対応",
+			"適切なフォーカス管理"
+		]
+	},
+
+	"testing_approach": {
+		"component_tests": {
+			"TermsCheckbox": [
+				"チェック状態の切り替えテスト",
+				"無効化状態のテスト",
+				"必須属性のテスト",
+				"キーボード操作テスト"
+			],
+			"PasswordTooltip": [
+				"表示/非表示のトリガーテスト",
+				"ポジショニングテスト",
+				"遅延設定のテスト",
+				"エスケープキーでの閉じるテスト"
+			]
+		},
+		"integration_tests": [
+			"RegisterForm内での連携動作",
+			"バリデーションとの統合",
+			"エラー状態の表示"
+		],
+		"accessibility_tests": [
+			"ARIAラベルの確認",
+			"キーボードナビゲーション",
+			"スクリーンリーダーでの読み上げ"
+		]
+	},
+
+	"potential_challenges": {
+		"melt_ui_learning_curve": {
+			"issue": "Melt UIのビルダーパターンの理解",
+			"mitigation": "公式ドキュメントと実装例の参照"
+		},
+		"state_synchronization": {
+			"issue": "親子コンポーネント間の状態同期",
+			"mitigation": "$bindableによる明示的なバインディング"
+		},
+		"styling_customization": {
+			"issue": "プロジェクトのデザインシステムとの統合",
+			"mitigation": "Tailwind CSSクラスによる柔軟なカスタマイズ"
+		}
+	},
+
+	"references": {
+		"melt_ui_docs": "https://next.melt-ui.com/components",
+		"svelte5_runes": "https://svelte.dev/docs/svelte/runes",
+		"fsd_architecture": ".claude/agents/00-Architechture-Rules/FSD-ARCHITECTURE-RULES.md",
+		"project_conventions": "CLAUDE.md"
+	}
+}

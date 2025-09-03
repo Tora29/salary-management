@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { CardProps } from '$shared/components/model/types';
 
-	let {
+	const {
 		class: className = '',
 		padding = 'md',
 		shadow = 'md',
-		radius = 'md',
 		children,
 		...restProps
 	}: CardProps = $props();

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { LabelProps } from '$shared/components/model/types';
 
-	let { for: forId, required = false, class: className = '', children }: LabelProps = $props();
+	const { for: forId, required = false, class: className = '', children }: LabelProps = $props();
 
 	const classes = $derived(`form-label ${className}`);
 </script>
