@@ -8,8 +8,9 @@ export const SUCCESS_MESSAGES = {
 	REGISTRATION_COMPLETE: '登録が完了しました。確認メールをご確認ください。',
 	LOGIN_SUCCESS: 'ログインしました',
 	LOGOUT_SUCCESS: 'ログアウトしました',
-	PASSWORD_RESET_EMAIL_SENT: 'パスワードリセット用のメールを送信しました',
-	PASSWORD_RESET_SUCCESS: 'パスワードがリセットされました',
+	PASSWORD_RESET_EMAIL_SENT: 'パスワードリセットメールを送信しました。メールをご確認ください。',
+	PASSWORD_RESET_COMPLETE:
+		'パスワードがリセットされました。新しいパスワードでログインしてください。',
 	EMAIL_VERIFIED: 'メールアドレスの確認が完了しました。ログインしてください。',
 
 	// データ操作

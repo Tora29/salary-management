@@ -59,7 +59,10 @@
 		</div>
 
 		<div class="form-group">
-			<Label for="password" required>パスワード</Label>
+			<div class="flex items-center justify-between">
+				<Label for="password" required>パスワード</Label>
+				<Link href={ROUTES.FORGOT_PASSWORD} class="text-sm">パスワードを忘れた方</Link>
+			</div>
 			<div class="relative">
 				<Input
 					id="password"

@@ -63,30 +63,50 @@
 	}
 </script>
 
-<div class="error-page">
-	<div class="error-container">
+<div
+	class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white p-8 sm:p-6 relative overflow-hidden"
+>
+	<!-- 背景装飾 -->
+	<div
+		class="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-transparent pointer-events-none"
+	></div>
+
+	<div class="w-full max-w-[560px] relative z-10">
 		<Card padding="xl">
-			<div class="error-content">
+			<div class="text-center flex flex-col gap-6 py-8 px-6 sm:py-6 sm:px-4">
 				{#if page.status}
-					<div class="error-code">
+					<div
+						class="text-[7rem] sm:text-[5rem] font-extrabold leading-none bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4 tracking-tight"
+					>
 						{page.status}
 					</div>
-					<h1 class="error-title">
+					<h1 class="text-3xl sm:text-2xl font-semibold text-gray-900 m-0 tracking-tight">
 						{getErrorTitle(page.status)}
 					</h1>
-					<p class="error-message">
+					<p class="text-lg sm:text-base text-gray-600 m-0 leading-relaxed max-w-[400px] mx-auto">
 						{getErrorMessage(page.status)}
 					</p>
 				{:else}
-					<div class="error-code">500</div>
-					<h1 class="error-title">Internal Server Error</h1>
-					<p class="error-message">
+					<div
+						class="text-[7rem] sm:text-[5rem] font-extrabold leading-none bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4 tracking-tight"
+					>
+						500
+					</div>
+					<h1 class="text-3xl sm:text-2xl font-semibold text-gray-900 m-0 tracking-tight">
+						Internal Server Error
+					</h1>
+					<p class="text-lg sm:text-base text-gray-600 m-0 leading-relaxed max-w-[400px] mx-auto">
 						{ERROR_MESSAGES.UNKNOWN}
 					</p>
 				{/if}
 
-				<div class="error-actions">
-					<Button variant="primary" size="lg" onclick={handleRedirectToLogin}>
+				<div class="mt-8 sm:mt-6">
+					<Button
+						variant="primary"
+						size="lg"
+						onclick={handleRedirectToLogin}
+						class="min-w-[200px] sm:min-w-[180px] !py-3 !px-8 sm:!py-2 sm:!px-6 !text-lg sm:!text-base font-medium shadow-lg hover:shadow-xl"
+					>
 						ログイン画面へ
 					</Button>
 				</div>
@@ -94,165 +114,3 @@
 		</Card>
 	</div>
 </div>
-
-<style>
-	.error-page {
-		min-height: 100vh;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
-		padding: var(--spacing-4xl) var(--spacing-2xl);
-		position: relative;
-		overflow: hidden;
-	}
-
-	.error-page::before {
-		content: '';
-		position: absolute;
-		top: -50%;
-		left: -50%;
-		width: 200%;
-		height: 200%;
-		background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.05) 0%, transparent 70%);
-		animation: pulse 15s ease-in-out infinite;
-	}
-
-	@keyframes pulse {
-		0%,
-		100% {
-			transform: scale(1);
-			opacity: 0.5;
-		}
-		50% {
-			transform: scale(1.1);
-			opacity: 0.3;
-		}
-	}
-
-	.error-container {
-		width: 100%;
-		max-width: 560px;
-		position: relative;
-		z-index: 1;
-	}
-
-	.error-content {
-		text-align: center;
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-xl);
-		padding: var(--spacing-2xl) var(--spacing-xl);
-	}
-
-	.error-code {
-		font-size: 7rem;
-		font-weight: 800;
-		line-height: 0.9;
-		background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		margin-bottom: var(--spacing-lg);
-		letter-spacing: -0.02em;
-		animation: fadeInScale 0.6s ease-out;
-	}
-
-	@keyframes fadeInScale {
-		from {
-			opacity: 0;
-			transform: scale(0.8);
-		}
-		to {
-			opacity: 1;
-			transform: scale(1);
-		}
-	}
-
-	.error-title {
-		font-size: var(--font-size-3xl);
-		font-weight: 600;
-		color: var(--color-text-primary);
-		margin: 0;
-		letter-spacing: -0.01em;
-		animation: fadeInUp 0.6s ease-out 0.1s both;
-	}
-
-	@keyframes fadeInUp {
-		from {
-			opacity: 0;
-			transform: translateY(20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	.error-message {
-		font-size: var(--font-size-lg);
-		color: var(--color-text-secondary);
-		margin: 0;
-		line-height: 1.6;
-		max-width: 400px;
-		margin-left: auto;
-		margin-right: auto;
-		animation: fadeInUp 0.6s ease-out 0.2s both;
-	}
-
-	.error-actions {
-		margin-top: 2rem;
-		animation: fadeInUp 0.6s ease-out 0.4s both;
-	}
-
-	.error-actions :global(.button) {
-		min-width: 200px;
-		padding: var(--spacing-md) var(--spacing-2xl);
-		font-size: var(--font-size-lg);
-		font-weight: 500;
-		box-shadow: 0 8px 24px rgba(var(--color-primary-rgb), 0.15);
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.error-actions :global(.button:hover) {
-		transform: translateY(-2px);
-		box-shadow: 0 12px 32px rgba(var(--color-primary-rgb), 0.2);
-	}
-
-	.error-actions :global(.button:active) {
-		transform: translateY(0);
-	}
-
-	/* レスポンシブ対応 */
-	@media (max-width: 640px) {
-		.error-page {
-			padding: var(--spacing-2xl) var(--spacing-lg);
-		}
-
-		.error-content {
-			padding: var(--spacing-xl) var(--spacing-md);
-		}
-
-		.error-code {
-			font-size: 5rem;
-		}
-
-		.error-title {
-			font-size: var(--font-size-2xl);
-		}
-
-		.error-message {
-			font-size: var(--font-size-base);
-		}
-
-		.error-actions {
-			margin-top: 1.5rem;
-		}
-
-		.error-actions :global(.button) {
-			min-width: 180px;
-			padding: var(--spacing-sm) var(--spacing-xl);
-			font-size: var(--font-size-base);
-		}
-	}
-</style>

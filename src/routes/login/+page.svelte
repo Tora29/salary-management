@@ -12,9 +12,10 @@
 
 	let showRegistrationSuccess = $state(false);
 	let showEmailConfirmed = $state(false);
+	let showPasswordReset = $state(false);
 
 	// 既にログインしている場合はダッシュボードへリダイレクト
-	// URLパラメータから登録成功・メール確認完了メッセージを表示
+	// URLパラメータから登録成功・メール確認完了・パスワードリセット完了メッセージを表示
 	onMount(async () => {
 		const session = await getCurrentSession();
 		if (session) {
@@ -28,6 +29,9 @@
 		}
 		if (searchParams.get('confirmed') === 'true') {
 			showEmailConfirmed = true;
+		}
+		if (searchParams.get('reset') === 'true') {
+			showPasswordReset = true;
 		}
 	});
 </script>
@@ -56,6 +60,17 @@
 				message={SUCCESS_MESSAGES.EMAIL_VERIFIED}
 				dismissible
 				onDismiss={() => (showEmailConfirmed = false)}
+			/>
+		</div>
+	{/if}
+
+	{#if showPasswordReset}
+		<div class="max-w-md mx-auto mb-4 px-4">
+			<Alert
+				type="success"
+				message={SUCCESS_MESSAGES.PASSWORD_RESET_COMPLETE}
+				dismissible
+				onDismiss={() => (showPasswordReset = false)}
 			/>
 		</div>
 	{/if}

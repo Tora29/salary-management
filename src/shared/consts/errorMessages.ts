@@ -41,6 +41,7 @@ export const ERROR_MESSAGES = {
 	INVALID_INPUT: '入力内容が正しくありません',
 	REQUIRED_FIELDS: '必須項目を入力してください',
 	SUBMIT_FAILED: '送信に失敗しました',
+	FIELD_TOO_LONG: 'フィールドが長すぎます',
 
 	// メールアドレス
 	EMAIL_REQUIRED: 'メールアドレスを入力してください',
