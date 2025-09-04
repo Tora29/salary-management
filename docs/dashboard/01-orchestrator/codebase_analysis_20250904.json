@@ -1,0 +1,124 @@
+{
+  "analysis_date": "2025-09-04",
+  "feature": "dashboard",
+  "existing_structure": {
+    "architecture": "Feature-Sliced Design (FSD)",
+    "framework": "SvelteKit with Svelte 5",
+    "ui_library": "Melt-UI",
+    "authentication": "Supabase Auth",
+    "database": "Supabase (PostgreSQL)",
+    "styling": "CSS with Tailwind-like utilities"
+  },
+  "current_layers": {
+    "shared": {
+      "components": [
+        "Alert", "Button", "Card", "Checkbox", "Input", 
+        "Label", "Link", "PasswordStrength", "ThemeSelector", "Tooltip"
+      ],
+      "utilities": ["validation", "theme"],
+      "api": ["supabase client"]
+    },
+    "entities": {
+      "auth": {
+        "ui": ["LoginCard", "ForgotPasswordCard", "ResetPasswordCard"],
+        "model": ["password-reset", "user types"]
+      }
+    },
+    "features": {
+      "auth": {
+        "modules": ["login", "register", "forgot-password", "reset-password"],
+        "structure": "Each module has ui/, composable/, model/, api/"
+      }
+    },
+    "routes": {
+      "existing": ["/", "/login", "/register", "/forgot-password", "/reset-password", "/terms"],
+      "missing": ["/dashboard"]
+    }
+  },
+  "new_requirements": {
+    "entities_needed": [
+      {
+        "name": "salary",
+        "purpose": "給料明細データの管理",
+        "components": ["SalaryCard", "SalaryDetail", "SalaryBadge"]
+      },
+      {
+        "name": "stock",
+        "purpose": "株式ポートフォリオの管理",
+        "components": ["StockCard", "StockPrice", "StockBadge"]
+      },
+      {
+        "name": "asset",
+        "purpose": "総資産の管理",
+        "components": ["AssetSummaryCard", "AssetChart"]
+      }
+    ],
+    "features_needed": [
+      {
+        "name": "dashboard-summary",
+        "purpose": "ダッシュボード全体のサマリー表示"
+      },
+      {
+        "name": "salary-overview",
+        "purpose": "給料の概要と管理"
+      },
+      {
+        "name": "stock-portfolio",
+        "purpose": "株式ポートフォリオの表示と管理"
+      },
+      {
+        "name": "asset-timeline",
+        "purpose": "資産の時系列分析"
+      },
+      {
+        "name": "notifications",
+        "purpose": "通知とアクションアイテムの管理"
+      }
+    ],
+    "routes_needed": [
+      "/dashboard - メインダッシュボードページ"
+    ]
+  },
+  "design_considerations": {
+    "layout": {
+      "type": "Grid-based responsive layout",
+      "sections": [
+        "Header with user info",
+        "Summary cards (3 columns)",
+        "Main content area (2 columns: salary + stocks)",
+        "Timeline analysis (full width)",
+        "Action/notification area"
+      ]
+    },
+    "data_flow": {
+      "initial_load": "Server-side data fetching with +page.server.ts",
+      "updates": "Real-time updates via Supabase subscriptions",
+      "caching": "Client-side caching for performance"
+    },
+    "ui_patterns": {
+      "cards": "Use existing Card component from shared",
+      "charts": "Need to select charting library",
+      "tables": "Need data table component",
+      "forms": "PDF upload for salary slips"
+    }
+  },
+  "technical_dependencies": {
+    "required_libraries": [
+      "Chart library (TBD in library-selector phase)",
+      "PDF parsing library (TBD)",
+      "Data table component (TBD)"
+    ],
+    "api_endpoints": [
+      "/api/salary - 給料データの取得・更新",
+      "/api/stocks - 株式データの取得・更新",
+      "/api/assets - 資産集計データの取得"
+    ]
+  },
+  "fsd_compliance_check": {
+    "layer_dependencies": "shared → entities → features → routes",
+    "ui_hierarchy": "shared/ui → entities/ui → features/ui → routes",
+    "composable_pattern": "All features use .svelte.ts extension",
+    "model_restriction": "Only type definitions in model/ directories",
+    "no_cross_feature_imports": true
+  }
+}
