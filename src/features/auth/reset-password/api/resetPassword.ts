@@ -3,9 +3,9 @@
  * Supabase Authを使用したトークン検証とパスワード更新
  */
 
-import { supabase } from '$shared/api/supabase';
 import { ERROR_MESSAGES } from '$shared/consts/errorMessages';
 import { SUCCESS_MESSAGES } from '$shared/consts/successMessages';
+import { supabase } from '$shared/lib/supabase';
 
 import type { ResetPasswordResult } from '../model/resetPasswordSchema';
 
